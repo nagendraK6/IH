@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/neartagtheme"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/desc_1"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="100dp"
+        android:text="You have friends on InstaHelo"
+        android:textSize="16dp"
+        android:gravity="center_horizontal|center_vertical"
+        />
+
+    <TextView
+        android:id="@+id/desc_2"
+        android:layout_below="@+id/desc_1"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_marginTop="10dp"
+        android:text="follow them?"
+        android:textSize="16dp"
+        android:gravity="center_horizontal"
+        />
+    <RelativeLayout
+        android:layout_below="@+id/desc_2"
+        android:layout_width="match_parent"
+        android:background="@color/neartagtheme"
+        android:layout_marginBottom="70dp"
+        android:layout_height="match_parent">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/friend_list_display"
+            android:background="@color/neartagtheme"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+    </RelativeLayout>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="70dp"
+        android:id="@+id/looks_good_to_me"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/looks_good_friends"/>
+    <ProgressBar
+        android:layout_gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/busy_send_photo"/>
+</RelativeLayout>

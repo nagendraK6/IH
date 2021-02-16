@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:id="@+id/active_room_shortcut"
+        android:visibility="visible"
+        android:background="@drawable/top_border"
+        android:layout_alignParentBottom="true"
+        android:layout_height="100dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="15dp"
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Event Title" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="40dp"
+            android:id="@+id/author_image_in_shortcut"
+            android:src="@drawable/empty_inviter"
+            android:layout_height="30dp">
+        </de.hdodenhof.circleimageview.CircleImageView>
+        <ImageView
+            android:visibility="visible"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="40dp"
+            android:layout_marginBottom="10dp"
+            android:id="@+id/mute_unmute_button_bottom"
+            android:layout_alignParentRight="true"
+            android:textAlignment="center"
+            android:paddingTop="5dp"
+            android:textColor="@color/Black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        </ImageView>
+    </RelativeLayout>
+</RelativeLayout>

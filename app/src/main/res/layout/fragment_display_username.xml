@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/neartagtheme"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/display_user_name"
+        android:textColor="@color/neartagtextcolor"
+        android:fontFamily="Helvetica-Bold"
+        android:layout_marginTop="110dp"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:height="50dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pick a cool user name"/>
+    <EditText
+        android:id="@+id/edit_display_user_name"
+        android:layout_marginTop="180dp"
+        android:focusable="true"
+        android:gravity="center"
+        android:layout_marginLeft="100dp"
+        android:layout_marginEnd="100dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/main_screen_no_ask"
+        android:layout_gravity="center"
+        android:textColorHint="@color/texthintcolor"
+        android:textSize="18sp"
+        android:layout_centerHorizontal="true" />
+    <TextView
+        android:id="@+id/send_user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/next_disabled"
+        android:textColor="#ffffff"
+        android:fontFamily="Helvetica-Bold"
+        android:gravity="center_horizontal"
+        android:paddingLeft="50dp"
+        android:textSize="24sp" />
+
+    <ProgressBar
+        android:layout_gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/busy_send_user_name"/>
+</RelativeLayout>

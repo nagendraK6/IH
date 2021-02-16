@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:padding="1dp"
+    android:layout_marginTop="30dp"
+    android:layout_height="wrap_content">
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/contact_image"
+        android:background="@drawable/empty_inviter"
+        android:layout_width="40dp"
+        android:layout_marginLeft="20dp"
+        android:layout_alignParentLeft="true"
+        android:layout_height="40dp"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:src="@drawable/invite_button"
+        android:id="@+id/selected"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="20dp"
+        android:layout_height="wrap_content">
+    </ImageView>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_marginLeft="90dp"
+        android:layout_marginTop="0dp"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:text="Name not added"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp"
+            android:id="@+id/contact_name"
+            android:layout_height="wrap_content"></TextView>
+    </RelativeLayout>
+</RelativeLayout>

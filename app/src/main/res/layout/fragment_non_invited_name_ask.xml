@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/neartagtheme"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/profile_name_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/invited_name_2"
+        android:text="Enter your name for profile"/>
+
+    <LinearLayout
+        android:id="@+id/name_box"
+        android:layout_below="@+id/profile_name_desc"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        android:windowSoftInputMode="stateVisible"
+        android:focusableInTouchMode="true"
+        android:layout_marginTop="30dp"
+        android:layout_height="wrap_content">
+        <EditText
+            android:id="@+id/first_name"
+            android:layout_marginRight="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_height="44dp"
+            android:layout_width="wrap_content"
+            android:backgroundTint="@color/White"
+            android:background="@drawable/text_box_name_bg"
+            android:textAlignment="center"
+            android:textSize="15sp"
+            android:hint="First Name"
+            android:textColor="@color/neartagtextcolor"
+            />
+        <EditText
+            android:id="@+id/last_name"
+            android:hint="Last Name"
+            android:layout_marginLeft="20dp"
+            android:layout_marginEnd="6dp"
+            android:layout_height="44dp"
+            android:layout_width="wrap_content"
+            android:backgroundTint="@color/White"
+            android:background="@drawable/text_box_name_bg"
+            android:textAlignment="center"
+            android:textSize="15sp"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/neartagtextcolor"
+            />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/submit_first_name_last_name"
+        android:layout_width="120dp"
+        android:layout_height="40dp"
+        android:layout_below="@+id/name_box"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center"
+        android:background="@drawable/next_disabled"
+        android:paddingTop="1dp"
+        android:paddingBottom="1dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:layout_marginTop="50dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:textColor="#ffffff"
+        android:textSize="16dp" />
+    <ProgressBar
+        android:layout_gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/busy_send_user_name"/>
+</RelativeLayout>

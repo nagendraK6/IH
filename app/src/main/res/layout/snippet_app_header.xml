@@ -1,0 +1,71 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:id="@+id/app_bar"
+        android:layout_marginTop="35dp"
+        android:backgroundTint="@color/neartagtheme"
+        android:layout_height="50dp">
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <ImageView
+                    android:src="@drawable/notification_bell_icon"
+                    android:id="@+id/notification"
+                    android:layout_width="30dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="80dp"
+                    android:layout_height="30dp"/>
+
+                <ImageView
+                    android:src="@drawable/letter_box_icon"
+                    android:layout_width="30dp"
+                    android:id="@+id/invite"
+                    android:layout_marginTop="10dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="140dp"
+                    android:layout_height="30dp">
+                </ImageView>
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/user_profile_image"
+                   />
+                <LinearLayout
+                    android:layout_marginLeft="50dp"
+                    android:visibility="invisible"
+                    android:layout_width="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/minimize_room"
+                    android:orientation="horizontal"
+                    android:layout_height="30dp">
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_marginTop="5dp"
+                        android:id="@+id/down_arrow"
+                        android:src="@drawable/arrow_down_expand"
+                        android:layout_height="wrap_content">
+                    </ImageView>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:text="All Rooms"
+                        android:layout_marginLeft="10dp"
+                        android:textColor="@color/Black"
+                        android:textSize="20dp"
+                        android:layout_height="wrap_content">
+                    </TextView>
+                </LinearLayout>
+            </RelativeLayout>
+    </RelativeLayout>
+
+</merge>

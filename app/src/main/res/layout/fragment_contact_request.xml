@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/neartagtheme"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/relLayout1">
+        <include layout="@layout/snippet_app_skip_header"/>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/desc_1"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="100dp"
+        android:text="Tap `Allow` on next screen to"
+        android:textSize="16dp"
+        android:gravity="center_horizontal|center_vertical"
+        />
+
+    <TextView
+        android:id="@+id/desc_2"
+        android:layout_below="@+id/desc_1"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_marginTop="10dp"
+        android:text="find friends on InstaHelo"
+        android:textSize="16dp"
+        android:gravity="center_horizontal"
+        />
+
+
+    <TextView
+        android:id="@+id/next_contact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginBottom="108dp"
+        android:background="@drawable/next_enabled"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:paddingLeft="17dp"
+        android:paddingRight="34dp"
+        android:layout_centerInParent="true"
+        />
+    <ProgressBar
+        android:layout_gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/busy_indicator"/>
+</RelativeLayout>

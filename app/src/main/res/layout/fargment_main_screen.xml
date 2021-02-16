@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:background="@color/neartagtheme"
+    android:layout_height="match_parent">
+    <include layout="@layout/snippet_app_header"/>
+    <RelativeLayout
+        android:layout_below="@+id/app_bar"
+        android:id="@+id/invite_card"
+        android:visibility="invisible"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/bg_corner"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_height="0dp">
+        <RelativeLayout
+            android:id="@+id/invite_line_item_1"
+            android:layout_marginTop="10dp"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:id="@+id/invite_box_icon"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:src="@drawable/up_arrow_invite">
+            </ImageView>
+            <TextView
+                android:layout_toRightOf="@+id/invite_box_icon"
+                android:id="@+id/invites_count_display"
+                android:layout_marginLeft="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="You can send invites now !" />
+        </RelativeLayout>
+        <TextView
+            android:layout_below="@+id/invite_line_item_1"
+            android:id="@+id/desc_1"
+            android:layout_marginTop="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="Who else would you like to invite to" />
+        <TextView
+            android:id="@+id/desc_2"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"
+            android:layout_below="@+id/desc_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="InstaHelo and have discussions with?" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_below="@+id/invite_card"
+        android:layout_width="match_parent"
+        android:background="@color/neartagtheme"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_height="match_parent">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/news_feed_list"
+            android:background="@color/neartagtheme"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+    </RelativeLayout>
+    <com.github.ybq.android.spinkit.SpinKitView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/loading_channel_token_fetch"
+        android:visibility="invisible"
+        style="@style/SpinKitView.Large.Wave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_centerVertical="true"
+        android:layout_centerInParent="true"
+        app:SpinKit_Color="@color/Grey" />
+</RelativeLayout>

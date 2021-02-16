@@ -1,0 +1,77 @@
+<resources>
+    <string name="app_name">InstaHelo</string>
+    <string name="phone_no_ask">Enter your phone number</string>
+    <string name="phn_msg"></string>
+    <string name="string_next">Ok</string>
+    <string name="user_selected_image">user_selected_image</string>
+    <string name="verify_no_msg">We are verifying your phone number</string>
+    <string name="ok">OK</string>
+    <string name="edit">Change it</string>
+    <string name="edit_no_msg">Is it ok  or you want to change it?</string>
+    <string name="otp_send_text">OTP sent</string>
+    <string name="verify_your_phone_number">Verify Phone Number</string>
+    <string name="otp_verify_description">Enter 4 digits OTP here</string>
+    <string name="phone_no_sample">+98181881818</string>
+    <string name="send_again">Send Again</string>
+    <string name="what_s_your_name">What is your name?</string>
+    <string name="name_add_hint">Name</string>
+    <string name="empty_name_msg">Name required</string>
+    <string name="empty_location_name_msg">यह बताना ज़रूरी है</string>
+    <string name="next">Next</string>
+    <string name="user_location_ask_str">आप कहाँ से हैं?</string>
+    <string name="location_hint_text">जैसे: गया, बिहार</string>
+    <string name="user_preferences_title">अपनी पसंद बताएं</string>
+    <string name="preference_text_1">नीचे अपनी पसंद के मुद्दों को चुने,</string>
+    <string name="preference_text_2">ताकि हम आपको पसंद की चीजें दिखा सकें</string>
+    <string name="option_1">ज्योतिष</string>
+    <string name="option_2">राजनीति</string>
+    <string name="option_3">क्रिकेट</string>
+    <string name="option_4">भक्ति</string>
+    <string name="option_5">सिनेमा</string>
+    <string name="option_6">खेलकूद</string>
+    <string name="option_7">रोमांस</string>
+    <string name="getstarted">Get your username</string>
+    <string name="comments_text">आजादी हम लेकर रहेंगे. हिंदुस्तान ज़िंदाबाद</string>
+    <string name="upload_in_progress">अपलोड हो रहा है</string>
+    <string name="sample_name_on_empty_profile">a</string>
+    <string name="sample_user_name">Nagendra</string>
+    <string name="adding_empty_comments_toast">पहले कुछ लिखें</string>
+    <string name="post_message_hint">यहाँ कुछ लिखे</string>
+    <string name="recommended_action_title">अभी के चर्चित मुद्दे</string>
+    <string name="recommendation_itme_text">#आरक्षण</string>
+    <string name="at_least_one_interest">एक रूचि बताना ज़रूरी है</string>
+    <string name="picture">Picture</string>
+    <string name="description_info">Info</string>
+    <string name="request_permission">This sample needs camera permission.</string>
+    <string name="camera_error">This device doesn\'t support Camera2 API.</string>
+    <string name="intro_message">intro message</string>
+
+
+    <!-- fragment tags -->
+    <string name="fragment_camera2">Camera2</string>
+    <string name="fragment_view_stickers">View Stickers</string>
+
+    <string name="agora_access_token"></string>
+    <string name="agora_app_id">8d2e5807dcf04c8ea76a385f28964fe5</string>
+    <string name="agora_app_certificate">09c2ca295ab2490692b3347827c15d98</string>
+    <string name="agora_channel_name">nice</string>
+    <string name="msg_token_fmt" translatable="false">InstanceID Token: %s</string>
+    <string name="invited_name_format_1" translatable="false">%s has invited you already !</string>
+    <string name="invited_name_format_2" translatable="false"> Welcome again 🎉</string>
+
+
+
+
+    <string name="welcome">👋 Welcome</string>
+    <!-- strings.xml -->
+    <string name="we_are_thri">
+
+We are thrilled to have you onboard ! \n\nWe are adding people gradually to InstaHelo as we work to get the platform ready.\n\nIf you have an invite from an existing user, you can join right away, without any waitlist.  Lets get rolling ! \n\nInstaHelo Team\n
+</string>
+
+    <!-- strings.xml -->
+    <string name="enter_your_">Enter your phone number</string>
+
+    <!-- strings.xml -->
+    <string name="didn_t_rece">Didnot receive? Resend</string>
+</resources>

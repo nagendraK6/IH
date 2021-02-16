@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:background="@drawable/bg_corner"
+    android:visibility="visible"
+    android:gravity="center_horizontal"
+    android:layout_width="match_parent"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_height="wrap_content"
+    android:paddingBottom="20dp"
+    android:layout_marginTop="20dp">
+            <TextView
+                android:layout_marginTop="5dp"
+                android:id="@+id/event_title"
+                android:layout_marginLeft="15dp"
+                android:textSize="18dp"
+
+                android:text="Is farmers protest illegal?"
+                android:textColor="@color/main_screen_text_color"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                 />
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/event_title"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="15dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="15dp"
+        android:id="@+id/image_1"
+        />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/event_title"
+        android:layout_marginLeft="35dp"
+        android:layout_marginTop="25dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/image_2"
+        />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:id="@+id/speaker_audience_list"
+        android:layout_below="@+id/event_title"
+        android:layout_marginLeft="105dp"
+        android:layout_marginTop="15dp"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/user_1_view"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textSize="16sp"
+                android:textColor="@color/main_screen_text_color"
+                android:id="@+id/user_1"
+                android:text="Nagendra Kumar"
+                android:layout_height="wrap_content">
+            </TextView>
+            <ImageView
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="6dp"
+                android:layout_width="wrap_content"
+                android:src="@drawable/speech_icon"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/user_2_view"
+            android:layout_below="@+id/user_1_view"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textSize="16sp"
+                android:id="@+id/user_2"
+                android:textColor="@color/main_screen_text_color"
+                android:text="Ashu Dubey"
+                android:layout_height="wrap_content">
+            </TextView>
+            <ImageView
+                android:layout_marginLeft="10dp"
+                android:layout_width="wrap_content"
+                android:layout_marginTop="6dp"
+                android:src="@drawable/speech_icon"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/user_3_view"
+            android:layout_below="@+id/user_2_view"
+
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textSize="16sp"
+                android:id="@+id/user_3"
+                android:textColor="@color/main_screen_text_color"
+                android:text="Dhirendra Kumar Singh"
+                android:layout_height="wrap_content">
+            </TextView>
+            <ImageView
+                android:layout_marginLeft="10dp"
+                android:layout_width="wrap_content"
+                android:layout_marginTop="6dp"
+                android:src="@drawable/speech_icon"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/user_4_view"
+            android:layout_below="@+id/user_3_view"
+
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textSize="16sp"
+                android:textColor="@color/main_screen_text_color"
+                android:id="@+id/user_4"
+                android:text="Mayank  Vatsa"
+                android:layout_height="wrap_content">
+            </TextView>
+            <ImageView
+                android:visibility="invisible"
+                android:layout_marginLeft="10dp"
+
+                android:layout_width="wrap_content"
+                android:src="@drawable/speech_icon"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </RelativeLayout>
+</RelativeLayout>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="50dp"
+        android:id="@+id/profile_photo"
+        android:src="@drawable/empty_inviter"
+        android:layout_height="50dp" />
+    <TextView
+        android:layout_toRightOf="@+id/profile_photo"
+        android:layout_width="wrap_content"
+        android:id="@+id/name"
+        android:textColor="@color/Black"
+        android:textSize="15dp"
+        android:layout_centerVertical="true"
+        android:text="Ashutosh Kr. Dubey"
+        android:layout_height="wrap_content" />
+    <ImageView
+        android:id="@+id/contact_selected"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_width="wrap_content"
+        android:src="@drawable/select_contact_clear"
+        android:layout_height="wrap_content" />
+</RelativeLayout>

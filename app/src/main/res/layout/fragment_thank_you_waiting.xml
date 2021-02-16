@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/neartagtheme"
+    android:orientation="vertical">
+
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textColor="@color/next_button_bg"
+        android:textSize="48sp" />
+
+
+    <TextView
+        android:id="@+id/welcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="116dp"
+        android:text="Thank You"
+        android:textAppearance="@style/welcome"
+        android:gravity="center_horizontal|center_vertical"
+        />
+
+    <!-- We are thrilled to have you onboard ! We are adding people gradually to InstaHelo as we work to get the platform ready. If you have an invite from an existing user, you can join right away, without any waitlist. Lets get rolling ! InstaHelo Team -->
+    <TextView
+        android:id="@+id/we_are_thri"
+        android:layout_width="260dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="167dp"
+        android:text="@string/we_are_thri"
+        android:textAppearance="@style/we_are_thri"
+        android:gravity="top"
+        />
+
+</RelativeLayout>

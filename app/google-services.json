@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "770891739513",
+    "project_id": "instahelo-2f903",
+    "storage_bucket": "instahelo-2f903.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:770891739513:android:1ee7f3946910599d4f3fa8",
+        "android_client_info": {
+          "package_name": "com.relylabs.InstaHelo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "770891739513-a056cmhu3i8a4q2abojpprf1jehuvj0r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJun-dYZRIusYAVtVxkvpEC1PufSkfdmo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "770891739513-a056cmhu3i8a4q2abojpprf1jehuvj0r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

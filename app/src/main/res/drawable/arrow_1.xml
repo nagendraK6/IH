@@ -1,0 +1,25 @@
+<!-- drawable/arrow_1.xml -->
+<vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="16.03dp"
+    android:height="0dp"
+    android:viewportWidth="16.03"
+    android:viewportHeight="0"
+    >
+
+    <group>
+
+        <clip-path
+            android:pathData="M0 0H16.0312H0Z"
+            />
+
+        <path
+            android:pathData="M0 0H16.0312H0Z"
+            android:strokeWidth="2"
+            android:strokeColor="#FFFFFF"
+            />
+
+    </group>
+
+</vector>

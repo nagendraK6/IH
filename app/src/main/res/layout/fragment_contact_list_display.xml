@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/neartagtheme"
+    android:orientation="vertical">
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="70dp"
+        android:layout_marginLeft="20dp"
+        android:id="@+id/move_back"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/left_move_button"/>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/top_description"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_marginTop="70dp"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:textSize="20dp"
+            android:text="YOU HAVE 7 INVITES"
+            android:id="@+id/main_desc_with_invite_count"
+            android:layout_height="wrap_content">
+        </TextView>
+        <TextView
+            android:layout_below="@+id/main_desc_with_invite_count"
+            android:layout_marginTop="30dp"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:id="@+id/desc_1"
+            android:text="Who from your friend list should be on"
+            android:layout_height="wrap_content">
+        </TextView>
+        <TextView
+            android:layout_marginTop="5dp"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:id="@+id/desc_2"
+            android:layout_below="@+id/desc_1"
+            android:text="InstaHelo? You would get credits on their"
+            android:layout_height="wrap_content">
+        </TextView>
+        <TextView
+            android:layout_marginTop="5dp"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_below="@+id/desc_2"
+            android:id="@+id/desc_3"
+            android:text="profile for adding them"
+            android:layout_height="wrap_content">
+        </TextView>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_below="@+id/top_description"
+        android:layout_width="match_parent"
+        android:background="@color/neartagtheme"
+        android:layout_marginTop="20dp"
+        android:layout_height="match_parent">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/contact_list_display"
+            android:background="@color/neartagtheme"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+    </RelativeLayout>
+    <ProgressBar
+        android:layout_gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/show_busy_indicator"/>
+</RelativeLayout>
