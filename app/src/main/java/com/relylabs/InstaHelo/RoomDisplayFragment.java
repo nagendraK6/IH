@@ -209,6 +209,7 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
         recyclerView_a.setLayoutManager(new GridLayoutManager(getContext(), 3));
         audience_adapter = new RoomsUsersDisplayListAdapter(getContext(), audiences, is_current_user_admin);
         audience_adapter.setClickListener(this);
+        audience_adapter.setHasStableIds(true);
         recyclerView_a.setAdapter(audience_adapter);
     }
 
@@ -218,6 +219,7 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
         recyclerView_s.setLayoutManager(new GridLayoutManager(getContext(), 3));
         speaker_adapter = new RoomsUsersDisplayListAdapter(getContext(), speakers, is_current_user_admin);
         speaker_adapter.setClickListener(this);
+        speaker_adapter.setHasStableIds(true);
         recyclerView_s.setAdapter(speaker_adapter);
     }
 

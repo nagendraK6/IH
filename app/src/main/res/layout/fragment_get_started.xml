@@ -32,10 +32,11 @@
     <!-- We are thrilled to have you onboard ! We are adding people gradually to InstaHelo as we work to get the platform ready. If you have an invite from an existing user, you can join right away, without any waitlist. Lets get rolling ! InstaHelo Team -->
     <TextView
         android:id="@+id/we_are_thri"
-        android:layout_width="260dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="40dp"
+        android:layout_marginRight="60dp"
         android:layout_alignParentTop="true"
         android:layout_marginTop="167dp"
         android:text="@string/we_are_thri"

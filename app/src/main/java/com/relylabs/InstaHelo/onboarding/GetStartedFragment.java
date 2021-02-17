@@ -2,8 +2,11 @@ package com.relylabs.InstaHelo.onboarding;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.app.Activity;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +16,8 @@ import android.os.Bundle;
 import com.relylabs.InstaHelo.R;
 
 public class GetStartedFragment extends Fragment {
+
+    public FragmentActivity activity_ref;
 
     @Nullable
     @Override
@@ -39,9 +44,19 @@ public class GetStartedFragment extends Fragment {
     }
 
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity){
+            activity_ref=(FragmentActivity) context;
+        }
+    }
+
     private void loadFragment(Fragment fragment_to_start) {
-        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_holder, fragment_to_start);
-        ft.commit();
+        if (activity_ref != null) {
+            FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.fragment_holder, fragment_to_start);
+            ft.commit();
+        }
     }
 }

@@ -76,12 +76,12 @@
         "source": "/Users/nagendrakumar/Documents/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml"
     },
     {
-        "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/debug/drawable_ic_launcher_background.xml.flat",
-        "source": "/Users/nagendrakumar/Documents/app/src/main/res/drawable/ic_launcher_background.xml"
-    },
-    {
         "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/debug/xml_provider_paths.xml.flat",
         "source": "/Users/nagendrakumar/Documents/app/src/main/res/xml/provider_paths.xml"
+    },
+    {
+        "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/debug/drawable_ic_launcher_background.xml.flat",
+        "source": "/Users/nagendrakumar/Documents/app/src/main/res/drawable/ic_launcher_background.xml"
     },
     {
         "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/debug/drawable-mdpi_leave_room.png.flat",
@@ -108,20 +108,20 @@
         "source": "/Users/nagendrakumar/Documents/app/src/main/res/drawable-hdpi/leave_room.png"
     },
     {
-        "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/debug/layout_friend_suggestion_image.xml.flat",
-        "source": "/Users/nagendrakumar/Documents/app/src/main/res/layout/friend_suggestion_image.xml"
-    },
-    {
         "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/debug/mipmap-xxhdpi_ic_launcher.png.flat",
         "source": "/Users/nagendrakumar/Documents/app/src/main/res/mipmap-xxhdpi/ic_launcher.png"
     },
     {
-        "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/debug/drawable-mdpi_arrow_down_expand.png.flat",
-        "source": "/Users/nagendrakumar/Documents/app/src/main/res/drawable-mdpi/arrow_down_expand.png"
+        "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/debug/layout_friend_suggestion_image.xml.flat",
+        "source": "/Users/nagendrakumar/Documents/app/src/main/res/layout/friend_suggestion_image.xml"
     },
     {
         "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/debug/drawable_notification_bell_icon.xml.flat",
         "source": "/Users/nagendrakumar/Documents/app/src/main/res/drawable/notification_bell_icon.xml"
+    },
+    {
+        "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/debug/drawable-mdpi_arrow_down_expand.png.flat",
+        "source": "/Users/nagendrakumar/Documents/app/src/main/res/drawable-mdpi/arrow_down_expand.png"
     },
     {
         "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/debug/drawable-xxxhdpi_speech_icon.png.flat",
@@ -160,24 +160,24 @@
         "source": "/Users/nagendrakumar/Documents/app/src/main/res/drawable/bg_otp.xml"
     },
     {
-        "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/debug/layout_snippet_top_gallerytoolbar.xml.flat",
-        "source": "/Users/nagendrakumar/Documents/app/src/main/res/layout/snippet_top_gallerytoolbar.xml"
-    },
-    {
         "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/debug/anim_speaker_speaking.xml.flat",
         "source": "/Users/nagendrakumar/Documents/app/src/main/res/anim/speaker_speaking.xml"
+    },
+    {
+        "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/debug/layout_snippet_top_gallerytoolbar.xml.flat",
+        "source": "/Users/nagendrakumar/Documents/app/src/main/res/layout/snippet_top_gallerytoolbar.xml"
     },
     {
         "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/debug/drawable-xxxhdpi_arrow_down_expand.png.flat",
         "source": "/Users/nagendrakumar/Documents/app/src/main/res/drawable-xxxhdpi/arrow_down_expand.png"
     },
     {
-        "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/debug/layout_snippet_contacts_view.xml.flat",
-        "source": "/Users/nagendrakumar/Documents/app/src/main/res/layout/snippet_contacts_view.xml"
-    },
-    {
         "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/debug/drawable_text_box_name_bg.xml.flat",
         "source": "/Users/nagendrakumar/Documents/app/src/main/res/drawable/text_box_name_bg.xml"
+    },
+    {
+        "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/debug/layout_snippet_contacts_view.xml.flat",
+        "source": "/Users/nagendrakumar/Documents/app/src/main/res/layout/snippet_contacts_view.xml"
     },
     {
         "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/debug/drawable-v24_ic_launcher_foreground.xml.flat",
@@ -196,16 +196,16 @@
         "source": "/Users/nagendrakumar/Documents/app/src/main/res/drawable/import_from_fb.xml"
     },
     {
-        "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/debug/anim_slide_out_top.xml.flat",
-        "source": "/Users/nagendrakumar/Documents/app/src/main/res/anim/slide_out_top.xml"
+        "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/debug/layout_activity_main.xml.flat",
+        "source": "/Users/nagendrakumar/Documents/app/src/main/res/layout/activity_main.xml"
     },
     {
         "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/debug/drawable_next_disabled.xml.flat",
         "source": "/Users/nagendrakumar/Documents/app/src/main/res/drawable/next_disabled.xml"
     },
     {
-        "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/debug/layout_activity_main.xml.flat",
-        "source": "/Users/nagendrakumar/Documents/app/src/main/res/layout/activity_main.xml"
+        "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/debug/anim_slide_out_top.xml.flat",
+        "source": "/Users/nagendrakumar/Documents/app/src/main/res/anim/slide_out_top.xml"
     },
     {
         "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/debug/drawable_room_display_top_border.xml.flat",
