@@ -112,6 +112,7 @@ com/relylabs/InstaHelo/models/EventElement.java
 com/relylabs/InstaHelo/rooms/RoomsUsersDisplayListAdapter.java
  com.relylabs.InstaHelo.rooms.RoomsUsersDisplayListAdapter
  com.relylabs.InstaHelo.rooms.RoomsUsersDisplayListAdapter$1
+ com.relylabs.InstaHelo.rooms.RoomsUsersDisplayListAdapter$2
  com.relylabs.InstaHelo.rooms.RoomsUsersDisplayListAdapter$ItemClickListener
  com.relylabs.InstaHelo.rooms.RoomsUsersDisplayListAdapter$ViewHolder
 com/relylabs/InstaHelo/onboarding/DisplayUserNameAskFragment.java
@@ -133,6 +134,13 @@ com/relylabs/InstaHelo/MainScreenFragment.java
  com.relylabs.InstaHelo.MainScreenFragment$1
  com.relylabs.InstaHelo.MainScreenFragment$10
  com.relylabs.InstaHelo.MainScreenFragment$11
+ com.relylabs.InstaHelo.MainScreenFragment$12
+ com.relylabs.InstaHelo.MainScreenFragment$13
+ com.relylabs.InstaHelo.MainScreenFragment$14
+ com.relylabs.InstaHelo.MainScreenFragment$15
+ com.relylabs.InstaHelo.MainScreenFragment$16
+ com.relylabs.InstaHelo.MainScreenFragment$17
+ com.relylabs.InstaHelo.MainScreenFragment$18
  com.relylabs.InstaHelo.MainScreenFragment$2
  com.relylabs.InstaHelo.MainScreenFragment$3
  com.relylabs.InstaHelo.MainScreenFragment$4
@@ -159,6 +167,7 @@ com/relylabs/InstaHelo/RoomDisplayFragment.java
  com.relylabs.InstaHelo.RoomDisplayFragment$2
  com.relylabs.InstaHelo.RoomDisplayFragment$3
  com.relylabs.InstaHelo.RoomDisplayFragment$4
+ com.relylabs.InstaHelo.RoomDisplayFragment$5
 com/relylabs/InstaHelo/models/User.java
  com.relylabs.InstaHelo.models.User
 com/relylabs/InstaHelo/App.java

@@ -50,6 +50,9 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.ViewHo
         if (!user.ProfilePicURL.equals("")) {
             Picasso.get().load(user.ProfilePicURL).into(holder.c1);
             Picasso.get().load(user.ProfilePicURL).into(holder.c2);
+        } else {
+            holder.c1.setImageDrawable(holder.itemView.getContext().getDrawable(R.drawable.empty_inviter));
+            holder.c2.setImageDrawable(holder.itemView.getContext().getDrawable(R.drawable.empty_inviter));
         }
     }
 

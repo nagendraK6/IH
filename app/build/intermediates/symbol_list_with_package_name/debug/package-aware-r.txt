@@ -1815,6 +1815,7 @@ drawable reactangle_1
 drawable room_actions_button
 drawable room_display_top_border
 drawable room_minimised_buttons_bg
+drawable round_outline
 drawable select_contact
 drawable select_contact_clear
 drawable speech_icon

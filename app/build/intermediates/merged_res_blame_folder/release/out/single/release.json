@@ -248,6 +248,10 @@
         "source": "/Users/nagendrakumar/Documents/app/src/main/res/drawable/mic_on_room_view.xml"
     },
     {
+        "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/release/drawable_round_outline.xml.flat",
+        "source": "/Users/nagendrakumar/Documents/app/src/main/res/drawable/round_outline.xml"
+    },
+    {
         "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/release/mipmap-mdpi_ic_launcher.png.flat",
         "source": "/Users/nagendrakumar/Documents/app/src/main/res/mipmap-mdpi/ic_launcher.png"
     },

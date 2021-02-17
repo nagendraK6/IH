@@ -40,6 +40,7 @@ import java.util.WeakHashMap;
 import cz.msebera.android.httpclient.Header;
 import de.hdodenhof.circleimageview.CircleImageView;
 
+
 public class RoomsUsersDisplayListAdapter extends RecyclerView.Adapter<RoomsUsersDisplayListAdapter.ViewHolder> {
 
     private ArrayList<UsersInRoom> mData;
@@ -79,7 +80,19 @@ public class RoomsUsersDisplayListAdapter extends RecyclerView.Adapter<RoomsUser
             holder.voice_action.setVisibility(View.VISIBLE);
         }
 
-        fetch_data(mData.get(position).UserId, holder);
+        String image_url = mData.get(position).profileImageURL;
+        String name =  mData.get(position).Name;
+        holder.speaker_listener_moderator_name.setText(name);
+        if (image_url!= null &&  !image_url.equals("")) {
+            Picasso.get().load(image_url).into(holder.speaker_listener_moderator_image);
+        } else {
+            holder.speaker_listener_moderator_image.setImageDrawable(holder.itemView.getContext().getDrawable(R.drawable.empty_user_profile_image));
+        }
+
+
+        if (mData.get(position).IsdataFetchRequired) {
+            fetch_data(mData.get(position).UserId, holder);
+        }
     }
 
     // total number of cells
@@ -161,8 +174,8 @@ public class RoomsUsersDisplayListAdapter extends RecyclerView.Adapter<RoomsUser
         @Override
         public void onClick(View view) {
             User user = User.getLoggedInUser();
-            if (is_admin_current_user && mData.get(getAdapterPosition()).IsSpeaker == false) {
-                actions_for_speakers(itemView.getContext(), mData.get(getAdapterPosition()).UserId);
+            if (is_admin_current_user && !user.UserID.equals(mData.get(getAdapterPosition()).UserId)) {
+                actions_for_speakers(itemView.getContext(), mData.get(getAdapterPosition()).UserId, mData.get(getAdapterPosition()).IsSpeaker);
             }
         }
     }
@@ -182,8 +195,9 @@ public class RoomsUsersDisplayListAdapter extends RecyclerView.Adapter<RoomsUser
         void onItemClick(Integer uid, String action);
     }
 
-    private void actions_for_speakers(Context context, Integer uid) {
-        final CharSequence[] items = { "Bring on stage"};
+    private void actions_for_speakers(Context context, Integer uid, Boolean is_speaker) {
+        String txt = is_speaker ? "Move to Audience": "Invite to Speak";
+        final CharSequence[] items = { txt };
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
@@ -192,13 +206,21 @@ public class RoomsUsersDisplayListAdapter extends RecyclerView.Adapter<RoomsUser
                     return;
                 }
 
-                if (items[item].equals("Bring on stage")) {
-                    mClickListener.onItemClick(uid, "MAKE_SPEAKER");
+
+                Log.d("debug_audio", items[item].toString());
+                if (items[item].equals("Move to Audience")) {
+                    mClickListener.onItemClick(uid, "MAKE_AUDIENCE");
                 } else if (items[item].equals("Cancel")) {
                     dialog.dismiss();
+                } else if (items[item].equals("Invite to Speak")) {
+                    mClickListener.onItemClick(uid, "MAKE_SPEAKER");
                 }
             }
         });
         builder.show();
+    }
+
+    private void fetch_listeners() {
+
     }
 }
