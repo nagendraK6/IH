@@ -1,5 +1,6 @@
 package com.relylabs.InstaHelo.onboarding;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
@@ -9,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 
@@ -42,7 +44,7 @@ import cz.msebera.android.httpclient.Header;
 
 
 public class LoginFragment extends Fragment {
-
+    public FragmentActivity activity_ref;
     EditText phone_no;
     TextView next_phone;
     ProgressBar busy;
@@ -66,7 +68,13 @@ public class LoginFragment extends Fragment {
         running = true;
         return view;
     }
-
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity){
+            activity_ref=(FragmentActivity) context;
+        }
+    }
     @Override
     public void onResume() {
         super.onResume();
@@ -75,8 +83,8 @@ public class LoginFragment extends Fragment {
             @Override
             public void run() {
                 phone_no.requestFocus();
-                if (getActivity()!= null) {
-                    InputMethodManager imgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (activity_ref!= null) {
+                    InputMethodManager imgr = (InputMethodManager) activity_ref.getSystemService(Context.INPUT_METHOD_SERVICE);
                     imgr.showSoftInput(phone_no, InputMethodManager.SHOW_IMPLICIT);
                 }
             }
@@ -106,7 +114,7 @@ public class LoginFragment extends Fragment {
     public void onDestroy() {
         running = false;
         super.onDestroy();
-        //App.getRefWatcher(getActivity()).watch(this);
+        //App.getRefWatcher(activity_ref).watch(this);
     }
 
     private  void setupPhoneNo() {
@@ -159,7 +167,7 @@ public class LoginFragment extends Fragment {
                                     try {
                                         String error_message = response.getString("error_message");
                                         if (!error_message.equals("SUCCESS")) {
-                                           // Toast.makeText(getContext(), error_message, Toast.LENGTH_LONG).show();
+                                            // Toast.makeText(getContext(), error_message, Toast.LENGTH_LONG).show();
                                             phone_no.setText("");
                                             return;
                                         }
@@ -237,7 +245,7 @@ public class LoginFragment extends Fragment {
     }
 
     private void loadFragment(Fragment fragment_to_start) {
-        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_holder, fragment_to_start);
         ft.commit();
     }

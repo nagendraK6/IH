@@ -5,28 +5,27 @@
     android:layout_height="match_parent"
     android:background="@color/neartagtheme"
     android:orientation="vertical">
+
     <TextView
         android:id="@+id/desc_1"
         android:layout_width="match_parent"
         android:layout_height="32dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="100dp"
-        android:text="We also suggest you follow"
-        android:textSize="16dp"
+        android:layout_marginTop="52dp"
         android:gravity="center_horizontal|center_vertical"
-        />
+        android:text="We also suggest you follow"
+        android:textSize="16dp" />
 
     <TextView
         android:id="@+id/desc_2"
-        android:layout_below="@+id/desc_1"
         android:layout_width="match_parent"
         android:layout_height="32dp"
-        android:layout_marginTop="10dp"
-        android:text="these !"
-        android:textSize="16dp"
+        android:layout_below="@+id/desc_1"
+        android:layout_marginTop="0dp"
         android:gravity="center_horizontal"
-        />
+        android:text="these !"
+        android:textSize="16dp" />
     <RelativeLayout
         android:layout_below="@+id/desc_2"
         android:layout_width="match_parent"

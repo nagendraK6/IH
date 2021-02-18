@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.Selection;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,7 +50,7 @@ import cz.msebera.android.httpclient.Header;
 
 public class DisplayUserNameAskFragment extends Fragment {
 
-
+    public FragmentActivity activity_ref;
     EditText user_name;
     ProgressBar busy;
     Boolean running = false;
@@ -60,6 +62,13 @@ public class DisplayUserNameAskFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity){
+            activity_ref=(FragmentActivity) context;
+        }
+    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -131,7 +140,7 @@ public class DisplayUserNameAskFragment extends Fragment {
                 RequestParams params = new RequestParams();
                 params.add("display_user_name", user_name.getText().toString());
 
-                SharedPreferences cached = getActivity().getSharedPreferences("app_shared_pref", Context.MODE_PRIVATE);
+                SharedPreferences cached = activity_ref.getSharedPreferences("app_shared_pref", Context.MODE_PRIVATE);
                 String fcm_token = cached.getString("fcm_token", null);
                 params.add("fcm_token", fcm_token);
 
@@ -153,11 +162,13 @@ public class DisplayUserNameAskFragment extends Fragment {
 
                             user.Username = user_name.getText().toString();
                             user.save();
-
+                            Log.d("Here",user.IsInvited.toString());
                             Logger.log(Logger.USER_NAME_SEND_REQUEST_SUCCESS);
                             if (!user.IsInvited) {
-                                loadFragment(new DisplayUserNameAskFragment());
+                                loadFragment(new FragmentNonInvitedThankYouScreen());
+//                                loadFragment(new PhotoAskFragment());
                             } else {
+                                Log.d("here","Message");
                                 loadFragment(new PhotoAskFragment());
                             }
                         } catch (JSONException e) {
@@ -214,7 +225,7 @@ public class DisplayUserNameAskFragment extends Fragment {
 
     private void loadFragment(Fragment fragment_to_start) {
         if (running) {
-            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+            FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.fragment_holder, fragment_to_start);
             ft.commitAllowingStateLoss();
         }
@@ -227,10 +238,10 @@ public class DisplayUserNameAskFragment extends Fragment {
         user_name.post(new Runnable() {
             @Override
             public void run() {
-                if (getActivity()!= null) {
-                   // user_name.requestFocus();
-                   // user_name.setSelection(user_name.getText().length());
-                    InputMethodManager imgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (activity_ref!= null) {
+                    // user_name.requestFocus();
+                    // user_name.setSelection(user_name.getText().length());
+                    InputMethodManager imgr = (InputMethodManager) activity_ref.getSystemService(Context.INPUT_METHOD_SERVICE);
                     //imgr.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
                     imgr.showSoftInput(user_name, InputMethodManager.SHOW_IMPLICIT);
                 }
@@ -242,7 +253,7 @@ public class DisplayUserNameAskFragment extends Fragment {
     public void onDestroy() {
         running = false;
         super.onDestroy();
-        //App.getRefWatcher(getActivity()).watch(this);
+        //App.getRefWatcher(activity_ref.watch(this);
     }
 
     @Override

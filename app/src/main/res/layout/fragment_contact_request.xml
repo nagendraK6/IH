@@ -17,40 +17,38 @@
         android:id="@+id/desc_1"
         android:layout_width="match_parent"
         android:layout_height="32dp"
+        android:layout_below="@+id/relLayout1"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="100dp"
-        android:text="Tap `Allow` on next screen to"
-        android:textSize="16dp"
+        android:layout_marginTop="18dp"
         android:gravity="center_horizontal|center_vertical"
-        />
+        android:text="Tap `Allow` on next screen to"
+        android:textSize="16dp" />
 
     <TextView
         android:id="@+id/desc_2"
-        android:layout_below="@+id/desc_1"
         android:layout_width="match_parent"
         android:layout_height="32dp"
-        android:layout_marginTop="10dp"
-        android:text="find friends on InstaHelo"
-        android:textSize="16dp"
+        android:layout_below="@+id/desc_1"
+        android:layout_marginTop="0dp"
         android:gravity="center_horizontal"
-        />
+        android:text="find friends on InstaHelo"
+        android:textSize="16dp" />
 
 
     <TextView
         android:id="@+id/next_contact"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/desc_2"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
+        android:layout_marginTop="228dp"
         android:layout_marginBottom="108dp"
         android:background="@drawable/next_enabled"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
         android:paddingLeft="17dp"
+        android:paddingTop="12dp"
         android:paddingRight="34dp"
-        android:layout_centerInParent="true"
-        />
+        android:paddingBottom="12dp" />
     <ProgressBar
         android:layout_gravity="center"
         android:layout_centerHorizontal="true"

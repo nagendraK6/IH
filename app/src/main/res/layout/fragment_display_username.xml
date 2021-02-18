@@ -4,43 +4,49 @@
     android:layout_height="match_parent"
     android:background="@color/neartagtheme"
     android:orientation="vertical">
+
     <TextView
         android:id="@+id/display_user_name"
-        android:textColor="@color/neartagtextcolor"
-        android:fontFamily="Helvetica-Bold"
-        android:layout_marginTop="110dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        android:height="50dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Pick a cool user name"/>
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="52dp"
+        android:height="50dp"
+        android:fontFamily="Helvetica-Bold"
+        android:text="Pick a cool user name"
+        android:textAlignment="center"
+        android:textColor="@color/neartagtextcolor"
+        android:textSize="20sp" />
+
     <EditText
         android:id="@+id/edit_display_user_name"
-        android:layout_marginTop="180dp"
-        android:focusable="true"
-        android:gravity="center"
-        android:layout_marginLeft="100dp"
-        android:layout_marginEnd="100dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/main_screen_no_ask"
+        android:layout_below="@+id/display_user_name"
+        android:layout_centerHorizontal="true"
         android:layout_gravity="center"
+        android:layout_marginLeft="80dp"
+        android:layout_marginTop="35dp"
+        android:layout_marginEnd="80dp"
+        android:background="@drawable/main_screen_no_ask"
+        android:focusable="true"
+        android:gravity="center"
         android:textColorHint="@color/texthintcolor"
-        android:textSize="18sp"
-        android:layout_centerHorizontal="true" />
+        android:textSize="18sp" />
+
     <TextView
         android:id="@+id/send_user_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_below="@+id/edit_display_user_name"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="237dp"
         android:background="@drawable/next_disabled"
-        android:textColor="#ffffff"
         android:fontFamily="Helvetica-Bold"
         android:gravity="center_horizontal"
         android:paddingLeft="50dp"
+        android:textColor="#ffffff"
         android:textSize="24sp" />
 
     <ProgressBar

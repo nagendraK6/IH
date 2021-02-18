@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
@@ -55,7 +56,7 @@ import cz.msebera.android.httpclient.Header;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PhotoAskFragment extends Fragment {
-
+    public FragmentActivity activity_ref;
     String image_file_name = "";
     ProgressBar busy;
 
@@ -82,7 +83,13 @@ public class PhotoAskFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_photo_ask, container, false);
     }
-
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity){
+            activity_ref=(FragmentActivity) context;
+        }
+    }
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -96,7 +103,7 @@ public class PhotoAskFragment extends Fragment {
             }
         });
 
-         crl_image_view = view.findViewById(R.id.profile_image_view);
+        crl_image_view = view.findViewById(R.id.profile_image_view);
         crl_image_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -141,11 +148,11 @@ public class PhotoAskFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-       // if (getContext() == null) {
-       //     return;
-       // }
+        // if (getContext() == null) {
+        //     return;
+        // }
         boolean result = checkPermission(getContext());
-        verifyStoragePermissions(getActivity());
+        verifyStoragePermissions(activity_ref);
         Log.d("debug_data", "inside camera intent result");
         Log.d("debug_data", "result is " + String.valueOf(result));
         if (result) {
@@ -180,22 +187,22 @@ public class PhotoAskFragment extends Fragment {
     private void selectImage() {
         final CharSequence[] items = { "Choose from Library",
                 "Cancel" };
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity_ref);
         builder.setTitle("Add Photo!");
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
-                if (getActivity() == null) {
+                if (activity_ref == null) {
                     return;
                 }
 
                 if (items[item].equals("Take Photo")) {
-                    boolean result= checkPermissionCamera(getActivity());
+                    boolean result= checkPermissionCamera(activity_ref);
                     userChoosenTask="Take Photo";
                     if(result)
                         cameraIntent();
                 } else if (items[item].equals("Choose from Library")) {
-                    boolean result= checkPermission(getActivity());
+                    boolean result= checkPermission(activity_ref);
                     userChoosenTask="Choose from Library";
                     if(result)
                         galleryIntent();
@@ -248,7 +255,7 @@ public class PhotoAskFragment extends Fragment {
     }
 
     private void loadFragment(Fragment fragment_to_start) {
-        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_holder, fragment_to_start);
         ft.commit();
     }
@@ -316,14 +323,14 @@ public class PhotoAskFragment extends Fragment {
                 galleryIntent();
             }
         } else {
-            Toast.makeText(getActivity(),"Permission is needed to capture image for the profile", Toast.LENGTH_LONG).show();
+            Toast.makeText(activity_ref,"Permission is needed to capture image for the profile", Toast.LENGTH_LONG).show();
         }
     }
 
     private void cameraIntent()
     {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        getActivity().startActivityForResult(intent, REQUEST_CAMERA);
+        activity_ref.startActivityForResult(intent, REQUEST_CAMERA);
     }
 
     private void galleryIntent()
@@ -331,7 +338,7 @@ public class PhotoAskFragment extends Fragment {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        getActivity().startActivityForResult(Intent.createChooser(intent, "Select File"),SELECT_FILE);
+        activity_ref.startActivityForResult(Intent.createChooser(intent, "Select File"),SELECT_FILE);
     }
 
     private void onSelectFromGalleryResult(Intent data) throws IOException {
@@ -372,7 +379,7 @@ public class PhotoAskFragment extends Fragment {
         image_updated_in_profile = true;
 
         Log.d("debug_data", data.getData().toString());
-          Picasso.get().load(data.getData())
+        Picasso.get().load(data.getData())
                 .into(crl_image_view);
         imgfile = new File(data.getData().getPath()) ;
         image_storage_path = data.getData().toString();

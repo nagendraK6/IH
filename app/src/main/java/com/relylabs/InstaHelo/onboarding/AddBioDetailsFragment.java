@@ -2,8 +2,10 @@ package com.relylabs.InstaHelo.onboarding;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.app.Activity;
 import android.content.Context;
 import android.text.Editable;
 import android.text.Selection;
@@ -32,7 +34,7 @@ import org.json.JSONObject;
 import cz.msebera.android.httpclient.Header;
 
 public class AddBioDetailsFragment extends Fragment {
-
+    public FragmentActivity activity_ref;
     EditText edit_display_bio;
     String edit_display_bio_text;
     ImageView next_btn;
@@ -42,7 +44,13 @@ public class AddBioDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_bio_ask, container, false);
     }
-
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity){
+            activity_ref=(FragmentActivity) context;
+        }
+    }
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -73,12 +81,12 @@ public class AddBioDetailsFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                    edit_display_bio_text = s.toString();
-                    if (edit_display_bio_text.length() > 0) {
-                        next_btn.setBackground(getActivity().getDrawable(R.drawable.next_enabled));
-                    } else {
-                        next_btn.setBackground(getActivity().getDrawable(R.drawable.next_disabled));
-                    }
+                edit_display_bio_text = s.toString();
+                if (edit_display_bio_text.length() > 0) {
+                    next_btn.setBackground(activity_ref.getDrawable(R.drawable.next_enabled));
+                } else {
+                    next_btn.setBackground(activity_ref.getDrawable(R.drawable.next_disabled));
+                }
             }
         });
     }
@@ -91,7 +99,7 @@ public class AddBioDetailsFragment extends Fragment {
 
 
     private void loadFragment(Fragment fragment_to_start) {
-        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_holder, fragment_to_start);
         ft.commit();
     }
@@ -134,14 +142,14 @@ public class AddBioDetailsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-      //  running = true;
+        //  running = true;
         edit_display_bio.post(new Runnable() {
             @Override
             public void run() {
-                if (getActivity()!= null) {
+                if (activity_ref!= null) {
                     // user_name.requestFocus();
                     // user_name.setSelection(user_name.getText().length());
-                    InputMethodManager imgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    InputMethodManager imgr = (InputMethodManager) activity_ref.getSystemService(Context.INPUT_METHOD_SERVICE);
                     //imgr.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
                     imgr.showSoftInput(edit_display_bio, InputMethodManager.SHOW_IMPLICIT);
                 }

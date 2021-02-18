@@ -74,4 +74,5 @@ We are thrilled to have you onboard ! \n\nWe are adding people gradually to Inst
 
     <!-- strings.xml -->
     <string name="didn_t_rece">Didnot receive? Resend</string>
+    <string name="terms_of_service">By entering your phone number, you\'re agreeing to our Terms Of Service and Privacy Policy. Thanks!</string>
 </resources>

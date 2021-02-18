@@ -4,13 +4,16 @@
     android:padding="1dp"
     android:layout_marginTop="30dp"
     android:layout_height="wrap_content">
+
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/suggested_profile_image"
-        android:background="@drawable/empty_inviter"
         android:layout_width="40dp"
-        android:layout_marginLeft="20dp"
+        android:layout_height="40dp"
+        android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
-        android:layout_height="40dp"/>
+        android:layout_marginStart="28dp"
+        android:layout_marginLeft="20dp"
+        android:background="@drawable/empty_inviter" />
     <ImageView
         android:layout_width="25dp"
         android:src="@drawable/tic_mark_selected"
@@ -20,16 +23,18 @@
         android:layout_marginRight="20dp"
         android:layout_height="25dp">
     </ImageView>
+
     <ImageView
-        android:layout_width="25dp"
-        android:visibility="invisible"
         android:id="@+id/deselected"
-        android:src="@drawable/tic_mark_not_selected"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_marginTop="10dp"
+        android:layout_marginEnd="27dp"
         android:layout_marginRight="20dp"
-        android:layout_height="25dp">
-    </ImageView>
+        android:src="@drawable/tic_mark_not_selected"
+        android:visibility="invisible"></ImageView>
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_marginLeft="90dp"

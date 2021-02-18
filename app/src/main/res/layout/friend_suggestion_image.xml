@@ -12,21 +12,21 @@
         android:layout_width="100dp"
         android:layout_centerHorizontal="true"
         android:layout_height="100dp"/>
-        <ImageView
-            android:layout_toRightOf="@+id/friend_profile_image"
-            android:layout_marginLeft="-10dp"
-            android:layout_marginTop="40dp"
-            android:layout_width="20dp"
-            android:id="@+id/selected_deselected"
-            android:src="@drawable/tic_mark_selected"
-            android:layout_height="20dp">
-        </ImageView>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@+id/friend_profile_image"
-            android:id="@+id/friend_name"
-            android:layout_marginTop="5dp"
-            android:layout_height="wrap_content">
-        </TextView>
+    <ImageView
+        android:layout_toRightOf="@+id/friend_profile_image"
+        android:layout_marginLeft="-10dp"
+        android:layout_marginTop="40dp"
+        android:layout_width="20dp"
+        android:id="@+id/selected_deselected"
+        android:src="@drawable/tic_mark_selected"
+        android:layout_height="20dp">
+    </ImageView>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/friend_profile_image"
+        android:id="@+id/friend_name"
+        android:layout_marginTop="5dp"
+        android:layout_height="wrap_content">
+    </TextView>
 </RelativeLayout>

@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
@@ -42,7 +43,7 @@ import java.util.ArrayList;
 import cz.msebera.android.httpclient.Header;
 
 public class ContactRequestFragment extends Fragment {
-
+    public FragmentActivity activity_ref;
     public static int REQUEST_FOR_READ_CONTACTS = 9;
     ProgressBar busy_indicator;
     @Nullable
@@ -62,6 +63,13 @@ public class ContactRequestFragment extends Fragment {
                 if(checkPermission(getContext())) {
                     loadFragment(new FriendsToFollow());
                 }
+            }
+        });
+        TextView skip = view.findViewById(R.id.skip);
+        skip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadFragment(new SuggestedProfileToFollowFragment());
             }
         });
 
@@ -87,7 +95,13 @@ public class ContactRequestFragment extends Fragment {
             return true;
         }
     }
-
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity){
+            activity_ref=(FragmentActivity) context;
+        }
+    }
     @Override
     public void onRequestPermissionsResult(int RC, String per[], int[] PResult) {
         super.onRequestPermissionsResult(RC, per, PResult);
@@ -105,7 +119,7 @@ public class ContactRequestFragment extends Fragment {
 
 
     private void loadFragment(Fragment fragment_to_start) {
-        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_holder, fragment_to_start);
         ft.commit();
     }

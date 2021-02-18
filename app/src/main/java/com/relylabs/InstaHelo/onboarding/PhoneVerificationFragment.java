@@ -1,5 +1,6 @@
 package com.relylabs.InstaHelo.onboarding;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.os.Handler;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.text.Editable;
@@ -47,7 +49,7 @@ import cz.msebera.android.httpclient.Header;
  */
 
 public class PhoneVerificationFragment extends Fragment {
-
+    public FragmentActivity activity_ref;
     String otp1_text = "";
     String otp2_text = "";
     String otp3_text = "";
@@ -80,7 +82,7 @@ public class PhoneVerificationFragment extends Fragment {
                 String otp = otp1_text + otp2_text + otp3_text + otp4_text;
                 if (otp.length() == 4) {
                     //Toast.makeText(getContext(), otp, Toast.LENGTH_LONG).show();
-                     otpSendToServer(otp, false);
+                    otpSendToServer(otp, false);
                 }
             }
         });
@@ -110,7 +112,13 @@ public class PhoneVerificationFragment extends Fragment {
         return view;
     }
 
-
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity){
+            activity_ref=(FragmentActivity) context;
+        }
+    }
     @Override
     public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
         running = true;
@@ -233,7 +241,7 @@ public class PhoneVerificationFragment extends Fragment {
             public void onClick(View fragment_view) {
                 if (should_resend_otp) {
                     sendNewOTP();
-                   // startTimer(view);
+                    // startTimer(view);
                 }
             }
         });
@@ -300,10 +308,10 @@ public class PhoneVerificationFragment extends Fragment {
         otp1.post(new Runnable() {
             @Override
             public void run() {
-                if (getActivity()!= null) {
+                if (activity_ref!= null) {
                     otp1.requestFocus();
                     otp1.setSelection(otp1.getText().length());
-                    InputMethodManager imgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    InputMethodManager imgr = (InputMethodManager) activity_ref.getSystemService(Context.INPUT_METHOD_SERVICE);
                     imgr.showSoftInput(otp1, InputMethodManager.SHOW_IMPLICIT);
                 }
             }
@@ -350,8 +358,8 @@ public class PhoneVerificationFragment extends Fragment {
     }
 
     private void loadFragment(Fragment fragment_to_start) {
-        if (running && getActivity().getSupportFragmentManager() != null) {
-            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        if (running && activity_ref.getSupportFragmentManager() != null) {
+            FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.fragment_holder, fragment_to_start);
             ft.commitAllowingStateLoss();
         }
@@ -361,8 +369,7 @@ public class PhoneVerificationFragment extends Fragment {
     public void onDestroy() {
         running = false;
         super.onDestroy();
-        //App.getRefWatcher(getActivity()).watch(this);
-        if (registered && getActivity() != null) {
+        if (registered && activity_ref != null) {
             registered = false;
         }
     }
@@ -382,7 +389,7 @@ public class PhoneVerificationFragment extends Fragment {
         params.add("country_code", user.CountryCode);
         params.add("phone_no", user.PhoneNo);
 
-        SharedPreferences cached = getActivity().getSharedPreferences("app_shared_pref", Context.MODE_PRIVATE);
+        SharedPreferences cached = activity_ref.getSharedPreferences("app_shared_pref", Context.MODE_PRIVATE);
         String fcm_token = cached.getString("fcm_token", null);
         params.add("fcm_token", fcm_token);
 
@@ -391,6 +398,7 @@ public class PhoneVerificationFragment extends Fragment {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
                     String error_message = response.getString("error_message");
+
                     if (!error_message.equals("SUCCESS") && running) {
                         busy.setVisibility(View.INVISIBLE);
                         if (!auto) {
@@ -403,22 +411,38 @@ public class PhoneVerificationFragment extends Fragment {
                         }
                         return;
                     }
-
                     user.AccessToken = response.getString("user_token");
                     user.IsOTPVerified = true;
+                    try {
+                        user.InviterImageURL = response.getString("inviter_image_url");
+                        user.IsInvited = response.getBoolean("is_invited");
+                        user.InviterName = response.getString("inviter_name");
+                        user.FirstName = response.getString("first_name");
+                        user.LastName = response.getString("last_name");
+                        user.ProfilePicURL = response.getString("user_profile_image_url");
+                        user.BioDescription = response.getString("description_bio");
+                        user.Username = response.getString("display_user_name");
+                        user.CompletedOnboarding = response.getBoolean("has_completed_onboarding");
+                        user.InvitesCount = response.getInt("total_invites_count");
+                        user.ShowWelcomeScreen = Boolean.TRUE;
+                        user.UserID = response.getInt("user_id");
+                    }
+                    catch(Exception e){
+                        Log.d("User_not_invited",response.toString());
+                        user.InviterImageURL = "";
+                        user.IsInvited = Boolean.FALSE;
+                        user.InviterName = "";
+                        user.FirstName = "";
+                        user.LastName = "";
+                        user.ProfilePicURL = "";
+                        user.BioDescription = "";
+                        user.Username = "";
+                        user.CompletedOnboarding = Boolean.FALSE;
+                        user.InvitesCount = 5;
+                        user.ShowWelcomeScreen = Boolean.FALSE;
+                        user.UserID = 1;
 
-                    user.InviterImageURL = response.getString("inviter_image_url");
-                    user.IsInvited = response.getBoolean("is_invited");
-                    user.InviterName = response.getString("inviter_name");
-                    user.FirstName = response.getString("first_name");
-                    user.LastName = response.getString("last_name");
-                    user.ProfilePicURL =  response.getString("user_profile_image_url");
-                    user.BioDescription = response.getString("description_bio");
-                    user.Username = response.getString("display_user_name");
-                    user.CompletedOnboarding = response.getBoolean("has_completed_onboarding");
-                    user.InvitesCount = response.getInt("total_invites_count");
-                    user.ShowWelcomeScreen = Boolean.TRUE;
-                    user.UserID = response.getInt("user_id");
+                    }
                     user.save();
 
 

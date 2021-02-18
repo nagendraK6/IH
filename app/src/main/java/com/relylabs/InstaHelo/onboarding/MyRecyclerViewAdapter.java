@@ -1,9 +1,11 @@
 package com.relylabs.InstaHelo.onboarding;
 
+import android.app.Activity;
 import android.content.Context;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,7 +21,6 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.ViewHolder> {
-
     private ArrayList<String> mData;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;

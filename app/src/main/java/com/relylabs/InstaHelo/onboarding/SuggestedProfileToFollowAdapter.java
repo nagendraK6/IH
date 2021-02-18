@@ -86,16 +86,16 @@ public class SuggestedProfileToFollowAdapter extends RecyclerView.Adapter<Sugges
 
         @Override
         public void onClick(View view) {
-             if (selected_flag) {
-                 selected_flag = false;
-                 selected.setVisibility(View.INVISIBLE);
-                 deselected.setVisibility(View.VISIBLE);
-             } else {
-                 selected_flag = true;
-                 selected.setVisibility(View.VISIBLE);
-                 deselected.setVisibility(View.INVISIBLE);
-             }
-             mClickListener.onItemClick(view, getAdapterPosition(), selected_flag);
+            if (selected_flag) {
+                selected_flag = false;
+                selected.setVisibility(View.INVISIBLE);
+                deselected.setVisibility(View.VISIBLE);
+            } else {
+                selected_flag = true;
+                selected.setVisibility(View.VISIBLE);
+                deselected.setVisibility(View.INVISIBLE);
+            }
+            mClickListener.onItemClick(view, getAdapterPosition(), selected_flag);
         }
     }
 

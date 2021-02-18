@@ -1,5 +1,6 @@
 package com.relylabs.InstaHelo.onboarding;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 
@@ -7,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.text.Editable;
@@ -42,7 +44,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import com.squareup.picasso.Picasso;
 
 public class NonInvitedUserFirstNameAskFragment extends Fragment {
-
+    public FragmentActivity activity_ref;
 
     EditText first_name, last_name;
     ProgressBar busy;
@@ -59,9 +61,17 @@ public class NonInvitedUserFirstNameAskFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity){
+            activity_ref=(FragmentActivity) context;
+        }
+    }
+
     private void loadFragment(Fragment fragment_to_start) {
         if (running) {
-            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+            FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.fragment_holder, fragment_to_start);
             ft.commitAllowingStateLoss();
         }
@@ -143,7 +153,7 @@ public class NonInvitedUserFirstNameAskFragment extends Fragment {
     public void onDestroy() {
         running = false;
         super.onDestroy();
-        //App.getRefWatcher(getActivity()).watch(this);
+        //App.getRefWatcher(activity_ref()).watch(this);
     }
 
     private void sendNameToServer() {

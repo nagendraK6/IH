@@ -1,9 +1,11 @@
 package com.relylabs.InstaHelo.onboarding;
 
+import android.app.Activity;
 import android.content.Context;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,7 +25,7 @@ import java.util.ArrayList;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FriendToFollowListAdapter extends RecyclerView.Adapter<FriendToFollowListAdapter.ViewHolder> {
-
+    public FragmentActivity activity_ref;
     private ArrayList<String> contact_names;
     private ArrayList<String> profile_image_urls;
 
@@ -45,6 +47,7 @@ public class FriendToFollowListAdapter extends RecyclerView.Adapter<FriendToFoll
         View view = mInflater.inflate(R.layout.friend_suggestion_image, parent, false);
         return new ViewHolder(view);
     }
+
 
     // binds the data to the textview in each cell
     @Override

@@ -2,8 +2,11 @@ package com.relylabs.InstaHelo.onboarding;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.app.Activity;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,7 +51,7 @@ import java.util.ArrayList;
 import cz.msebera.android.httpclient.Header;
 
 public class SuggestedProfileToFollowFragment extends Fragment  implements SuggestedProfileToFollowAdapter.ItemClickListener  {
-
+    public FragmentActivity activity_ref;
     ArrayList<String> suggested_names, suggested_bios, suggested_profile_image_urls;
     View fragment_view;
 
@@ -65,7 +68,13 @@ public class SuggestedProfileToFollowFragment extends Fragment  implements Sugge
         fragment_view =  inflater.inflate(R.layout.fragment_suggested_profiles, container, false);
         return fragment_view;
     }
-
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity){
+            activity_ref=(FragmentActivity) context;
+        }
+    }
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -146,7 +155,7 @@ public class SuggestedProfileToFollowFragment extends Fragment  implements Sugge
 
 
     private void loadFragment(Fragment fragment_to_start) {
-        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_holder, fragment_to_start);
         ft.commit();
     }

@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -42,7 +43,7 @@ import java.util.Collections;
 
 public class RecyclerGalaryFragment extends Fragment  implements MyRecyclerViewAdapter.ItemClickListener {
     public static final int REQUEST_FOR_TAKE_PHOTO = 9;
-
+    public FragmentActivity activity_ref;
     RecyclerView recyclerView;
     MyRecyclerViewAdapter adapter;
     String mSelectedImage;
@@ -60,7 +61,13 @@ public class RecyclerGalaryFragment extends Fragment  implements MyRecyclerViewA
         fragment_view = inflater.inflate(R.layout.recycler_galary_fragment, container, false);
         return fragment_view;
     }
-
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity){
+            activity_ref=(FragmentActivity) context;
+        }
+    }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -69,7 +76,7 @@ public class RecyclerGalaryFragment extends Fragment  implements MyRecyclerViewA
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getActivity().onBackPressed();
+                activity_ref.onBackPressed();
             }
         });
 
@@ -86,7 +93,7 @@ public class RecyclerGalaryFragment extends Fragment  implements MyRecyclerViewA
     }
 
     private void loadFragment(Fragment fragment_to_start) {
-        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
         ft.add(R.id.fragment_holder, fragment_to_start);
         ft.addToBackStack(null);
         ft.commit();
@@ -95,7 +102,7 @@ public class RecyclerGalaryFragment extends Fragment  implements MyRecyclerViewA
     @Override
     public void onDestroy() {
         super.onDestroy();
-        //App.getRefWatcher(getActivity()).watch(this);
+        //App.getRefWatcher(activity_ref).watch(this);
         if (recyclerView != null) {
             recyclerView.setAdapter(null);
         }
@@ -103,7 +110,7 @@ public class RecyclerGalaryFragment extends Fragment  implements MyRecyclerViewA
 
     private void setAlbumNames() {
         directoryNames = Helper.getDirectoryNames(getContext());
-        ArrayAdapter<String> dr_adapter = new ArrayAdapter<String>(getActivity(),
+        ArrayAdapter<String> dr_adapter = new ArrayAdapter<String>(activity_ref,
                 android.R.layout.simple_spinner_item, directoryNames);
         dr_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         directorySpinner.setAdapter(dr_adapter);
@@ -133,13 +140,13 @@ public class RecyclerGalaryFragment extends Fragment  implements MyRecyclerViewA
 
 
     public void processImageSelection() {
-        if (getActivity() != null) {
+        if (activity_ref != null) {
             findPermissionsAndSelectImage();
         }
     }
 
     public void findPermissionsAndSelectImage() {
-        boolean result = checkPermission(getActivity());
+        boolean result = checkPermission(activity_ref);
         if (result) {
             setAlbumNames();
         }
