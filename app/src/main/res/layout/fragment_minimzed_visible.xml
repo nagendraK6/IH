@@ -2,12 +2,13 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:background="#99F1EFE4"
     android:layout_height="wrap_content">
     <RelativeLayout
         android:layout_width="match_parent"
         android:id="@+id/active_room_shortcut"
         android:visibility="visible"
-        android:background="@drawable/top_border"
+        android:background="@drawable/border_top_bottom_sheet"
         android:layout_alignParentBottom="true"
         android:layout_height="100dp"
         android:orientation="horizontal">
@@ -15,21 +16,32 @@
             android:layout_marginLeft="30dp"
             android:layout_marginTop="15dp"
             android:id="@+id/title"
+            android:textSize="16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            style="@style/bottom_title"
             android:text="Event Title" />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:layout_width="30dp"
             android:layout_marginLeft="30dp"
             android:layout_marginTop="40dp"
-            android:id="@+id/author_image_in_shortcut"
+            android:id="@+id/author_image_in_shortcut_1"
             android:src="@drawable/empty_inviter"
             android:layout_height="30dp">
         </de.hdodenhof.circleimageview.CircleImageView>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="30dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="40dp"
+            android:id="@+id/author_image_in_shortcut_2"
+            android:src="@drawable/empty_inviter"
+            android:layout_height="30dp">
+        </de.hdodenhof.circleimageview.CircleImageView>
+
         <ImageView
             android:visibility="visible"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="40dp"
             android:layout_marginRight="40dp"
             android:layout_marginBottom="10dp"
             android:id="@+id/mute_unmute_button_bottom"

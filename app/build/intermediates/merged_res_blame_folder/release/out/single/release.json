@@ -1,23 +1,23 @@
 [
     {
-        "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/release/drawable_next_enabled.xml.flat",
-        "source": "/Users/nagendrakumar/Documents/app/src/main/res/drawable/next_enabled.xml"
+        "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/release/drawable-xxxhdpi_leave_room.png.flat",
+        "source": "/Users/nagendrakumar/Documents/app/src/main/res/drawable-xxxhdpi/leave_room.png"
     },
     {
         "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/release/drawable-v24_ic_launcher_foreground.xml.flat",
         "source": "/Users/nagendrakumar/Documents/app/src/main/res/drawable-v24/ic_launcher_foreground.xml"
     },
     {
-        "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/release/drawable-xxxhdpi_leave_room.png.flat",
-        "source": "/Users/nagendrakumar/Documents/app/src/main/res/drawable-xxxhdpi/leave_room.png"
-    },
-    {
-        "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/release/drawable-mdpi_leave_room.png.flat",
-        "source": "/Users/nagendrakumar/Documents/app/src/main/res/drawable-mdpi/leave_room.png"
+        "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/release/drawable_next_enabled.xml.flat",
+        "source": "/Users/nagendrakumar/Documents/app/src/main/res/drawable/next_enabled.xml"
     },
     {
         "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/release/drawable-v24_in.png.flat",
         "source": "/Users/nagendrakumar/Documents/app/src/main/res/drawable-v24/in.png"
+    },
+    {
+        "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/release/drawable-mdpi_leave_room.png.flat",
+        "source": "/Users/nagendrakumar/Documents/app/src/main/res/drawable-mdpi/leave_room.png"
     },
     {
         "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/release/mipmap-xhdpi_ic_launcher_round.png.flat",
@@ -44,12 +44,12 @@
         "source": "/Users/nagendrakumar/Documents/app/src/main/res/drawable-xxxhdpi/speech_icon.png"
     },
     {
-        "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/release/drawable-hdpi_arrow_down_expand.png.flat",
-        "source": "/Users/nagendrakumar/Documents/app/src/main/res/drawable-hdpi/arrow_down_expand.png"
-    },
-    {
         "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/release/anim_slide_out_top.xml.flat",
         "source": "/Users/nagendrakumar/Documents/app/src/main/res/anim/slide_out_top.xml"
+    },
+    {
+        "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/release/drawable-hdpi_arrow_down_expand.png.flat",
+        "source": "/Users/nagendrakumar/Documents/app/src/main/res/drawable-hdpi/arrow_down_expand.png"
     },
     {
         "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/release/drawable-v24_instahelo_text_original.png.flat",
@@ -92,12 +92,12 @@
         "source": "/Users/nagendrakumar/Documents/app/src/main/res/drawable/bg_otp.xml"
     },
     {
-        "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/release/drawable-mdpi_speech_icon.png.flat",
-        "source": "/Users/nagendrakumar/Documents/app/src/main/res/drawable-mdpi/speech_icon.png"
-    },
-    {
         "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/release/layout_phone_verification_fragment.xml.flat",
         "source": "/Users/nagendrakumar/Documents/app/src/main/res/layout/phone_verification_fragment.xml"
+    },
+    {
+        "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/release/drawable-mdpi_speech_icon.png.flat",
+        "source": "/Users/nagendrakumar/Documents/app/src/main/res/drawable-mdpi/speech_icon.png"
     },
     {
         "merged": "/Users/nagendrakumar/Documents/app/build/intermediates/res/merged/release/layout_snippet_app_header.xml.flat",

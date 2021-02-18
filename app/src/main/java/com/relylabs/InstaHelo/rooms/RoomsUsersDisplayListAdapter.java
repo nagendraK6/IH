@@ -8,10 +8,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,16 +31,22 @@ import com.relylabs.InstaHelo.Utils.Logger;
 import com.relylabs.InstaHelo.models.User;
 import com.relylabs.InstaHelo.models.UsersInRoom;
 import com.relylabs.InstaHelo.onboarding.DisplayUserNameAskFragment;
-import com.squareup.picasso.Picasso;
+//import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.WeakHashMap;
 
 import cz.msebera.android.httpclient.Header;
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 
 
 public class RoomsUsersDisplayListAdapter extends RecyclerView.Adapter<RoomsUsersDisplayListAdapter.ViewHolder> {
@@ -66,9 +74,66 @@ public class RoomsUsersDisplayListAdapter extends RecyclerView.Adapter<RoomsUser
         return new RoomsUsersDisplayListAdapter.ViewHolder(view);
     }
 
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position, @NonNull List<Object> payloads) {
+       // super.onBindViewHolder(holder, position, payloads);
+        int viewType = getItemViewType(position);
+        Boolean is_muted = false, IsSpeaker = false, IsdataFetchRequired = false;
+        String profileImageURL = "";
+        if (payloads.isEmpty()) {
+            super.onBindViewHolder(holder, position, payloads);
+            return;
+        } else {
+            Bundle o = (Bundle) payloads.get(0);
+            for (String key : o.keySet()) {
+                if (key.equals("IsMuted")) {
+                    is_muted = o.getBoolean("IsMuted");
+                    if(!is_muted) {
+                        holder.voice_action.setBackground(holder.itemView.getContext().getDrawable(R.drawable.mic_on_room_view));
+                    } else {
+                        holder.voice_action.setBackground(holder.itemView.getContext().getDrawable(R.drawable.mic_off));
+                    }
+                }
+
+                if (key.equals("profileImageURL")) {
+                    profileImageURL = o.getString("profileImageURL");
+                    if (profileImageURL != null && !profileImageURL.equals("")) {
+                      //  Picasso.get().load(profileImageURL).into(holder.speaker_listener_moderator_image);
+                    } else {
+                        holder.speaker_listener_moderator_image.setImageDrawable(holder.itemView.getContext().getDrawable(R.drawable.empty_user_profile_image));
+                    }
+                }
+
+                if (key.equals("IsSpeaker")) {
+                    IsSpeaker = o.getBoolean("IsSpeaker");
+                    if (!IsSpeaker) {
+                        holder.voice_action.setVisibility(View.INVISIBLE);
+                    } else {
+                        if(!mData.get(position).IsMuted) {
+                            holder.voice_action.setBackground(holder.itemView.getContext().getDrawable(R.drawable.mic_on_room_view));
+                        } else {
+                            holder.voice_action.setBackground(holder.itemView.getContext().getDrawable(R.drawable.mic_off));
+                        }
+                        holder.voice_action.setVisibility(View.VISIBLE);
+                    }
+                }
+
+                if (key.equals("IsdataFetchRequired")) {
+                    IsdataFetchRequired = o.getBoolean("IsdataFetchRequired");
+                    if (IsdataFetchRequired) {
+                        fetch_data(mData.get(position).UserId, holder);
+                    }
+                }
+            }
+        }
+    }
+
+
     // binds the data to the textview in each cell
+
     @Override
     public void onBindViewHolder(@NonNull RoomsUsersDisplayListAdapter.ViewHolder holder, int position) {
+   //     super.onBindViewHolder(holder, position) );
         if (!mData.get(position).IsSpeaker) {
             holder.voice_action.setVisibility(View.INVISIBLE);
         } else {
@@ -80,11 +145,20 @@ public class RoomsUsersDisplayListAdapter extends RecyclerView.Adapter<RoomsUser
             holder.voice_action.setVisibility(View.VISIBLE);
         }
 
+
+        RequestOptions options = new RequestOptions()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .skipMemoryCache(false)
+                .centerCrop();
+
+
         String image_url = mData.get(position).profileImageURL;
         String name =  mData.get(position).Name;
         holder.speaker_listener_moderator_name.setText(name);
         if (image_url!= null &&  !image_url.equals("")) {
-            Picasso.get().load(image_url).into(holder.speaker_listener_moderator_image);
+          //  Picasso.get().load(image_url).into(holder.speaker_listener_moderator_image);
+            Glide.with(holder.itemView.getContext()).load(image_url).into(holder.speaker_listener_moderator_image);
+
         } else {
             holder.speaker_listener_moderator_image.setImageDrawable(holder.itemView.getContext().getDrawable(R.drawable.empty_user_profile_image));
         }
@@ -121,7 +195,9 @@ public class RoomsUsersDisplayListAdapter extends RecyclerView.Adapter<RoomsUser
                         Log.d("debug_data", name);
                         holder.speaker_listener_moderator_name.setText(name);
                         if (!image_url.equals("")) {
-                            Picasso.get().load(image_url).into(holder.speaker_listener_moderator_image);
+                            Glide.with(holder.itemView.getContext()).load(image_url).into(holder.speaker_listener_moderator_image);
+
+                            //   Glide.get().load(image_url).into(holder.speaker_listener_moderator_image);
                         } else {
                             holder.speaker_listener_moderator_image.setImageDrawable(holder.itemView.getContext().getDrawable(R.drawable.empty_user_profile_image));
                         }

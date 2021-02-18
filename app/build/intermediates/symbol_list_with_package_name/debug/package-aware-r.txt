@@ -1465,6 +1465,7 @@ drawable avd_show_password
 drawable bg_corner
 drawable bg_otp
 drawable blank_circular_profile
+drawable border_top_bottom_sheet
 drawable btn_checkbox_checked_mtrl
 drawable btn_checkbox_checked_to_unchecked_mtrl_animation
 drawable btn_checkbox_unchecked_mtrl
@@ -1757,6 +1758,7 @@ drawable get_user_name_btn
 drawable getstartedoval
 drawable googleg_disabled_color_18
 drawable googleg_standard_color_18
+drawable hand_raise
 drawable ic_backspace_black_24dp
 drawable ic_calendar_black_24dp
 drawable ic_clear_black_24dp
@@ -1779,6 +1781,7 @@ drawable invite_button
 drawable invite_card_img
 drawable layout_bg_circular
 drawable leave_room
+drawable leave_room_circular_bg
 drawable left_move_button
 drawable letter_box_icon
 drawable looks_good_friends
@@ -1983,7 +1986,8 @@ id all_images
 id always
 id app_bar
 id async
-id author_image_in_shortcut
+id author_image_in_shortcut_1
+id author_image_in_shortcut_2
 id auto
 id barrier
 id beginning
@@ -2081,6 +2085,7 @@ id friend_profile_image
 id get_started
 id ghost_view
 id ghost_view_holder
+id glide_custom_view_target_tag
 id gone
 id great_choic
 id gridImageView
@@ -3459,6 +3464,7 @@ style Widget_MaterialComponents_Toolbar_Primary
 style Widget_MaterialComponents_Toolbar_PrimarySurface
 style Widget_MaterialComponents_Toolbar_Surface
 style Widget_Support_CoordinatorLayout
+style bottom_title
 style didn_t_rece
 style enter_your_
 style we_are_thri

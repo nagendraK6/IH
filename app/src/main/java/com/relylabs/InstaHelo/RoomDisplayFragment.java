@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,6 +27,7 @@ import com.loopj.android.http.RequestParams;
 import com.relylabs.InstaHelo.models.User;
 import com.relylabs.InstaHelo.models.UsersInRoom;
 import com.relylabs.InstaHelo.rooms.RoomsUsersDisplayListAdapter;
+import com.relylabs.InstaHelo.rooms.RoomsUsersDisplayListDiffsCallback;
 import com.relylabs.InstaHelo.sharing.SharingContactListAdapter;
 import com.squareup.picasso.Picasso;
 
@@ -34,6 +36,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -73,27 +76,65 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
     BroadcastReceiver broadCastNewMessage = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d("debug_audio", "Received update from the main");
             ArrayList<UsersInRoom> t = intent
                     .getParcelableArrayListExtra("speakers_list");
-            is_current_role_speaker =
-                    intent.getBooleanExtra("is_current_role_speaker", false);
-            is_current_user_admin = intent.getBooleanExtra("is_current_user_admin", false);
 
-            if (is_current_role_speaker) {
-                mute_unmute_button_bottom.setVisibility(View.VISIBLE);
-                raise_hand.setVisibility(View.INVISIBLE);
-            } else {
-                mute_unmute_button_bottom.setVisibility(View.INVISIBLE);
-                raise_hand.setVisibility(View.VISIBLE);
+            String update_type = intent.getStringExtra("update_type");
+            Log.d("debug_audio", "Received update from the main: " + update_type);
+
+            if (update_type.equals("LIST_CHANGE")) {
+                is_current_role_speaker =
+                        intent.getBooleanExtra("is_current_role_speaker", false);
+                is_current_user_admin = intent.getBooleanExtra("is_current_user_admin", false);
+
+                if (is_current_role_speaker) {
+                    mute_unmute_button_bottom.setVisibility(View.VISIBLE);
+                    raise_hand.setVisibility(View.INVISIBLE);
+                } else {
+                    mute_unmute_button_bottom.setVisibility(View.INVISIBLE);
+                    raise_hand.setVisibility(View.VISIBLE);
+                }
+
+                speakers.clear();
+                speakers.addAll(t);
+                 speaker_adapter.notifyDataSetChanged();
+                 //speaker_adapter.notifyItemChanged();
+                processMuteUnmuteSettings();
+                fetchListenersData();
             }
-            speakers.clear();
-            speakers.addAll(t);
-            speaker_adapter.notifyDataSetChanged();
-            processMuteUnmuteSettings();
-            fetchListenersData();
+
+
+            if (update_type.equals("MUTE_UNMUTE")) {
+                Integer uid = intent
+                        .getIntExtra("user_id", -1);
+                Boolean muted = intent.getBooleanExtra("is_muted", true);
+                Integer index  = -1;
+                for (int i = 0; i < speakers.size(); i++) {
+                    if (speakers.get(i).UserId.equals(uid)) {
+                        index = i;
+                    }
+                }
+
+                if (index > -1) {
+                    speakers.get(index).IsMuted = muted;
+                    updateItem(index, muted);
+                }
+            }
         }
     };
+
+
+    private  void updateItem(Integer index, Boolean muted) {
+            Bundle diff = new Bundle();
+                diff.putBoolean("IsMuted", muted);
+                speaker_adapter.notifyItemChanged(index, diff);
+    }
+
+
+
+
+
+
 
     @Nullable
     @Override
@@ -143,12 +184,13 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
             activity.registerReceiver(broadCastNewMessage, new_post);
         }
 
-        speakers = getArguments().getParcelableArrayList("speakers_list");
+        //speakers = getArguments().getParcelableArrayList("speakers_list");
         ArrayList<UsersInRoom> all_users = getArguments().getParcelableArrayList("all_users_list");
 
         audiences = new ArrayList<>();
-
+        speakers = new ArrayList<>();
         is_current_role_speaker = getArguments().getBoolean("is_current_role_speaker");
+        speakers = getArguments().getParcelableArrayList("speakers_list");
         is_current_user_admin = getArguments().getBoolean("is_current_user_admin");
         mute_unmute_button_bottom.setVisibility(View.VISIBLE);
 
@@ -181,6 +223,7 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
 
         setupSpeakers(view);
         setupAudiences(view);
+       // updatePostingDetails(t);
         fetchListenersData();
     }
 
@@ -209,7 +252,6 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
         recyclerView_a.setLayoutManager(new GridLayoutManager(getContext(), 3));
         audience_adapter = new RoomsUsersDisplayListAdapter(getContext(), audiences, is_current_user_admin);
         audience_adapter.setClickListener(this);
-        audience_adapter.setHasStableIds(true);
         recyclerView_a.setAdapter(audience_adapter);
     }
 
@@ -219,8 +261,8 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
         recyclerView_s.setLayoutManager(new GridLayoutManager(getContext(), 3));
         speaker_adapter = new RoomsUsersDisplayListAdapter(getContext(), speakers, is_current_user_admin);
         speaker_adapter.setClickListener(this);
-        speaker_adapter.setHasStableIds(true);
         recyclerView_s.setAdapter(speaker_adapter);
+      //  speaker_adapter.notifyDataSetChanged();
     }
 
     private  void broadcastLocalUpdate(String action) {
@@ -277,7 +319,6 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
                     String error_message = response.getString("error_message");
                     if (error_message.equals("SUCCESS")) {
                         JSONArray all_data = response.getJSONArray("all_audiences");
-                        Log.d("debug_audio", " All data " + String.valueOf(all_data.length()));
                         ArrayList<UsersInRoom> all_audiences = new ArrayList<>();
                         for (int i  = 0 ; i < all_data.length(); i++) {
                             JSONObject obj = all_data.getJSONObject(i);
