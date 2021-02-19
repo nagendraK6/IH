@@ -192,6 +192,9 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
         is_current_role_speaker = getArguments().getBoolean("is_current_role_speaker");
         speakers = getArguments().getParcelableArrayList("speakers_list");
         is_current_user_admin = getArguments().getBoolean("is_current_user_admin");
+        String event_title = getArguments().getString("event_title");
+        TextView title_of_room = view.findViewById(R.id.title_of_room);
+        title_of_room.setText(event_title);
         mute_unmute_button_bottom.setVisibility(View.VISIBLE);
 
             mute_unmute_button_bottom.setOnClickListener(new View.OnClickListener() {
@@ -232,7 +235,7 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
             mute_unmute_button_bottom.setVisibility(View.VISIBLE);
             if (is_muted) {
                 if (activity != null) {
-                    mute_unmute_button_bottom.setBackground(activity.getDrawable(R.drawable.mic_off));
+                    mute_unmute_button_bottom.setBackground(activity.getDrawable(R.drawable.mic_off_self_user));
                 }
             } else {
                 if (activity != null) {

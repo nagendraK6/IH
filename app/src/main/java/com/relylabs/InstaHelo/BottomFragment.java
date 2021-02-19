@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
+import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,11 +13,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.os.Bundle;
 
+import com.bumptech.glide.Glide;
 import com.relylabs.InstaHelo.R;
 import com.relylabs.InstaHelo.models.User;
 
 public class BottomFragment extends Fragment {
-    ImageView mute_unmute_button_bottom;
+    TextView mute_unmute_button_bottom;
     Boolean is_current_role_speaker, is_muted;
     String event_title;
 
@@ -59,21 +61,49 @@ public class BottomFragment extends Fragment {
             });
         }
 
+
+        TextView raise_hand = view.findViewById(R.id.raise_hand);
+        if (is_current_role_speaker) {
+            raise_hand.setVisibility(View.INVISIBLE);
+        } else {
+            raise_hand.setVisibility(View.VISIBLE);
+        }
+
+        ImageView i1 = view.findViewById(R.id.author_image_in_shortcut_1);
+        if (!User.getLoggedInUser().ProfilePicURL.equals("")) {
+            Glide.with(getContext()).load(User.getLoggedInUser().ProfilePicURL).into(i1);
+        }
+
+        ImageView i2 = view.findViewById(R.id.author_image_in_shortcut_2);
+        if (!User.getLoggedInUser().ProfilePicURL.equals("")) {
+            Glide.with(getContext()).load(User.getLoggedInUser().ProfilePicURL).into(i2);
+        }
         processMuteUnmuteSettings();
+
+        TextView leave_quitely = view.findViewById(R.id.leave_quitely);
+        leave_quitely.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                broadcastLocalUpdate("LEAVE_CHANNEL");
+            }
+        });
     }
 
     void processMuteUnmuteSettings() {
         if (is_current_role_speaker) {
             mute_unmute_button_bottom.setVisibility(View.VISIBLE);
             if (is_muted) {
-                mute_unmute_button_bottom.setBackground(getActivity().getDrawable(R.drawable.mic_off));
+                mute_unmute_button_bottom.setBackground(getActivity().getDrawable(R.drawable.mic_off_self_user));
             } else {
                 mute_unmute_button_bottom.setBackground(getActivity().getDrawable(R.drawable.mic_on_room_view));
             }
 
         } else {
+            mute_unmute_button_bottom.setVisibility(View.INVISIBLE);
         }
     }
+
+
 
     private  void broadcastLocalUpdate(String action) {
         Bundle data_bundle = new Bundle();

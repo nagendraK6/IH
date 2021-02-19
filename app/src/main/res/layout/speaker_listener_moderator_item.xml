@@ -10,6 +10,7 @@
         android:layout_width="50dp"
         android:layout_centerHorizontal="true"
         android:layout_height="50dp"/>
+
     <ImageView
         android:layout_marginTop="10dp"
         android:layout_alignLeft="@+id/speaker_listener_moderator_image"
