@@ -5,8 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -19,6 +17,7 @@ import com.relylabs.InstaHelo.models.User;
 import com.relylabs.InstaHelo.onboarding.AddBioDetailsFragment;
 import com.relylabs.InstaHelo.onboarding.ContactRequestFragment;
 import com.relylabs.InstaHelo.onboarding.DisplayUserNameAskFragment;
+import com.relylabs.InstaHelo.onboarding.FragmentNonInvitedThankYouScreen;
 import com.relylabs.InstaHelo.onboarding.FriendsToFollow;
 import com.relylabs.InstaHelo.onboarding.GetStartedFragment;
 import com.relylabs.InstaHelo.onboarding.InvitedUserNameAskFragment;
@@ -26,6 +25,7 @@ import com.relylabs.InstaHelo.onboarding.LoginFragment;
 import com.relylabs.InstaHelo.onboarding.NonInvitedUserFirstNameAskFragment;
 import com.relylabs.InstaHelo.onboarding.PhoneVerificationFragment;
 import com.relylabs.InstaHelo.onboarding.PhotoAskFragment;
+import com.relylabs.InstaHelo.onboarding.SuggestedProfileToFollowFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("debug_audio", "save instant state is " + String.valueOf(savedInstanceState != null));
         setContentView(R.layout.activity_main);
         setUpFragment();
 
@@ -80,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Fragment findFragment() {
         User user = User.getLoggedInUser();
-      //  return new AddBioDetailsFragment();
+        //  return new AddBioDetailsFragment();
 
         if (user == null) {
             return new GetStartedFragment();
@@ -122,14 +121,26 @@ public class MainActivity extends AppCompatActivity {
         if (user.UserSteps.equals("RESERVE_DISPLAY_USER_NAME")) {
             return new DisplayUserNameAskFragment();
         }
+        if (user.UserSteps.equals(("THANK_YOU_SCREEN"))){
+            return new FragmentNonInvitedThankYouScreen();
+        }
+        if (user.UserSteps.equals(("PHOTO_ASK"))){
+            return new PhotoAskFragment();
+        }
+        if (user.UserSteps.equals(("ADD_BIO"))){
+            return new AddBioDetailsFragment();
+        }
+        if (user.UserSteps.equals(("CONTACT_REQUEST"))){
+            return new ContactRequestFragment();
+        }
+        if (user.UserSteps.equals(("FRIENDS_TO_FOLLOW"))){
+            return new FriendsToFollow();
+        }
+        if (user.UserSteps.equals(("SUGGESTED_PROFILE"))){
+            return new SuggestedProfileToFollowFragment();
+        }
+//        if()
 
         return new MainScreenFragment();
     }
-
-        @Override public void onBackPressed() {
-            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
-            if (!(fragment instanceof IOnBackPressed) || !((IOnBackPressed) fragment).onBackPressed()) {
-                super.onBackPressed();
-            }
-        }
 }
