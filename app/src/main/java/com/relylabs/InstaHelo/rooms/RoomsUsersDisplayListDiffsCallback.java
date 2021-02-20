@@ -28,8 +28,9 @@ public class RoomsUsersDisplayListDiffsCallback extends DiffUtil.Callback {
     // for matching the items data type (usually same therefore true)
     @Override
     public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-        return true;
+        return mNewPostingDetailsList.get(newItemPosition).UserId == mOldPostingDetailsList.get(oldItemPosition).UserId;
     }
+
     // checking the data of the model (exactly same or not)
     @Override
     public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {

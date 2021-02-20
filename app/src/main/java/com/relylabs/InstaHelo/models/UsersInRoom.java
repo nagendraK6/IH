@@ -1,15 +1,40 @@
 package com.relylabs.InstaHelo.models;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import  com.activeandroid.annotation.Table;
+import com.activeandroid.query.Delete;
+import com.activeandroid.query.Select;
+import com.activeandroid.query.Update;
 
-public class UsersInRoom  implements Parcelable {
-    public Boolean IsSpeaker;
-    public String Name;
-    public String profileImageURL;
-    public Boolean IsdataFetchRequired;
+import java.util.ArrayList;
+import java.util.List;
+
+
+@Table(name = "UsersInRoom")
+public class UsersInRoom extends Model {
+    @Column(name = "UserId", unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
     public Integer UserId;
+
+    @Column(name = "Name")
+    public String Name;
+
+    @Column(name = "profileImageURL")
+    public String profileImageURL;
+
+    @Column(name = "IsdataFetchRequired")
+    public Boolean IsdataFetchRequired;
+
+
+    @Column(name = "IsMuted")
     public Boolean IsMuted;
+
+    @Column(name = "IsSpeaker")
+    public Boolean IsSpeaker;
+
+    public UsersInRoom() {
+        super();
+    }
 
     public UsersInRoom(Boolean IsSpearker, Boolean IsMuted, Integer UserId) {
         this.IsSpeaker = IsSpearker;
@@ -29,39 +54,25 @@ public class UsersInRoom  implements Parcelable {
         this.profileImageURL = profileImageURL;
     }
 
-    protected UsersInRoom(Parcel in) {
-        IsSpeaker = in.readByte() == 1;
-        IsMuted = in.readByte() == 1;
-        UserId = in.readInt();
-        IsdataFetchRequired = in.readByte() == 1;
-        Name = in.readString();
-        profileImageURL = in.readString();
+
+
+    public static ArrayList<UsersInRoom> getAllSpeakers() {
+        List<UsersInRoom> all_users = new Select().from(UsersInRoom.class).execute();
+        return new ArrayList<UsersInRoom>(all_users);
     }
 
-    public static final Creator<UsersInRoom> CREATOR = new Creator<UsersInRoom>() {
-        @Override
-        public UsersInRoom createFromParcel(Parcel in) {
-            return new UsersInRoom(in);
-        }
-
-        @Override
-        public UsersInRoom[] newArray(int size) {
-            return new UsersInRoom[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
+    public static void deleteAllRecords() {
+        new Delete().from(UsersInRoom.class).execute();
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeByte((byte) (this.IsSpeaker ? 1 : 0));
-        dest.writeByte((byte) (this.IsMuted ? 1 : 0));
-        dest.writeInt(UserId);
-        dest.writeByte((byte) (this.IsdataFetchRequired ? 1 : 0));
-        dest.writeString(Name);
-        dest.writeString(profileImageURL);
+    public static void changeMuteState(Integer uid, Boolean mute) {
+        UsersInRoom u = getRecords(uid);
+        u.IsMuted = mute;
+        u.save();
+    }
+
+    public static UsersInRoom getRecords(Integer uid) {
+        return (UsersInRoom) new Select().from(UsersInRoom.class)
+                .where("UserId = ?",uid).executeSingle();
     }
 }

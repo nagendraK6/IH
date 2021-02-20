@@ -1,0 +1,65 @@
+package com.relylabs.InstaHelo.models;
+
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import  com.activeandroid.annotation.Table;
+import com.activeandroid.query.Delete;
+import com.activeandroid.query.Select;
+
+
+@Table(name = "UserSettings")
+public class UserSettings extends Model {
+
+    @Column(name = "UserID", unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
+    public Integer UserID;
+
+
+    @Column(name = "selected_event_id")
+    public Integer selected_event_id;
+
+
+    @Column(name = "selected_channel")
+    public String selected_channel;
+
+
+    @Column(name = "selected_channel_display_name")
+    public String selected_channel_display_name;
+
+    @Column(name = "is_bottom_sheet_visible")
+    public Boolean is_bottom_sheet_visible;
+
+
+    @Column(name = "is_current_role_speaker")
+    public Boolean is_current_role_speaker;
+
+
+    @Column(name = "is_current_user_admin")
+    public Boolean is_current_user_admin;
+
+    @Column(name = "is_muted")
+    public Boolean is_muted;
+
+
+    public UserSettings() {
+        super();
+        this.is_muted = false;
+        this.is_bottom_sheet_visible = false;
+        this.selected_channel = "";
+        this.selected_channel_display_name = "";
+        this.selected_event_id = -1;
+        this.is_current_role_speaker = false;
+        this.is_current_user_admin = false;
+    }
+
+
+    public static UserSettings getSettings() {
+        User u = User.getLoggedInUser();
+        Integer uid = u.UserID;
+        return (UserSettings) new Select().from(UserSettings.class)
+                .where("UserId = ?",uid).executeSingle();
+    }
+
+    public static void deleteAll() {
+        new Delete().from(UserSettings.class).execute();
+    }
+}

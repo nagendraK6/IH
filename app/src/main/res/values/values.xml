@@ -1,0 +1,8 @@
+<resources>
+    <dimen name="default_corner_radius">30dp</dimen>
+    <dimen name="default_corner_radius_profile">10dp</dimen>
+    <dimen name="default_corner_news_feed_image_profile">17dp</dimen>
+    <dimen name="default_corner_news_feed_image_bottom">13dp</dimen>
+
+    <dimen name="item_corner_radius">10dp</dimen>
+</resources>

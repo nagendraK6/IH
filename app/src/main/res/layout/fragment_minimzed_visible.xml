@@ -28,22 +28,22 @@
             style="@style/bottom_title"
             android:text="Event Title" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:layout_width="30dp"
             android:layout_marginLeft="30dp"
             android:layout_marginTop="40dp"
             android:id="@+id/author_image_in_shortcut_1"
             android:src="@drawable/empty_inviter"
             android:layout_height="30dp">
-        </de.hdodenhof.circleimageview.CircleImageView>
-        <de.hdodenhof.circleimageview.CircleImageView
+        </com.google.android.material.imageview.ShapeableImageView>
+        <com.google.android.material.imageview.ShapeableImageView
             android:layout_width="30dp"
             android:layout_marginLeft="50dp"
             android:layout_marginTop="40dp"
             android:id="@+id/author_image_in_shortcut_2"
             android:src="@drawable/empty_inviter"
             android:layout_height="30dp">
-        </de.hdodenhof.circleimageview.CircleImageView>
+        </com.google.android.material.imageview.ShapeableImageView>
 
         <TextView
             android:background="@drawable/leave_room_circular_bg"

@@ -4,19 +4,18 @@
     android:padding="1dp"
     android:layout_marginTop="30dp"
     android:layout_height="wrap_content">
-    <de.hdodenhof.circleimageview.CircleImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/speaker_listener_moderator_image"
         android:background="@drawable/empty_inviter"
-        android:layout_width="50dp"
+        android:layout_width="70dp"
         android:layout_centerHorizontal="true"
-        android:layout_height="50dp"/>
-
+        android:layout_height="70dp"/>
     <ImageView
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="25dp"
         android:layout_alignLeft="@+id/speaker_listener_moderator_image"
         android:layout_width="25dp"
         android:visibility="visible"
-        android:layout_marginLeft="35dp"
+        android:layout_marginLeft="55dp"
         android:id="@+id/voice_action"
         android:layout_height="25dp"/>
     <TextView

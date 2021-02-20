@@ -14,10 +14,12 @@ import android.widget.TextView;
 import android.os.Bundle;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.shape.CornerFamily;
 import com.relylabs.InstaHelo.R;
 import com.relylabs.InstaHelo.models.User;
 
-public class BottomFragment extends Fragment {
+public class BottomFragment extends Fragment implements IOnBackPressed {
     TextView mute_unmute_button_bottom;
     Boolean is_current_role_speaker, is_muted;
     String event_title;
@@ -69,13 +71,30 @@ public class BottomFragment extends Fragment {
             raise_hand.setVisibility(View.VISIBLE);
         }
 
-        ImageView i1 = view.findViewById(R.id.author_image_in_shortcut_1);
+        ShapeableImageView i1 = view.findViewById(R.id.author_image_in_shortcut_1);
         if (!User.getLoggedInUser().ProfilePicURL.equals("")) {
+            float radius = getActivity().getResources().getDimension(R.dimen.default_corner_news_feed_image_bottom);
+            i1.setShapeAppearanceModel(i1.getShapeAppearanceModel()
+                    .toBuilder()
+                    .setTopRightCorner(CornerFamily.ROUNDED,radius)
+                    .setTopLeftCorner(CornerFamily.ROUNDED,radius)
+                    .setBottomLeftCorner(CornerFamily.ROUNDED,radius)
+                    .setBottomRightCorner(CornerFamily.ROUNDED,radius)
+                    .build());
+
             Glide.with(getContext()).load(User.getLoggedInUser().ProfilePicURL).into(i1);
         }
 
-        ImageView i2 = view.findViewById(R.id.author_image_in_shortcut_2);
+        ShapeableImageView i2 = view.findViewById(R.id.author_image_in_shortcut_2);
         if (!User.getLoggedInUser().ProfilePicURL.equals("")) {
+            float radius = getActivity().getResources().getDimension(R.dimen.default_corner_news_feed_image_bottom);
+            i2.setShapeAppearanceModel(i2.getShapeAppearanceModel()
+                    .toBuilder()
+                    .setTopRightCorner(CornerFamily.ROUNDED,radius)
+                    .setTopLeftCorner(CornerFamily.ROUNDED,radius)
+                    .setBottomLeftCorner(CornerFamily.ROUNDED,radius)
+                    .setBottomRightCorner(CornerFamily.ROUNDED,radius)
+                    .build());
             Glide.with(getContext()).load(User.getLoggedInUser().ProfilePicURL).into(i2);
         }
         processMuteUnmuteSettings();
@@ -121,4 +140,9 @@ public class BottomFragment extends Fragment {
     }
 
 
+    @Override
+    public boolean onBackPressed() {
+        broadcastLocalUpdate("LEAVE_CHANNEL");
+        return false;
+    }
 }
