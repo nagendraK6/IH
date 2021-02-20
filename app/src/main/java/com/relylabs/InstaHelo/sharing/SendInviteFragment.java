@@ -22,8 +22,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -42,15 +44,19 @@ import com.relylabs.InstaHelo.onboarding.SuggestedProfileToFollowFragment;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.Header;
 
+import static androidx.core.content.ContextCompat.getSystemService;
+
 public class SendInviteFragment extends Fragment implements SharingContactListAdapter.ItemClickListener  {
 
     private static final int REQUEST_FOR_READ_CONTACTS = 10;
     private ArrayList<String> contact_names, contact_numbers;
+    private ArrayList<String> contact_names_permanent, contact_numbers_permanent;
     private ArrayList<String> contact_numbers_exclude;
     View fragment_view;
     RecyclerView recyclerView;
@@ -65,6 +71,10 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        final User user = User.getLoggedInUser();
+        String invite_number = "YOU HAVE " + user.InvitesCount.toString() + " INVITES";
+        TextView invite_top = (TextView) view.findViewById(R.id.main_desc_with_invite_count);
+        invite_top.setText(invite_number);
         ImageView left_move = view.findViewById(R.id.move_back);
         show_busy_indicator = view.findViewById(R.id.show_busy_indicator);
         left_move.setOnClickListener(new View.OnClickListener() {
@@ -79,6 +89,42 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
         if (checkPermission(getContext())) {
             new StartAsyncTask().execute();
         }
+
+        SearchView search = (SearchView) view.findViewById(R.id.search_contact);
+        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                Log.d("search",query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                //    adapter.getFilter().filter(newText);
+                Log.d("search",newText);
+                if(newText==""){
+                    contact_names = contact_names_permanent;
+                    contact_numbers = contact_numbers_permanent;
+                }
+                else{
+                    contact_names.clear();
+                    contact_numbers.clear();
+                    for (int i=0;i<contact_names_permanent.size();i++){
+
+                        if(contact_names_permanent.get(i).toLowerCase().startsWith(newText.toLowerCase())){
+                            contact_names.add(contact_names_permanent.get(i));
+                            contact_numbers.add(contact_numbers_permanent.get(i));
+                        }
+                    }
+                }
+
+                adapter.notifyDataSetChanged();
+                return false;
+            }
+        });
+
+
     }
 
 
@@ -102,6 +148,8 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
     public ArrayList<Contact> readContacts(){
         contact_names = new ArrayList<>();
         contact_numbers = new ArrayList<>();
+        contact_names_permanent = new ArrayList<>();
+        contact_numbers_permanent = new ArrayList<>();
         ArrayList<Contact> contacts = new ArrayList<>();
         ContentResolver cr = getActivity().getContentResolver();
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
@@ -129,6 +177,8 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
                         contacts.add(new Contact(name, phone));
                         contact_names.add(name);
                         contact_numbers.add(phone);
+                        contact_names_permanent.add(name);
+                        contact_numbers_permanent.add(phone);
                     }
                 }
             }

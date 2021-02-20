@@ -43,6 +43,9 @@ import java.util.WeakHashMap;
 
 import cz.msebera.android.httpclient.Header;
 
+import static com.relylabs.InstaHelo.Utils.Helper.nextScreen;
+import static com.relylabs.InstaHelo.Utils.Helper.prevScreen;
+
 /**
  * Created by nagendra on 7/10/18.
  *
@@ -71,6 +74,9 @@ public class PhoneVerificationFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.phone_verification_fragment, container, false);
+        final User user = User.getLoggedInUser();
+        user.UserSteps = "VERIFY_OTP";
+        user.save();
         busy = view.findViewById(R.id.busy_send_otp);
         FadingCircle cr = new FadingCircle();
         cr.setColor(R.color.neartagtextcolor);
@@ -91,10 +97,12 @@ public class PhoneVerificationFragment extends Fragment {
         prev_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("OTP","Here in otp back");
                 User user = User.getLoggedInUser();
                 user.UserSteps = "LOGIN";
                 user.save();
-                loadFragment(new LoginFragment());
+//                loadFragment(new LoginFragment());
+                prevScreen(activity_ref);
             }
         });
 
@@ -450,12 +458,7 @@ public class PhoneVerificationFragment extends Fragment {
                         loadFragment(new MainScreenFragment());
                         return;
                     }
-
-                    if (user.IsInvited) {
-                        loadFragment(new InvitedUserNameAskFragment());
-                    } else {
-                        loadFragment(new NonInvitedUserFirstNameAskFragment());
-                    }
+                    nextScreen(activity_ref);
                     if (!auto) {
                         Logger.log(Logger.OTP_VERIFY_REQUEST_SUCCESS);
                     } else {

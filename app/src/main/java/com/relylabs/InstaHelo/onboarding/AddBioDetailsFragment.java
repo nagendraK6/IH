@@ -33,6 +33,8 @@ import org.json.JSONObject;
 
 import cz.msebera.android.httpclient.Header;
 
+import static com.relylabs.InstaHelo.Utils.Helper.nextScreen;
+
 public class AddBioDetailsFragment extends Fragment {
     public FragmentActivity activity_ref;
     EditText edit_display_bio;
@@ -42,6 +44,9 @@ public class AddBioDetailsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        final User user = User.getLoggedInUser();
+        user.UserSteps = "ADD_BIO";
+        user.save();
         return inflater.inflate(R.layout.fragment_bio_ask, container, false);
     }
     @Override
@@ -117,7 +122,8 @@ public class AddBioDetailsFragment extends Fragment {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
                     String error_message = response.getString("error_message");
-                    loadFragment(new ContactRequestFragment());
+//                    loadFragment(new ContactRequestFragment());
+                    nextScreen(activity_ref);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

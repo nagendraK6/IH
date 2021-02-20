@@ -37,6 +37,8 @@ import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.Header;
 
+import static com.relylabs.InstaHelo.Utils.Helper.nextScreen;
+
 public class FriendsToFollow extends Fragment  implements FriendToFollowListAdapter.ItemClickListener  {
     public FragmentActivity activity_ref;
     ArrayList<String> contact_names, contact_numbers;
@@ -52,6 +54,9 @@ public class FriendsToFollow extends Fragment  implements FriendToFollowListAdap
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         fragment_view =  inflater.inflate(R.layout.friends_suggestion, container, false);
+        final User user = User.getLoggedInUser();
+        user.UserSteps = "FRIENDS_TO_FOLLOW";
+        user.save();
         return fragment_view;
     }
     @Override
@@ -151,8 +156,10 @@ public class FriendsToFollow extends Fragment  implements FriendToFollowListAdap
                     String error_message = response.getString("error_message");
                     JSONArray all_contacts_to_follow = response.getJSONArray("all_contacts");
                     if (all_contacts_to_follow.length() == 0) {
-                        loadFragment(new SuggestedProfileToFollowFragment());
+//                        loadFragment(new SuggestedProfileToFollowFragment());
+                        nextScreen(activity_ref);
                     }
+
 
                     for (int i  = 0; i < all_contacts_to_follow.length(); i++) {
                         JSONObject contact_info = all_contacts_to_follow.getJSONObject(i);
@@ -207,7 +214,8 @@ public class FriendsToFollow extends Fragment  implements FriendToFollowListAdap
         JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                loadFragment(new SuggestedProfileToFollowFragment());
+//                loadFragment(new SuggestedProfileToFollowFragment());
+                nextScreen(activity_ref);
             }
 
             @Override

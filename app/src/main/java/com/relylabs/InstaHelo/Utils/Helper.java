@@ -14,6 +14,23 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
+
+import com.relylabs.InstaHelo.MainScreenFragment;
+import com.relylabs.InstaHelo.R;
+import com.relylabs.InstaHelo.models.User;
+import com.relylabs.InstaHelo.onboarding.AddBioDetailsFragment;
+import com.relylabs.InstaHelo.onboarding.ContactRequestFragment;
+import com.relylabs.InstaHelo.onboarding.DisplayUserNameAskFragment;
+import com.relylabs.InstaHelo.onboarding.FragmentNonInvitedThankYouScreen;
+import com.relylabs.InstaHelo.onboarding.FriendsToFollow;
+import com.relylabs.InstaHelo.onboarding.InvitedUserNameAskFragment;
+import com.relylabs.InstaHelo.onboarding.LoginFragment;
+import com.relylabs.InstaHelo.onboarding.PhoneVerificationFragment;
+import com.relylabs.InstaHelo.onboarding.PhotoAskFragment;
+import com.relylabs.InstaHelo.onboarding.SuggestedProfileToFollowFragment;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -108,4 +125,105 @@ public class Helper {
 
         return names;
     }
+
+    public static void nextScreen(FragmentActivity activity_ref){
+        FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
+        Boolean isInvited = false;
+        final User user = User.getLoggedInUser();
+        String currentStep = "";
+        if(user==null){
+            currentStep = "GET_STARTED";
+            isInvited = false;
+        }
+        else {
+            currentStep =  user.UserSteps;
+            isInvited = user.IsInvited;
+        }
+        Log.d("currentStep",currentStep);
+        if(currentStep.equals("GET_STARTED")){
+            ft.replace(R.id.fragment_holder, new LoginFragment());
+            ft.commit();
+        }
+        else if(currentStep.equals("LOGIN")){
+            ft.replace(R.id.fragment_holder, new PhoneVerificationFragment());
+            ft.commit();
+        }
+        else if(currentStep.equals("VERIFY_OTP")){
+            ft.replace(R.id.fragment_holder, new DisplayUserNameAskFragment());
+            ft.commit();
+        }
+        else if(currentStep.equals("RESERVE_DISPLAY_USER_NAME") && !isInvited){
+            ft.replace(R.id.fragment_holder, new FragmentNonInvitedThankYouScreen());
+            ft.commit();
+        }
+        else if(currentStep.equals("THANK_YOU_SCREEN") && isInvited){
+            ft.replace(R.id.fragment_holder, new InvitedUserNameAskFragment());
+            ft.commit();
+        }
+        else if(currentStep.equals("RESERVE_DISPLAY_USER_NAME") && isInvited){
+            ft.replace(R.id.fragment_holder, new InvitedUserNameAskFragment());
+            ft.commit();
+        }
+        else if(currentStep.equals("INVITED_NAME_ASK")){
+            ft.replace(R.id.fragment_holder, new PhotoAskFragment());
+            ft.commit();
+        }
+        else if(currentStep.equals("PHOTO_ASK")){
+            ft.replace(R.id.fragment_holder, new AddBioDetailsFragment());
+            ft.commit();
+        }
+        else if(currentStep.equals("ADD_BIO")){
+            ft.replace(R.id.fragment_holder, new ContactRequestFragment());
+            ft.commit();
+        }
+        else if(currentStep.equals("CONTACT_REQUEST")){
+            ft.replace(R.id.fragment_holder, new FriendsToFollow());
+            ft.commit();
+        }
+        else if(currentStep.equals("FRIENDS_TO_FOLLOW")){
+            ft.replace(R.id.fragment_holder, new SuggestedProfileToFollowFragment());
+            ft.commit();
+        }
+        else if(currentStep.equals("MAIN_SCREEN")){
+            ft.replace(R.id.fragment_holder, new MainScreenFragment());
+            ft.commit();
+        }
+    }
+    public static void prevScreen(FragmentActivity activity_ref){
+        FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
+        final User user = User.getLoggedInUser();
+        String currentStep = "";
+        if(user==null){
+            currentStep = "GET_STARTED";
+        }
+        else {
+            currentStep =  user.UserSteps;
+        }
+        Log.d("prev_state",currentStep);
+        if(currentStep.equals("LOGIN")){
+            ft.replace(R.id.fragment_holder, new LoginFragment());
+            ft.commitAllowingStateLoss();
+        }
+
+    }
+    public static void skipScreen(FragmentActivity activity_ref){
+        FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
+        final User user = User.getLoggedInUser();
+        String currentStep = "";
+        if(user==null){
+            currentStep = "GET_STARTED";
+        }
+        else {
+            currentStep =  user.UserSteps;
+        }
+        if(currentStep.equals("PHOTO_ASK")){
+            ft.replace(R.id.fragment_holder, new AddBioDetailsFragment());
+            ft.commit();
+        }
+        else if(currentStep.equals("CONTACT_REQUEST")){
+            ft.replace(R.id.fragment_holder, new SuggestedProfileToFollowFragment());
+            ft.commit();
+        }
+    }
+
 }

@@ -13,61 +13,69 @@
         android:id="@+id/move_back"
         android:layout_alignParentLeft="true"
         android:src="@drawable/left_move_button"/>
+
     <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_centerHorizontal="true"
         android:id="@+id/top_description"
-        android:layout_height="wrap_content">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true">
+
         <TextView
-            android:layout_marginTop="70dp"
-            android:layout_centerHorizontal="true"
-            android:layout_width="wrap_content"
-            android:textSize="20dp"
-            android:text="YOU HAVE 7 INVITES"
             android:id="@+id/main_desc_with_invite_count"
-            android:layout_height="wrap_content">
-        </TextView>
-        <TextView
-            android:layout_below="@+id/main_desc_with_invite_count"
-            android:layout_marginTop="30dp"
-            android:layout_centerHorizontal="true"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="70dp"
+            android:text="YOU HAVE 7 INVITES"
+            android:textSize="20dp"></TextView>
+
+        <TextView
             android:id="@+id/desc_1"
-            android:text="Who from your friend list should be on"
-            android:layout_height="wrap_content">
-        </TextView>
-        <TextView
-            android:layout_marginTop="5dp"
-            android:layout_centerHorizontal="true"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/main_desc_with_invite_count"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:text="Who from your friend list should be on"></TextView>
+
+        <TextView
             android:id="@+id/desc_2"
-            android:layout_below="@+id/desc_1"
-            android:text="InstaHelo? You would get credits on their"
-            android:layout_height="wrap_content">
-        </TextView>
-        <TextView
-            android:layout_marginTop="5dp"
-            android:layout_centerHorizontal="true"
             android:layout_width="wrap_content"
-            android:layout_below="@+id/desc_2"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/desc_1"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="0dp"
+            android:text="InstaHelo? You would get credits on their"></TextView>
+
+        <TextView
             android:id="@+id/desc_3"
-            android:text="profile for adding them"
-            android:layout_height="wrap_content">
-        </TextView>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/desc_2"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="0dp"
+            android:text="profile for adding them"></TextView>
     </RelativeLayout>
 
     <RelativeLayout
-        android:layout_below="@+id/top_description"
         android:layout_width="match_parent"
-        android:background="@color/neartagtheme"
-        android:layout_marginTop="20dp"
-        android:layout_height="match_parent">
+        android:layout_height="479dp"
+        android:layout_below="@+id/search_contact"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:background="@color/neartagtheme">
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/contact_list_display"
-            android:background="@color/neartagtheme"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            />
+            android:layout_height="476dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="0dp"
+            android:background="@color/neartagtheme" />
+
     </RelativeLayout>
     <ProgressBar
         android:layout_gravity="center"
@@ -77,4 +85,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/show_busy_indicator"/>
+
+    <SearchView
+        android:id="@+id/search_contact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="6dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="179dp"
+        android:layout_marginEnd="7dp"
+        android:background="#E1E0D6" />
+
 </RelativeLayout>

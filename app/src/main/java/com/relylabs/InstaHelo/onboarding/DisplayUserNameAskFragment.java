@@ -47,6 +47,8 @@ import java.util.WeakHashMap;
 
 import cz.msebera.android.httpclient.Header;
 
+import static com.relylabs.InstaHelo.Utils.Helper.nextScreen;
+
 
 public class DisplayUserNameAskFragment extends Fragment {
 
@@ -59,6 +61,7 @@ public class DisplayUserNameAskFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_display_username, container, false);
+
         return view;
     }
 
@@ -164,13 +167,13 @@ public class DisplayUserNameAskFragment extends Fragment {
                             user.save();
                             Log.d("Here",user.IsInvited.toString());
                             Logger.log(Logger.USER_NAME_SEND_REQUEST_SUCCESS);
-                            if (!user.IsInvited) {
-                                loadFragment(new FragmentNonInvitedThankYouScreen());
+                            nextScreen(activity_ref);
+//                            if (!user.IsInvited) {
+//                                loadFragment(new FragmentNonInvitedThankYouScreen());
+//                            } else {
+//                                Log.d("here","Message");
 //                                loadFragment(new PhotoAskFragment());
-                            } else {
-                                Log.d("here","Message");
-                                loadFragment(new PhotoAskFragment());
-                            }
+//                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

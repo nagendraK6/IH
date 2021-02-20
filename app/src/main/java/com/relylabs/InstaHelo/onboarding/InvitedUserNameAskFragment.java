@@ -44,6 +44,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import com.squareup.picasso.Picasso;
 
+import static com.relylabs.InstaHelo.Utils.Helper.nextScreen;
+
 public class InvitedUserNameAskFragment extends Fragment {
 
     public FragmentActivity activity_ref;
@@ -200,7 +202,8 @@ public class InvitedUserNameAskFragment extends Fragment {
                     user.LastName = last_name_text;
                     user.save();
                     Logger.log(Logger.USER_NAME_SEND_REQUEST_SUCCESS);
-                    loadFragment(new DisplayUserNameAskFragment());
+//                    loadFragment(new DisplayUserNameAskFragment());
+                    nextScreen(activity_ref);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

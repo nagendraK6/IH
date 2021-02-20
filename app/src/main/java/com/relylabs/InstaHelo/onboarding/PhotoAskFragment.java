@@ -55,6 +55,9 @@ import java.util.HashMap;
 import cz.msebera.android.httpclient.Header;
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.relylabs.InstaHelo.Utils.Helper.nextScreen;
+import static com.relylabs.InstaHelo.Utils.Helper.skipScreen;
+
 public class PhotoAskFragment extends Fragment {
     public FragmentActivity activity_ref;
     String image_file_name = "";
@@ -93,6 +96,9 @@ public class PhotoAskFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        final User user = User.getLoggedInUser();
+        user.UserSteps = "PHOTO_ASK";
+        user.save();
         next_photo = view.findViewById(R.id.next_photo);
         busy = view.findViewById(R.id.busy_send_photo);
         empty = view.findViewById(R.id.form_fields);
@@ -135,7 +141,7 @@ public class PhotoAskFragment extends Fragment {
         skip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadFragment(new AddBioDetailsFragment());
+                skipScreen(activity_ref);
             }
         });
     }
@@ -290,7 +296,8 @@ public class PhotoAskFragment extends Fragment {
                 try {
                     user.ProfilePicURL = response.getString("profile_image_url");
                     user.save();
-                    loadFragment(new AddBioDetailsFragment());
+//                    loadFragment(new AddBioDetailsFragment());
+                    nextScreen(activity_ref);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

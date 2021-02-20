@@ -42,6 +42,8 @@ import java.util.WeakHashMap;
 
 import cz.msebera.android.httpclient.Header;
 
+import static com.relylabs.InstaHelo.Utils.Helper.nextScreen;
+
 
 public class LoginFragment extends Fragment {
     public FragmentActivity activity_ref;
@@ -57,6 +59,7 @@ public class LoginFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.login_fragment, container, false);
+
         phone_no = view.findViewById(R.id.edit_txt_phone);
         phone_desc = view.findViewById(R.id.phone_no_desc);
         country_code = view.findViewById(R.id.country_code);
@@ -188,16 +191,17 @@ public class LoginFragment extends Fragment {
                                             user.LastName = "";
                                             user.IsOTPVerified = false;
                                             user.BioDescription = "";
-                                            user.UserSteps = "VERIFY_OTP";
+                                            user.UserSteps = "LOGIN";
                                             //user.ProfilePicURL = response.getString("profile_image_url");
                                         } else {
                                             user.UserID = user_id;
-                                            user.UserSteps = "VERIFY_OTP";
+                                            user.UserSteps = "LOGIN";
                                         }
 
                                         Logger.log(Logger.PHONE_ADD_REQUEST_SUCCESS);
                                         user.save();
-                                        loadFragment(new PhoneVerificationFragment());
+//                                        loadFragment(new PhoneVerificationFragment());
+                                        nextScreen(activity_ref);
                                         // move to code verification
                                     } catch (JSONException e) {
                                         e.printStackTrace();

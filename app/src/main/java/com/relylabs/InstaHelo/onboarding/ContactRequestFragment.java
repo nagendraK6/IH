@@ -42,6 +42,9 @@ import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.Header;
 
+import static com.relylabs.InstaHelo.Utils.Helper.nextScreen;
+import static com.relylabs.InstaHelo.Utils.Helper.skipScreen;
+
 public class ContactRequestFragment extends Fragment {
     public FragmentActivity activity_ref;
     public static int REQUEST_FOR_READ_CONTACTS = 9;
@@ -49,6 +52,9 @@ public class ContactRequestFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        final User user = User.getLoggedInUser();
+        user.UserSteps = "CONTACT_REQUEST";
+        user.save();
         return inflater.inflate(R.layout.fragment_contact_request, container, false);
     }
 
@@ -61,7 +67,9 @@ public class ContactRequestFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if(checkPermission(getContext())) {
-                    loadFragment(new FriendsToFollow());
+                    Log.d("Contact","here in contact next click");
+//                    loadFragment(new FriendsToFollow());
+                        nextScreen(activity_ref);
                 }
             }
         });
@@ -69,12 +77,12 @@ public class ContactRequestFragment extends Fragment {
         skip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadFragment(new SuggestedProfileToFollowFragment());
+                skipScreen(activity_ref);
             }
         });
 
         User user = User.getLoggedInUser();
-        user.UserSteps = "CONTACT_REQUET";
+        user.UserSteps = "CONTACT_REQUEST";
         user.save();
     }
 
@@ -106,9 +114,11 @@ public class ContactRequestFragment extends Fragment {
     public void onRequestPermissionsResult(int RC, String per[], int[] PResult) {
         super.onRequestPermissionsResult(RC, per, PResult);
         if (PResult.length > 0 && PResult[0] == PackageManager.PERMISSION_GRANTED) {
-            loadFragment(new FriendsToFollow());
+//            loadFragment(new FriendsToFollow());
+            nextScreen(activity_ref);
         } else {
-            loadFragment(new FriendsToFollow());
+            loadFragment(new SuggestedProfileToFollowFragment());
+//            nextScreen(activity_ref);
         }
     }
 

@@ -50,6 +50,8 @@ import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.Header;
 
+import static com.relylabs.InstaHelo.Utils.Helper.nextScreen;
+
 public class SuggestedProfileToFollowFragment extends Fragment  implements SuggestedProfileToFollowAdapter.ItemClickListener  {
     public FragmentActivity activity_ref;
     ArrayList<String> suggested_names, suggested_bios, suggested_profile_image_urls;
@@ -66,6 +68,9 @@ public class SuggestedProfileToFollowFragment extends Fragment  implements Sugge
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         fragment_view =  inflater.inflate(R.layout.fragment_suggested_profiles, container, false);
+        final User user = User.getLoggedInUser();
+        user.UserSteps = "SUGGESTED_PROFILE";
+        user.save();
         return fragment_view;
     }
     @Override
@@ -95,6 +100,9 @@ public class SuggestedProfileToFollowFragment extends Fragment  implements Sugge
             @Override
             public void onClick(View v) {
                 send_follow_to_server();
+                final User user = User.getLoggedInUser();
+                user.UserSteps = "MAIN_SCREEN";
+                user.save();
             }
         });
     }
@@ -124,7 +132,8 @@ public class SuggestedProfileToFollowFragment extends Fragment  implements Sugge
                     }
 
                     if (all_contacts_to_follow.length() == 0) {
-                        loadFragment(new MainScreenFragment());
+//                        loadFragment(new MainScreenFragment());
+                        nextScreen(activity_ref);
                     } else {
                         setupFriendSuggestion();
                     }
@@ -179,7 +188,8 @@ public class SuggestedProfileToFollowFragment extends Fragment  implements Sugge
         JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                loadFragment(new MainScreenFragment());
+//                loadFragment(new MainScreenFragment());
+                nextScreen(activity_ref);
             }
 
             @Override
