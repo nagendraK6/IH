@@ -73,7 +73,7 @@
             android:layout_marginBottom="10dp"
             android:layout_height="50dp">
             <TextView
-                android:layout_marginStart="40dp"
+                android:layout_marginStart="20dp"
                 android:background="@drawable/room_actions_button"
                 android:layout_marginBottom="20dp"
                 android:id="@+id/leave_quitely"
@@ -86,7 +86,7 @@
                 android:text="✌🏽 Leave room">
             </TextView>
             <TextView
-                android:layout_marginRight="40dp"
+                android:layout_marginRight="20dp"
                 android:background="@drawable/room_actions_button"
                 android:layout_marginBottom="10dp"
                 android:visibility="visible"
@@ -97,7 +97,21 @@
                 android:textColor="@color/Black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="✋ Raise Hand">
+                android:text="✋🏽 Raise Hand">
+            </TextView>
+            <TextView
+                android:layout_marginRight="20dp"
+                android:background="@drawable/room_actions_button"
+                android:layout_marginBottom="10dp"
+                android:visibility="invisible"
+                android:id="@+id/hand_down"
+                android:layout_alignParentRight="true"
+                android:textAlignment="center"
+                android:paddingTop="5dp"
+                android:textColor="@color/Black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bring Hand">
             </TextView>
             <ImageView
                 android:visibility="invisible"

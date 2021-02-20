@@ -22,6 +22,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.shape.CornerFamily;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -30,8 +32,6 @@ import com.relylabs.InstaHelo.R;
 import com.relylabs.InstaHelo.Utils.Logger;
 import com.relylabs.InstaHelo.models.User;
 import com.relylabs.InstaHelo.models.UsersInRoom;
-import com.relylabs.InstaHelo.onboarding.DisplayUserNameAskFragment;
-//import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -156,9 +156,7 @@ public class RoomsUsersDisplayListAdapter extends RecyclerView.Adapter<RoomsUser
         String name =  mData.get(position).Name;
         holder.speaker_listener_moderator_name.setText(name);
         if (image_url!= null &&  !image_url.equals("")) {
-          //  Picasso.get().load(image_url).into(holder.speaker_listener_moderator_image);
-            Glide.with(holder.itemView.getContext()).load(image_url).into(holder.speaker_listener_moderator_image);
-
+            Glide.with(holder.itemView.getContext()).load(image_url).diskCacheStrategy(DiskCacheStrategy.ALL).into(holder.speaker_listener_moderator_image);
         } else {
             holder.speaker_listener_moderator_image.setImageDrawable(holder.itemView.getContext().getDrawable(R.drawable.empty_user_profile_image));
         }
@@ -234,13 +232,23 @@ public class RoomsUsersDisplayListAdapter extends RecyclerView.Adapter<RoomsUser
 
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-         CircleImageView speaker_listener_moderator_image;
+        ShapeableImageView speaker_listener_moderator_image;
          ImageView voice_action;
          TextView speaker_listener_moderator_name;
 
         ViewHolder(View itemView) {
             super(itemView);
             speaker_listener_moderator_image = itemView.findViewById(R.id.speaker_listener_moderator_image);
+            float radius = itemView.getResources().getDimension(R.dimen.default_corner_radius);
+            speaker_listener_moderator_image.setShapeAppearanceModel(speaker_listener_moderator_image.getShapeAppearanceModel()
+                    .toBuilder()
+                    .setTopRightCorner(CornerFamily.ROUNDED,radius)
+                    .setTopLeftCorner(CornerFamily.ROUNDED,radius)
+                    .setBottomLeftCorner(CornerFamily.ROUNDED,radius)
+                    .setBottomRightCorner(CornerFamily.ROUNDED,radius)
+                    .build());
+
+
             voice_action = itemView.findViewById(R.id.voice_action);
             speaker_listener_moderator_name = itemView.findViewById(R.id.speaker_listener_moderator_name);
             User user = User.getLoggedInUser();

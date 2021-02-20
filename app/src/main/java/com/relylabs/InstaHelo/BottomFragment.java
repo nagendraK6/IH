@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
+import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,11 +13,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.os.Bundle;
 
+import com.bumptech.glide.Glide;
+import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.shape.CornerFamily;
 import com.relylabs.InstaHelo.R;
 import com.relylabs.InstaHelo.models.User;
 
-public class BottomFragment extends Fragment {
-    ImageView mute_unmute_button_bottom;
+public class BottomFragment extends Fragment implements IOnBackPressed {
+    TextView mute_unmute_button_bottom;
     Boolean is_current_role_speaker, is_muted;
     String event_title;
 
@@ -59,21 +63,66 @@ public class BottomFragment extends Fragment {
             });
         }
 
+
+        TextView raise_hand = view.findViewById(R.id.raise_hand);
+        if (is_current_role_speaker) {
+            raise_hand.setVisibility(View.INVISIBLE);
+        } else {
+            raise_hand.setVisibility(View.VISIBLE);
+        }
+
+        ShapeableImageView i1 = view.findViewById(R.id.author_image_in_shortcut_1);
+        if (!User.getLoggedInUser().ProfilePicURL.equals("")) {
+            float radius = getActivity().getResources().getDimension(R.dimen.default_corner_news_feed_image_bottom);
+            i1.setShapeAppearanceModel(i1.getShapeAppearanceModel()
+                    .toBuilder()
+                    .setTopRightCorner(CornerFamily.ROUNDED,radius)
+                    .setTopLeftCorner(CornerFamily.ROUNDED,radius)
+                    .setBottomLeftCorner(CornerFamily.ROUNDED,radius)
+                    .setBottomRightCorner(CornerFamily.ROUNDED,radius)
+                    .build());
+
+            Glide.with(getContext()).load(User.getLoggedInUser().ProfilePicURL).into(i1);
+        }
+
+        ShapeableImageView i2 = view.findViewById(R.id.author_image_in_shortcut_2);
+        if (!User.getLoggedInUser().ProfilePicURL.equals("")) {
+            float radius = getActivity().getResources().getDimension(R.dimen.default_corner_news_feed_image_bottom);
+            i2.setShapeAppearanceModel(i2.getShapeAppearanceModel()
+                    .toBuilder()
+                    .setTopRightCorner(CornerFamily.ROUNDED,radius)
+                    .setTopLeftCorner(CornerFamily.ROUNDED,radius)
+                    .setBottomLeftCorner(CornerFamily.ROUNDED,radius)
+                    .setBottomRightCorner(CornerFamily.ROUNDED,radius)
+                    .build());
+            Glide.with(getContext()).load(User.getLoggedInUser().ProfilePicURL).into(i2);
+        }
         processMuteUnmuteSettings();
+
+        TextView leave_quitely = view.findViewById(R.id.leave_quitely);
+        leave_quitely.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                broadcastLocalUpdate("LEAVE_CHANNEL");
+            }
+        });
     }
 
     void processMuteUnmuteSettings() {
         if (is_current_role_speaker) {
             mute_unmute_button_bottom.setVisibility(View.VISIBLE);
             if (is_muted) {
-                mute_unmute_button_bottom.setBackground(getActivity().getDrawable(R.drawable.mic_off));
+                mute_unmute_button_bottom.setBackground(getActivity().getDrawable(R.drawable.mic_off_self_user));
             } else {
                 mute_unmute_button_bottom.setBackground(getActivity().getDrawable(R.drawable.mic_on_room_view));
             }
 
         } else {
+            mute_unmute_button_bottom.setVisibility(View.INVISIBLE);
         }
     }
+
+
 
     private  void broadcastLocalUpdate(String action) {
         Bundle data_bundle = new Bundle();
@@ -91,4 +140,9 @@ public class BottomFragment extends Fragment {
     }
 
 
+    @Override
+    public boolean onBackPressed() {
+        broadcastLocalUpdate("LEAVE_CHANNEL");
+        return false;
+    }
 }

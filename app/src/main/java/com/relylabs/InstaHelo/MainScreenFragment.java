@@ -1,10 +1,12 @@
 package com.relylabs.InstaHelo;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,8 +16,10 @@ import androidx.transition.TransitionInflater;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -34,6 +38,8 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.github.ybq.android.spinkit.SpinKitView;
+import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.shape.CornerFamily;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.SyncHttpClient;
 
@@ -43,6 +49,7 @@ import com.relylabs.InstaHelo.Utils.Logger;
 import com.relylabs.InstaHelo.models.EventElement;
 import com.relylabs.InstaHelo.models.User;
 import com.relylabs.InstaHelo.BottomFragment;
+import com.relylabs.InstaHelo.models.UserSettings;
 import com.relylabs.InstaHelo.models.UsersInRoom;
 import com.relylabs.InstaHelo.sharing.SendInviteFragment;
 import com.squareup.picasso.Picasso;
@@ -86,7 +93,16 @@ interface ServerCallBack {
 }
 
 
-public class MainScreenFragment extends Fragment implements NewsFeedAdapter.ItemClickListener {
+public class MainScreenFragment extends Fragment implements NewsFeedAdapter.ItemClickListener, IOnBackPressed {
+
+    void processExit() {
+        leave_channel_server_update();
+        process_leave_channel();
+        is_room_fragment_loaded = false;
+        selected_event_id = -1;
+
+        unloadFragmentBottom();
+    }
 
     BroadcastReceiver broadCastNewMessage = new BroadcastReceiver() {
         @Override
@@ -96,11 +112,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
             Integer uid;
             switch (user_action) {
                 case "LEAVE_CHANNEL":
-                    leave_channel_server_update();
-                    process_leave_channel();
-                    unloadFragmentBottom();
-                    is_room_fragment_loaded = false;
-                    selected_event_id = -1;
+                    processExit();
                     break;
 
                 case "MAKE_SPEAKER":
@@ -167,7 +179,8 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
     TextView invites_count_display;
     Boolean show_inviter_card = true;
 
-    ArrayList<UsersInRoom> speakers_list;
+    private FragmentActivity activity;
+
 
     void send_message(String action, Integer uid) {
         JSONObject obj= new JSONObject();
@@ -212,7 +225,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         @Override
         public void onMemberCountUpdated(int i) {
             Log.d("debug_data", "onMemberCountUpdated  Count " + String.valueOf(i));
-            broadcastfrommain();
+            broadcastfrommain("onMemberCountUpdated");
         }
 
         @Override
@@ -247,18 +260,14 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                     is_current_role_speaker = true;
                     Log.d("debug_audio", "Updating channel users");
                     // remove from audience queue and move to speaker queue and broadcast for the update
-                    boolean add = true;
-                    for (int i = 0; i < speakers_list.size(); i++) {
-                        if (speakers_list.get(i).UserId.equals(user_id)) {
-                            add = false;
-                        }
+                    UsersInRoom u = UsersInRoom.getRecords(user_id);
+                    if (u == null) {
+                        new UsersInRoom(Boolean.TRUE, Boolean.TRUE, user_id).save();
                     }
 
-                    if (add) {
-                        speakers_list.add(new UsersInRoom(Boolean.TRUE, Boolean.TRUE, user_id));
-                    }
+                    is_muted = true;
                     Log.d("debug_audio", "Broadcasting from main to receive in room flow");
-                    broadcastfrommain();
+                    broadcastfrommain("onMessageReceived");
                 }
 
                 if (user_action.equals("MAKE_AUDIENCE")) {
@@ -271,19 +280,14 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                     is_current_role_speaker = false;
                     Log.d("debug_audio", "Updating channel users");
                     // remove from audience queue and move to speaker queue and broadcast for the update
-                    int index_to_remove = -1;
-                    for (int i = 0; i < speakers_list.size(); i++) {
-                        if (speakers_list.get(i).UserId.equals(user_id)) {
-                            index_to_remove = i;
-                        }
+                    UsersInRoom u = UsersInRoom.getRecords(user_id);
+                    if (u != null) {
+                        u.delete();
                     }
 
-                    if (index_to_remove > -1) {
-                        speakers_list.remove(index_to_remove);
-                    }
-
+                    is_muted = true;
                     Log.d("debug_audio", "Broadcasting from main to receive in room flow");
-                    broadcastfrommain();
+                    broadcastfrommain("onMessageReceived");
                 }
             }
         }
@@ -300,25 +304,26 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
 
         @Override
         public void onMemberJoined(RtmChannelMember member) {
-            broadcastfrommain();
+
+            broadcastfrommain("member joined");
         }
 
         @Override
         public void onMemberLeft(RtmChannelMember member) {
-            broadcastfrommain();
+            broadcastfrommain("member left");
         }
 
-        private void broadcastfrommain() {
+        private void broadcastfrommain(String location) {
             Bundle data_bundle = new Bundle();
             data_bundle.putString("update_type", "LIST_CHANGE");
-            data_bundle.putParcelableArrayList("speakers_list", speakers_list);
+          //  data_bundle.putParcelableArrayList("speakers_list", speakers_list);
             data_bundle.putBoolean("is_current_role_speaker", is_current_role_speaker);
             data_bundle.putBoolean("is_current_user_admin", is_current_user_admin);;
             data_bundle.putString("event_title", selected_channel_display_name);
             data_bundle.putBoolean("is_muted", is_muted);
             Intent intent = new Intent("update_from_main");
             intent.putExtras(data_bundle);
-            getActivity().sendBroadcast(intent);
+            activity.sendBroadcast(intent);
         }
     };
 
@@ -329,18 +334,19 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         @Override
         public void onUserOffline(final int uid, final int reason) {
             Log.d("debug_audio", "Speaker Offline " + String.valueOf(uid) + " Reason " + String.valueOf(reason));
-            int index_to_remove = -1;
-            for (int i = 0; i < speakers_list.size(); i++) {
-                if (speakers_list.get(i).UserId.equals(uid)) {
-                    index_to_remove = i;
-                }
+            UsersInRoom u = UsersInRoom.getRecords(uid);
+            if (u != null) {
+                u.delete();
             }
 
-            if (index_to_remove > -1) {
-                speakers_list.remove(index_to_remove);
-            }
+            broadcastfrommain("onUserOffline");
+        }
 
-            broadcastfrommain();
+        @Override
+        public void onConnectionStateChanged(int state, int reason) {
+            super.onConnectionStateChanged(state, reason);
+            Log.d("debug_audio", "Connection Changed ");
+            broadcastrefetch();
         }
 
         @Override
@@ -365,18 +371,11 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         public void onUserJoined(int uid, int elapsed) {
             super.onUserJoined(uid, elapsed);
             Log.d("debug_audio", "Speaker Joined  " + String.valueOf(uid));
-            boolean add = true;
-            for (int i = 0; i < speakers_list.size(); i++) {
-                if (speakers_list.get(i).UserId.equals(uid)) {
-                    add = false;
-                }
+            UsersInRoom u = UsersInRoom.getRecords(uid);
+            if (u == null) {
+                new UsersInRoom(Boolean.TRUE, Boolean.TRUE, uid).save();
             }
-
-            if (add) {
-                speakers_list.add(new UsersInRoom(Boolean.TRUE, Boolean.TRUE, uid));
-            }
-
-            broadcastfrommain();
+            broadcastfrommain("onUserJoined");
         }
 
 
@@ -384,51 +383,44 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         public void onRemoteAudioStateChanged(int uid, int state, int reason, int elapsed) {
             Log.d("debug_audio", "mute/unmute " + String.valueOf(uid) + " Reason : " + String.valueOf(reason) + " State : " + String.valueOf(state));
             if (state == Constants.REMOTE_AUDIO_STATE_STARTING) {
-                for (int i = 0; i < speakers_list.size(); i++) {
-                    if (speakers_list.get(i).UserId.equals(uid)) {
-                        speakers_list.get((i)).IsMuted = Boolean.FALSE;
-                       // broadcastfrommain();
-                        broadcastmutestate(uid, false);
-                    }
+                UsersInRoom u = UsersInRoom.getRecords(uid);
+                if (u != null) {
+                    UsersInRoom.changeMuteState(uid, Boolean.FALSE);
+                    broadcastmutestate(uid, false);
                 }
             }
 
             if (reason == Constants.REMOTE_AUDIO_REASON_REMOTE_UNMUTED) {
-                for (int i = 0; i < speakers_list.size(); i++) {
-                    if (speakers_list.get(i).UserId.equals(uid)) {
-                        speakers_list.get((i)).IsMuted = Boolean.FALSE;
-                        broadcastmutestate(uid, false);
-                      //  broadcastfrommain();
-
-                    }
+                UsersInRoom u = UsersInRoom.getRecords(uid);
+                if (u != null) {
+                    UsersInRoom.changeMuteState(uid, Boolean.FALSE);
+                    broadcastmutestate(uid, false);
                 }
             }
 
             if (reason == Constants.REMOTE_AUDIO_REASON_REMOTE_MUTED) {
-                for (int i = 0; i < speakers_list.size(); i++) {
-                    if (speakers_list.get(i).UserId.equals(uid)) {
-                        speakers_list.get((i)).IsMuted = Boolean.TRUE;
-                        broadcastmutestate(uid, true);
-                     //   broadcastfrommain();
-
-                    }
+                UsersInRoom u = UsersInRoom.getRecords(uid);
+                if (u != null) {
+                    UsersInRoom.changeMuteState(uid, Boolean.TRUE);
+                    broadcastmutestate(uid, true);
                 }
             }
 
             super.onRemoteAudioStateChanged(uid, state, reason, elapsed);
         }
 
-        void broadcastfrommain() {
+        void broadcastfrommain(String location) {
             Bundle data_bundle = new Bundle();
             data_bundle.putString("update_type", "LIST_CHANGE");
-            data_bundle.putParcelableArrayList("speakers_list", speakers_list);
+     //       data_bundle.putParcelableArrayList("speakers_list", speakers_list);
             data_bundle.putBoolean("is_current_role_speaker", is_current_role_speaker);
             data_bundle.putBoolean("is_current_user_admin", is_current_user_admin);;
             data_bundle.putString("event_title", selected_channel_display_name);
+            Log.d("debug_voice", "Sending is_muted " + String.valueOf(is_muted));
             data_bundle.putBoolean("is_muted", is_muted);
             Intent intent = new Intent("update_from_main");
             intent.putExtras(data_bundle);
-            getActivity().sendBroadcast(intent);
+            activity.sendBroadcast(intent);
         }
 
         void broadcastmutestate(Integer uid, Boolean muted) {
@@ -438,13 +430,21 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
             data_bundle.putString("update_type", "MUTE_UNMUTE");
             Intent intent = new Intent("update_from_main");
             intent.putExtras(data_bundle);
-            getActivity().sendBroadcast(intent);
+            activity.sendBroadcast(intent);
+        }
+
+        void broadcastrefetch() {
+            Bundle data_bundle = new Bundle();
+            data_bundle.putString("update_type", "CONNECTION_CHANGE");
+            Intent intent = new Intent("update_from_main");
+            intent.putExtras(data_bundle);
+            activity.sendBroadcast(intent);
         }
     };
 
     public void initRTM() {
         try {
-            mRtmClient = RtmClient.createInstance(getActivity(), getString(R.string.agora_app_id),
+            mRtmClient = RtmClient.createInstance(activity, getString(R.string.agora_app_id),
                     new RtmClientListener() {
                         @Override
                         public void onConnectionStateChanged(int state, int reason) {
@@ -500,10 +500,10 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fargment_main_screen, container, false);
         IntentFilter new_post = new IntentFilter("update_from_room");
-        getActivity().registerReceiver(broadCastNewMessage, new_post);
+        activity.registerReceiver(broadCastNewMessage, new_post);
         busy = view.findViewById(R.id.loading_channel_token_fetch);
-        initRTM();
-        speakers_list = new ArrayList<>();
+         UsersInRoom.deleteAllRecords();
+ //       speakers_list = new ArrayList<>();
         all_event_display_name = new ArrayList<>();
         all_event_channel_name = new ArrayList<>();
         all_event_ids = new ArrayList<>();
@@ -514,23 +514,31 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        Log.d("debug_activity", "OnView Created called MainScreenFragment");
         news_feed_list = view.findViewById(R.id.news_feed_list);
         // Create adapter passing in the sample user data
-        adapter = new NewsFeedAdapter(getActivity(), all_feeds);
+        adapter = new NewsFeedAdapter(activity, all_feeds);
         adapter.setClickListener(this);
 
         // Attach the adapter to the recyclerview to populate items
         news_feed_list.setAdapter(adapter);
-        PreCachingLayoutManager layoutManager = new PreCachingLayoutManager(getActivity());
+        PreCachingLayoutManager layoutManager = new PreCachingLayoutManager(activity);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        layoutManager.setExtraLayoutSpace(DeviceUtils.getScreenHeight(getActivity()));
+        layoutManager.setExtraLayoutSpace(DeviceUtils.getScreenHeight(activity));
         news_feed_list.setLayoutManager(layoutManager);
         //news_feed_list.setOnClickListener();
 
-        CircleImageView img = view.findViewById(R.id.user_profile_image);
+        ShapeableImageView img = view.findViewById(R.id.user_profile_image);
         User user = User.getLoggedInUser();
         if (!user.ProfilePicURL.equals("")) {
+            float radius = activity.getResources().getDimension(R.dimen.default_corner_radius_profile);
+            img.setShapeAppearanceModel(img.getShapeAppearanceModel()
+                    .toBuilder()
+                    .setTopRightCorner(CornerFamily.ROUNDED,radius)
+                    .setTopLeftCorner(CornerFamily.ROUNDED,radius)
+                    .setBottomLeftCorner(CornerFamily.ROUNDED,radius)
+                    .setBottomRightCorner(CornerFamily.ROUNDED,radius)
+                    .build());
             Picasso.get().load(user.ProfilePicURL).into(img);
         }
 
@@ -569,8 +577,6 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                 }
             }
         });
-
-        initRTM();
     }
 
 
@@ -621,9 +627,9 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
     public void onRequestPermissionsResult(int RC, String per[], int[] PResult) {
         super.onRequestPermissionsResult(RC, per, PResult);
         if (PResult.length > 0 && PResult[0] == PackageManager.PERMISSION_GRANTED) {
-            processAndConnectToAChannel(selected_channel);
+            processAndConnectToAChannel(selected_channel, selected_event_id);
         } else {
-            Toast.makeText(getActivity(), "Permission is needed to start audio call", Toast.LENGTH_LONG).show();
+            Toast.makeText(activity, "Permission is needed to start audio call", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -652,7 +658,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
             if (is_current_user_admin) {
                 is_current_role_speaker = Boolean.TRUE;
             }
-            mRtcEngine = RtcEngine.create(getActivity(), getString(R.string.agora_app_id), mRtcEventHandler);
+            mRtcEngine = RtcEngine.create(activity, getString(R.string.agora_app_id), mRtcEventHandler);
             //mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING);
             mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING);
             mRtcEngine.setAudioProfile(Constants.AUDIO_PROFILE_MUSIC_HIGH_QUALITY_STEREO, Constants.AUDIO_SCENARIO_MEETING);
@@ -685,9 +691,10 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         mRtcEngine.getUserInfoByUid(user.UserID, t);
 
         if (is_current_role_speaker) {
-            speakers_list.add(new UsersInRoom(Boolean.TRUE, Boolean.TRUE, user.UserID, user.FirstName, user.ProfilePicURL));
+            new UsersInRoom(Boolean.TRUE, Boolean.TRUE, user.UserID, user.FirstName, user.ProfilePicURL).save();
         }
         loadRoomFragment();
+        initRTM();
         joinChannelRTM(channel_name, agora_rtm_token);
     }
 
@@ -836,6 +843,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                 @Override
                 public void onSuccess(Void aVoid) {
                     Log.d("debug_data", "RTM channel leave success");
+                    mRtmChannel.release();
                 }
 
                 @Override
@@ -855,17 +863,28 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
 
                 }
             });
+
         } catch (Exception ex) {
             Log.d("debug_data", "RTM cleanup issue");
         }
 
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity){
+            activity=(FragmentActivity) context;
+        }
+    }
 
     @Override
     public void onDestroy() {
+        activity.unregisterReceiver(broadCastNewMessage);
         super.onDestroy();
     }
+
+
 
 
     private void loadRoomFragment() {
@@ -873,7 +892,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         if (!is_room_fragment_loaded) {
             Bundle args = new Bundle();
             args.putString("update_type", "LIST_CHANGE");
-            args.putParcelableArrayList("speakers_list", speakers_list);
+       //     args.putParcelableArrayList("speakers_list", speakers_list);
             args.putBoolean("is_current_role_speaker", is_current_role_speaker);
             args.putString("event_title", selected_channel_display_name);
             args.putBoolean("is_current_user_admin", is_current_user_admin);;
@@ -902,19 +921,32 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
     public void onTagClick(int index) {
         selected_channel = all_event_channel_name.get(index);
         if (all_event_ids.get(index).equals(selected_event_id)) {
+            loadRoomFragment();
             return;
 
         }
         selected_event_id = all_event_ids.get(index);
 
         selected_channel_display_name = all_event_display_name.get(index);
-            if (checkPermission(getActivity())) {
-                processAndConnectToAChannel(selected_channel);
+            if (checkPermission(activity)) {
+                processAndConnectToAChannel(selected_channel, selected_event_id);
             }
     }
 
-    private void processAndConnectToAChannel(String channel_name) {
-        speakers_list.clear();
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d("debug_audio", "on save instance called");
+    }
+
+
+
+    private void processAndConnectToAChannel(String channel_name, Integer event_id) {
+        UsersInRoom.deleteAllRecords();
+        UserSettings.deleteAll();
+
+        Log.d("debug_audio", "speaker list clear");
         leave_channel_server_update();
         process_leave_channel();
         final User user = User.getLoggedInUser();
@@ -922,7 +954,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
         params.add("channel_name", channel_name);
-        params.add("channel_id", String.valueOf(selected_event_id));
+        params.add("channel_id", String.valueOf(event_id));
 
         JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
             @Override
@@ -970,26 +1002,30 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
 
     void hide_busy_indicator() {
 
-        getActivity().runOnUiThread(new Runnable() {
+        activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 //Your code
                 busy.setVisibility(View.INVISIBLE);
             }
         });
-
     }
+
 
     void process_leave_channel() {
         try {
             if (mRtcEngine!= null) {
                 mRtcEngine.leaveChannel();
+                Log.d("debug_channel", "Leave channel success");
+                mRtcEngine.destroy();
+                Log.d("debug_channel", "RTC Engine destroy success");
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         leaveRTMChannel();
+        Log.d("debug_channel", "Leave channel success");
     }
 
     void fetch_all_events() {
@@ -998,11 +1034,6 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         show_busy_indicator();
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
-
-        ArrayList<String> all_event_names, all_channel_names;
-        all_channel_names = new ArrayList<>();
-        all_event_names = new ArrayList<>();
-
 
         JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
             @Override
@@ -1093,6 +1124,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
 
 
     void process_mute_unmute() {
+        Boolean new_state = !is_muted;
         server_update(User.getLoggedInUserID(), String.valueOf(selected_event_id), is_muted ? "unmute" : "mute", new ServerCallBack() {
             @Override
             public void onSuccess() {
@@ -1105,6 +1137,9 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                 }
             }
         });
+
+        UsersInRoom.changeMuteState(User.getLoggedInUserID(), new_state);
+
         // update the list of speakers
 //        speakers_list.get(User.getLoggedInUserID()).IsMuted = is_muted;
     }
@@ -1117,7 +1152,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
             args.putBoolean("is_muted", is_muted);
             args.putString("event_title", selected_channel_display_name);
             Fragment frg = new BottomFragment();
-            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+            FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
             frg.setArguments(args);
             ft.replace(R.id.fragment_bottom, frg, "bottom_sheet");
             ft.commit();
@@ -1126,10 +1161,10 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
     }
 
     private void unloadFragmentBottom() {
-        if (getActivity() != null) {
-            Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag("bottom_sheet");
+        if (activity != null) {
+            Fragment fragment = activity.getSupportFragmentManager().findFragmentByTag("bottom_sheet");
             if(fragment != null) {
-                getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+                activity.getSupportFragmentManager().beginTransaction().remove(fragment).commit();
                 is_bottom_sheet_visible = false;
             }
         }
@@ -1161,5 +1196,44 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         client.addHeader("Accept", "application/json");
         client.addHeader("Authorization", "Token " + user.AccessToken);
         client.post(App.getBaseURL() + "page/update_action", params, jrep);
+    }
+
+
+    void showDialogExit() {
+        String txt = "You are part of the room with active conversation";
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setMessage(txt);
+        builder.setTitle("Active Conversation");
+        builder.setPositiveButton("Don't Leave", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+
+                // Do nothing, but close the dialog
+                dialog.dismiss();
+            }
+        });
+
+        builder.setNegativeButton("Leave", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                // Do nothing
+                processExit();
+                activity.finish();
+                dialog.dismiss();
+            }
+        });
+        builder.show();
+    }
+
+
+    @Override
+    public boolean onBackPressed() {
+        //save the state of the client
+        showDialogExit();
+//        processExit();
+        return true;
     }
 }

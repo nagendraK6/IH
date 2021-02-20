@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -32,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("debug_audio", "save instant state is " + String.valueOf(savedInstanceState != null));
         setContentView(R.layout.activity_main);
         setUpFragment();
 
@@ -122,4 +125,11 @@ public class MainActivity extends AppCompatActivity {
 
         return new MainScreenFragment();
     }
+
+        @Override public void onBackPressed() {
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
+            if (!(fragment instanceof IOnBackPressed) || !((IOnBackPressed) fragment).onBackPressed()) {
+                super.onBackPressed();
+            }
+        }
 }

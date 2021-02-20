@@ -15,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.shape.CornerFamily;
 import com.relylabs.InstaHelo.R;
 import com.relylabs.InstaHelo.models.User;
 import com.squareup.picasso.Picasso;
@@ -66,13 +68,32 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.ViewHo
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView tagDisplayView;
-        CircleImageView c1, c2;
+        ShapeableImageView c1, c2;
 
         ViewHolder(View itemView) {
             super(itemView);
             tagDisplayView = itemView.findViewById(R.id.event_title);
             c1 = itemView.findViewById(R.id.image_1);
             c2 = itemView.findViewById(R.id.image_2);
+
+            float radius = itemView.getResources().getDimension(R.dimen.default_corner_news_feed_image_profile);
+            c1.setShapeAppearanceModel(c1.getShapeAppearanceModel()
+                    .toBuilder()
+                    .setTopRightCorner(CornerFamily.ROUNDED,radius)
+                    .setTopLeftCorner(CornerFamily.ROUNDED,radius)
+                    .setBottomLeftCorner(CornerFamily.ROUNDED,radius)
+                    .setBottomRightCorner(CornerFamily.ROUNDED,radius)
+                    .build());
+
+            c2.setShapeAppearanceModel(c1.getShapeAppearanceModel()
+                    .toBuilder()
+                    .setTopRightCorner(CornerFamily.ROUNDED,radius)
+                    .setTopLeftCorner(CornerFamily.ROUNDED,radius)
+                    .setBottomLeftCorner(CornerFamily.ROUNDED,radius)
+                    .setBottomRightCorner(CornerFamily.ROUNDED,radius)
+                    .build());
+
+
             itemView.setOnClickListener(this);
         }
 
