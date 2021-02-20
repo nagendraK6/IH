@@ -111,7 +111,6 @@ public class DisplayUserNameAskFragment extends Fragment {
                 if(!s.toString().startsWith("@")){
                     user_name.setText("@");
                     Selection.setSelection(user_name.getText(), user_name.getText().length());
-
                 }
 
             }
@@ -125,15 +124,15 @@ public class DisplayUserNameAskFragment extends Fragment {
         busy.setIndeterminateDrawable(cr);
 
         running = true;
-        if(user.Username.toString().length() > 0) {
+        if(user_name.getText().toString().length() > 1) {
             send_button.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.next_enabled));
         } else {
-            send_button.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.next_enabled));
+            send_button.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.next_disabled));
         }
         send_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View buttonView) {
-                if (StringUtils.isEmpty(user_name.getText().toString())) {
+                if (StringUtils.isEmpty(user_name.getText().toString()) || user_name.toString().length() < 2) {
                     return;
                 }
 
@@ -217,10 +216,10 @@ public class DisplayUserNameAskFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if(editable.toString().length() > 0) {
+                if(editable.toString().length() > 1) {
                     send_button.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.next_enabled));
                 } else {
-                    send_button.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.next_enabled));
+                    send_button.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.next_disabled));
                 }
             }
         });
@@ -242,10 +241,9 @@ public class DisplayUserNameAskFragment extends Fragment {
             @Override
             public void run() {
                 if (activity_ref!= null) {
-                    // user_name.requestFocus();
-                    // user_name.setSelection(user_name.getText().length());
+                    user_name.requestFocus();
+                    user_name.setSelection(user_name.getText().length());
                     InputMethodManager imgr = (InputMethodManager) activity_ref.getSystemService(Context.INPUT_METHOD_SERVICE);
-                    //imgr.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
                     imgr.showSoftInput(user_name, InputMethodManager.SHOW_IMPLICIT);
                 }
             }

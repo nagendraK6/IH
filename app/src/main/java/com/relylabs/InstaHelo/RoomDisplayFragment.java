@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,6 +45,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -402,32 +405,6 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
     }
 
 
-    private void sendPing() {
-        checkConnection();
-        User user = User.getLoggedInUser();
-        AsyncHttpClient client = new AsyncHttpClient();
-        RequestParams params = new RequestParams();
-        params.add("event_id", String.valueOf(event_id));
-
-
-        JsonHttpResponseHandler jrep= new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
-            }
-        };
-
-        client.addHeader("Accept", "application/json");
-        client.addHeader("Authorization", "Token " + user.AccessToken);
-        client.post( App.getBaseURL() + "page/send_ping", params, jrep);
-    }
 
     private  void checkConnection() {
         if (activity != null) {
@@ -443,6 +420,9 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
             }
         }
     }
+
+
+
 
     @Override
     public boolean onBackPressed() {

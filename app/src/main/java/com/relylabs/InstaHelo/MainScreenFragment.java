@@ -25,6 +25,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -100,8 +101,17 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         process_leave_channel();
         is_room_fragment_loaded = false;
         selected_event_id = -1;
-
+        stopTimer();
         unloadFragmentBottom();
+    }
+
+    void join_a_room_after_start(Integer event_id, String event_title, String channe_name) {
+        is_muted = true;
+        is_current_role_speaker = true;
+        is_bottom_sheet_visible = false;
+        selected_channel_display_name = event_title;
+        selected_channel = channe_name;
+        processAndConnectToAChannel(channe_name, event_id);
     }
 
     BroadcastReceiver broadCastNewMessage = new BroadcastReceiver() {
@@ -113,6 +123,10 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
             switch (user_action) {
                 case "LEAVE_CHANNEL":
                     processExit();
+                    break;
+
+                case "HAND_RAISE":
+                    send_hand_raise_request();
                     break;
 
                 case "MAKE_SPEAKER":
@@ -154,6 +168,10 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
     /* ADMIN CONTROL */
     private boolean is_current_role_speaker = true;
     Boolean is_current_user_admin = true;
+
+
+    /* USER CONTROL */
+    Boolean has_raised_hand = false;
 
     NewsFeedAdapter adapter;
     RecyclerView news_feed_list;
@@ -644,6 +662,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         update_role_user(role, new ServerCallBack() {
             @Override
             public void onSuccess() {
+                runTimer();
                 hide_busy_indicator();
                 joinChannelRTC(channel_name, agora_rtc_token, agora_rtm_token);
             }
@@ -1145,12 +1164,70 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
     }
 
 
+    private void sendPing() {
+        User user = User.getLoggedInUser();
+        AsyncHttpClient client = new AsyncHttpClient();
+        RequestParams params = new RequestParams();
+        params.add("event_id", String.valueOf(selected_event_id));
+
+
+        JsonHttpResponseHandler jrep= new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.d("debug_data", "sent ping success");
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
+            }
+        };
+
+        client.addHeader("Accept", "application/json");
+        client.addHeader("Authorization", "Token " + user.AccessToken);
+        client.post( App.getBaseURL() + "page/send_a_ping", params, jrep);
+    }
+
+
+    private final Handler handler = new Handler();
+    private Runnable runnable = new Runnable() {
+        public void run() {
+            //
+            // Do the stuff
+            sendPing();
+            //
+
+            handler.postDelayed(this, 20000);
+        }
+    };
+
+    private void runTimer() {
+        runnable.run();
+    }
+
+    private void stopTimer() {
+        if(runnable != null){
+            handler.removeCallbacks(runnable);
+            //cancel timer task and assign null
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        stopTimer();
+    }
+
     private void loadFragmentInBottom() {
         if (!is_bottom_sheet_visible) {
             Bundle args = new Bundle();
             args.putBoolean("is_current_role_speaker", is_current_role_speaker);
             args.putBoolean("is_muted", is_muted);
             args.putString("event_title", selected_channel_display_name);
+            args.putInt("event_id", selected_event_id);
             Fragment frg = new BottomFragment();
             FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
             frg.setArguments(args);
@@ -1235,5 +1312,66 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         showDialogExit();
 //        processExit();
         return true;
+    }
+
+
+    private void send_hand_raise_request() {
+        has_raised_hand = true;
+        final User user = User.getLoggedInUser();
+        AsyncHttpClient client = new AsyncHttpClient();
+        RequestParams params = new RequestParams();
+        params.add("event_id", String.valueOf(selected_event_id));
+
+        JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
+            }
+        };
+
+        client.addHeader("Accept", "application/json");
+        client.addHeader("Authorization", "Token " + user.AccessToken);
+        client.post(App.getBaseURL() + "page/raise_hand", params, jrep);
+    }
+
+    private void send_create_room_request(String title) {
+        final User user = User.getLoggedInUser();
+        AsyncHttpClient client = new AsyncHttpClient();
+        RequestParams params = new RequestParams();
+        params.add("event_title", title);
+
+        JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                processExit();
+                Integer event_id = null;
+                try {
+                    event_id = response.getInt("event_id");
+                    String event_channel_name = response.getString("event_channel_name");
+                    join_a_room_after_start(event_id, title, event_channel_name);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
+            }
+        };
+
+        client.addHeader("Accept", "application/json");
+        client.addHeader("Authorization", "Token " + user.AccessToken);
+        client.post(App.getBaseURL() + "page/create_room", params, jrep);
     }
 }

@@ -8,6 +8,7 @@
         android:id="@+id/invited_name_1"
         android:textColor="@color/neartagtextcolor"
         android:layout_marginTop="70dp"
+        android:textAppearance="@style/OnboardingTop"
         android:textAlignment="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,10 +18,11 @@
         android:layout_below="@+id/invited_name_1"
         android:textColor="@color/neartagtextcolor"
         android:fontFamily="Helvetica-Bold"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:textAlignment="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textAppearance="@style/OnboardingTop"
         android:text="Welcome again 🎉"/>
 
     <ImageView
@@ -33,8 +35,7 @@
         android:src="@drawable/empty_inviter"/>
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:layout_marginTop="10dp"
-
+        android:layout_marginTop="20dp"
         android:layout_below="@+id/invited_name_2"
         android:visibility="invisible"
         android:id="@+id/inviter_image"
@@ -44,7 +45,8 @@
         android:backgroundTint="@color/colorAccent"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="20dp"
+
         />
 
     <TextView
@@ -53,7 +55,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/empty_inviter_user"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="22dp"
+        android:layout_marginTop="30dp"
+        android:textAppearance="@style/OnboardingTop"
         android:text="Enter your name for profile" />
 
     <LinearLayout
@@ -108,20 +111,14 @@
 
     <TextView
         android:id="@+id/submit_first_name_last_name"
-        android:layout_width="120dp"
-        android:layout_height="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/name_box"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
-        android:layout_marginTop="124dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/next_disabled"
-        android:gravity="center_horizontal|center_vertical"
-        android:paddingLeft="5dp"
-        android:paddingTop="1dp"
-        android:paddingRight="5dp"
-        android:paddingBottom="1dp"
-        android:textColor="#ffffff"
-        android:textSize="16dp" />
+        android:gravity="center_horizontal|center_vertical" />
     <ProgressBar
         android:layout_gravity="center"
         android:layout_centerHorizontal="true"

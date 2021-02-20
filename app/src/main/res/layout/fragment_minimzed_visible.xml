@@ -76,6 +76,22 @@
             android:text="✋🏽 ">
         </TextView>
         <TextView
+            android:layout_marginRight="180dp"
+            android:background="@drawable/leave_room_circular_bg"
+            android:layout_marginBottom="10dp"
+            android:visibility="visible"
+            android:id="@+id/hand_raise_admin"
+            android:layout_alignParentRight="true"
+            android:textAlignment="center"
+            android:paddingTop="5dp"
+            android:paddingLeft="5dp"
+            android:layout_marginTop="40dp"
+            android:textColor="@color/Black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="✋🏽 ">
+        </TextView>
+        <TextView
             android:background="@drawable/mic_on_room_view"
             android:visibility="visible"
             android:layout_marginTop="40dp"

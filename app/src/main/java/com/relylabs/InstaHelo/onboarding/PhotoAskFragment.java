@@ -136,14 +136,6 @@ public class PhotoAskFragment extends Fragment {
                 sendImageToServer();
             }
         });
-
-        TextView skip = view.findViewById(R.id.skip);
-        skip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                skipScreen(activity_ref);
-            }
-        });
     }
 
 

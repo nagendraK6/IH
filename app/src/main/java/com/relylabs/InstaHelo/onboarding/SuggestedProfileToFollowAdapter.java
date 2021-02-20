@@ -57,6 +57,8 @@ public class SuggestedProfileToFollowAdapter extends RecyclerView.Adapter<Sugges
             Picasso.get()
                     .load(profile_image_urls.get(position))
                     .into(holder.suggested_profile_image);
+        } else {
+            holder.suggested_profile_image.setImageDrawable(holder.itemView.getContext().getDrawable(R.drawable.empty_user_profile_image));
         }
     }
 

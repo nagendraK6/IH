@@ -16,6 +16,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.telephony.SmsManager;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -103,9 +104,9 @@ public class SharingContactListAdapter extends RecyclerView.Adapter<SharingConta
                 String phone = contact_numbers.get(position).toString();
                 Boolean isInstalledWhatsapp =isAppInstalled("com.whatsapp");
                 if(isInstalledWhatsapp){
-                    if (!phone.startsWith("+91")){
+                    /*if (!phone.startsWith("+91")){
                         phone = "+91" + phone;
-                    }
+                    }*/
                     String message = "Hey!, come join me at InstaHelo.";
                     try {
                         String url = "https://api.whatsapp.com/send?phone="+ phone +"&text=" + URLEncoder.encode(message, "UTF-8");

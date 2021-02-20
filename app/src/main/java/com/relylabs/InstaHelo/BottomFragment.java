@@ -16,13 +16,22 @@ import android.os.Bundle;
 import com.bumptech.glide.Glide;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.shape.CornerFamily;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 import com.relylabs.InstaHelo.R;
 import com.relylabs.InstaHelo.models.User;
+import com.relylabs.InstaHelo.rooms.HandRaiseUsersListDialogFragment;
+
+import org.json.JSONObject;
+
+import cz.msebera.android.httpclient.Header;
 
 public class BottomFragment extends Fragment implements IOnBackPressed {
     TextView mute_unmute_button_bottom;
     Boolean is_current_role_speaker, is_muted;
     String event_title;
+    Integer event_id;
 
     @Nullable
     @Override
@@ -44,6 +53,7 @@ public class BottomFragment extends Fragment implements IOnBackPressed {
         is_current_role_speaker = getArguments().getBoolean("is_current_role_speaker");
         is_muted =  getArguments().getBoolean("is_muted");
         event_title = getArguments().getString("event_title");
+        event_id = getArguments().getInt("event_id");
         TextView title = view.findViewById(R.id.title);
         title.setText(event_title);
         if (is_current_role_speaker) {
@@ -106,6 +116,30 @@ public class BottomFragment extends Fragment implements IOnBackPressed {
                 broadcastLocalUpdate("LEAVE_CHANNEL");
             }
         });
+
+        TextView hand_raise_admin = view.findViewById(R.id.hand_raise_admin);
+        hand_raise_admin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                broadcastLocalUpdate("LEAVE_CHANNEL");
+                HandRaiseUsersListDialogFragment bottomSheetDialog = new HandRaiseUsersListDialogFragment();
+              //  View parentView = getLayoutInflater().inflate(R.layout.activity_main, null);
+              //  bottomSheetDialog.setContentView(parentView);
+                bottomSheetDialog.show(getFragmentManager(), "TAG");
+            }
+        });
+
+        raise_hand.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                send_raise_hand_request();
+            }
+        });
+    }
+
+
+    private void send_raise_hand_request() {
+        broadcastLocalUpdate("HAND_RAISE");
     }
 
     void processMuteUnmuteSettings() {

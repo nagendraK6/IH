@@ -41,7 +41,7 @@
         android:layout_below="@+id/edit_display_user_name"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
-        android:layout_marginTop="237dp"
+        android:layout_marginTop="143dp"
         android:background="@drawable/next_disabled"
         android:fontFamily="Helvetica-Bold"
         android:gravity="center_horizontal"
