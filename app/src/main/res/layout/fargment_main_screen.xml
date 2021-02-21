@@ -68,7 +68,28 @@
             android:background="@color/neartagtheme"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:paddingBottom="200dp"
+            android:clipToPadding="false"
             />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:id="@+id/bottom_room_create_action"
+        android:layout_alignParentBottom="true"
+        android:layout_height="140dp">
+        <RelativeLayout
+            android:layout_alignParentBottom="true"
+            android:background="#99F1EFE4"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+        <ImageView
+            android:layout_alignParentTop="true"
+            android:layout_width="wrap_content"
+            android:id="@+id/start_a_room_cta"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/start_a_room"
+            android:layout_height="40dp"/>
     </RelativeLayout>
     <com.github.ybq.android.spinkit.SpinKitView
         xmlns:app="http://schemas.android.com/apk/res-auto"

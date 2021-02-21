@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:orientation="horizontal"
+    android:id="@+id/user_2_view"
+    android:layout_below="@+id/user_1_view"
+    android:layout_height="wrap_content">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_marginTop="5dp"
+        android:textSize="16sp"
+        android:id="@+id/user_first_name"
+        android:textColor="@color/main_screen_text_color"
+        android:text="Ashu Dubey"
+        android:layout_height="wrap_content">
+    </TextView>
+    <ImageView
+        android:id="@+id/speech_icon"
+        android:layout_marginLeft="10dp"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="6dp"
+        android:src="@drawable/speech_icon"
+        android:layout_height="wrap_content" />
+</LinearLayout>

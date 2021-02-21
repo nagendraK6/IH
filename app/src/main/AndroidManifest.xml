@@ -47,12 +47,12 @@
             android:name="AA_DB_VERSION"  android:value="1" />
         <meta-data
             android:name="AA_MODELS"
-            android:value="com.relylabs.Instahelo.models.User, com.relylabs.Instahelo.models.EventElement, com.relylabs.Instahelo.models.UsersInRoom, com.relylabs.Instahelo.models.UserSettings" />
+            android:value="com.relylabs.Instahelo.models.User, com.relylabs.Instahelo.models.UsersInRoom, com.relylabs.Instahelo.models.UserSettings" />
 
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize|adjustPan">
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
