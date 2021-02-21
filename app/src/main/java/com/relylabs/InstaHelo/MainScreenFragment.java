@@ -2,17 +2,13 @@ package com.relylabs.InstaHelo;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.transition.Transition;
-import androidx.transition.TransitionInflater;
 
 import android.Manifest;
 import android.app.Activity;
@@ -22,19 +18,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
-import android.text.InputType;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.LinearInterpolator;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -45,35 +35,28 @@ import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.shape.CornerFamily;
 import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.SyncHttpClient;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-import com.relylabs.InstaHelo.Utils.Logger;
+import com.relylabs.InstaHelo.Utils.RoomHelper;
 import com.relylabs.InstaHelo.models.EventCardUserElement;
 import com.relylabs.InstaHelo.models.EventElement;
 import com.relylabs.InstaHelo.models.User;
-import com.relylabs.InstaHelo.BottomFragment;
 import com.relylabs.InstaHelo.models.UserSettings;
 import com.relylabs.InstaHelo.models.UsersInRoom;
-import com.relylabs.InstaHelo.rooms.HandRaiseUsersListDialogFragment;
 import com.relylabs.InstaHelo.rooms.RoomCreateBottomSheetDialogFragment;
 import com.relylabs.InstaHelo.sharing.SendInviteFragment;
 import com.squareup.picasso.Picasso;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 import cz.msebera.android.httpclient.Header;
-import de.hdodenhof.circleimageview.CircleImageView;
 import io.agora.rtc.Constants;
 import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
@@ -91,13 +74,8 @@ import io.agora.rtm.RtmFileMessage;
 import io.agora.rtm.RtmImageMessage;
 import io.agora.rtm.RtmMediaOperationProgress;
 import io.agora.rtm.RtmMessage;
-import io.agora.rtm.SendMessageOptions;
 
 import io.agora.rtc.models.UserInfo;
-
-interface ServerCallBack {
-    void onSuccess();
-}
 
 
 public class MainScreenFragment extends Fragment implements NewsFeedAdapter.ItemClickListener, IOnBackPressed {
@@ -112,9 +90,11 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
     }
 
     void join_a_room_after_start(Integer event_id, String event_title, String channe_name) {
-        is_muted = true;
-        is_current_role_speaker = true;
-        is_current_user_admin = true;
+        UserSettings us = UserSettings.getSettings();
+        us.is_muted = true;
+        us.is_current_role_speaker = true;
+        us.is_current_user_admin = true;
+        us.save();
         is_bottom_sheet_visible = false;
         selected_channel_display_name = event_title;
         selected_channel = channe_name;
@@ -133,9 +113,22 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                     processExit();
                     break;
 
-                case "HAND_RAISE":
-                    send_hand_raise_request();
+                // audience sending MAKE_SPEAKER_REQUEST
+                case "MAKE_SPEAKER_REQUEST":
+                    uid =  intent
+                            .getIntExtra("uid", -1);
+                    // add request in server
+                    RoomHelper.send_hand_raise_request(selected_event_id, false);
+                    // send message to notifiy
+                    send_message("MAKE_SPEAKER_REQUEST", uid);
+                  //  switch_roles(1, uid);
                     break;
+
+
+                case "HAND_RAISE_CLEAR":
+                    RoomHelper.send_hand_raise_request(selected_event_id, true);
+                    break;
+
 
                 case "ROOM_CREATE":
                     String room_title =  intent
@@ -143,19 +136,31 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                     send_create_room_request(room_title);
                     break;
 
-                case "MAKE_SPEAKER":
+
+                case "REJECT_SPEAKER":
                     uid =  intent
                             .getIntExtra("uid", -1);
-                    send_message("MAKE_SPEAKER", uid);
-                    switch_roles(1, uid);
+                    send_message("REJECT_SPEAKER", uid);
+                    switch_roles_on_server(2, uid);
                     break;
 
+                // from the explicit admin action
                 case "MAKE_AUDIENCE":
                     uid =  intent
                             .getIntExtra("uid", -1);
                     send_message("MAKE_AUDIENCE", uid);
-                    switch_roles(2, uid);
+                    switch_roles_on_server(2, uid);
                     break;
+
+
+                // from the explicit admin action
+                case "MAKE_SPEAKER":
+                    uid =  intent
+                            .getIntExtra("uid", -1);
+                    send_message("MAKE_SPEAKER", uid);
+                    switch_roles_on_server(1, uid);
+                    break;
+
 
                 case "MINIMISED":
                     loadFragmentInBottom();
@@ -178,15 +183,6 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
     private static final String LOG_TAG = "debug_data";
 
 
-
-    /* ADMIN CONTROL */
-    private boolean is_current_role_speaker = true;
-    Boolean is_current_user_admin = true;
-
-
-    /* USER CONTROL */
-    Boolean has_raised_hand = false;
-
     NewsFeedAdapter adapter;
     RecyclerView news_feed_list;
 
@@ -201,7 +197,6 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
 
     Boolean is_bottom_sheet_visible = false;
     Boolean is_room_fragment_loaded = false;
-    Boolean is_muted = false;
 
 
     private RtcEngine mRtcEngine;
@@ -223,7 +218,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         }
 
 
-        server_update(uid, String.valueOf(selected_event_id), action, new ServerCallBack() {
+        RoomHelper.server_update(uid, String.valueOf(selected_event_id), action, new ServerCallBack() {
             @Override
             public void onSuccess() {
                 processRTMMessageSend(obj);
@@ -280,35 +275,42 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
             }
 
             Log.d("debug_audio", "user action " + user_action);
+            UserSettings us = UserSettings.getSettings();
+            if (us.is_current_user_admin && user_action.equals("MAKE_SPEAKER_REQUEST")) {
+                us.audience_hand_raised = true;
+                us.save();
+                askforRefresh();
+            }
+
             if (User.getLoggedInUser().UserID.equals(user_id)) {
+
                 if (user_action.equals("MAKE_SPEAKER")) {
-                    // change the current user role
-                    Log.d("debug_audio", "Changing role");
                     mRtcEngine.setClientRole(Constants.CLIENT_ROLE_BROADCASTER);
-                    Log.d("debug_audio", "Changing role 1");
                     mRtcEngine.muteLocalAudioStream(true);
-                    Log.d("debug_audio", "Changing role 2");
-                    is_current_role_speaker = true;
-                    Log.d("debug_audio", "Updating channel users");
+                    us = UserSettings.getSettings();
+                    us.is_current_role_speaker = true;
+                    us.is_muted = true;
+                    us.is_self_hand_raised = false;
+                    us.save();
+
                     // remove from audience queue and move to speaker queue and broadcast for the update
                     UsersInRoom u = UsersInRoom.getRecords(user_id);
                     if (u == null) {
                         new UsersInRoom(Boolean.TRUE, Boolean.TRUE, user_id).save();
                     }
 
-                    is_muted = true;
-                    Log.d("debug_audio", "Broadcasting from main to receive in room flow");
+
                     broadcastfrommain("onMessageReceived");
                 }
 
                 if (user_action.equals("MAKE_AUDIENCE")) {
                     // change the current user role
-                    Log.d("debug_audio", "Changing role");
                     mRtcEngine.setClientRole(Constants.CLIENT_ROLE_AUDIENCE);
-                    Log.d("debug_audio", "Changing role 1");
                     mRtcEngine.muteLocalAudioStream(true);
-                    Log.d("debug_audio", "Changing role 2");
-                    is_current_role_speaker = false;
+                    us  = UserSettings.getSettings();
+                    us.is_current_role_speaker = false;
+                    us.is_muted = true;
+                    us.save();
                     Log.d("debug_audio", "Updating channel users");
                     // remove from audience queue and move to speaker queue and broadcast for the update
                     UsersInRoom u = UsersInRoom.getRecords(user_id);
@@ -316,9 +318,18 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                         u.delete();
                     }
 
-                    is_muted = true;
-                    Log.d("debug_audio", "Broadcasting from main to receive in room flow");
                     broadcastfrommain("onMessageReceived");
+                }
+
+                if (user_action.equals("REJECT_SPEAKER")) {
+                    // once state changes clear the flag
+                  //  UserSettings us  = UserSettings.getSettings();
+                    us.is_self_hand_raised = false;
+                    us.is_muted = true;
+                    us.save();
+
+                    askforRefresh();
+                    RoomHelper.broadcastToMainThread(activity, "HAND_RAISE_CLEAR_USER");
                 }
             }
         }
@@ -347,11 +358,15 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         private void broadcastfrommain(String location) {
             Bundle data_bundle = new Bundle();
             data_bundle.putString("update_type", "LIST_CHANGE");
-          //  data_bundle.putParcelableArrayList("speakers_list", speakers_list);
-            data_bundle.putBoolean("is_current_role_speaker", is_current_role_speaker);
-            data_bundle.putBoolean("is_current_user_admin", is_current_user_admin);;
             data_bundle.putString("event_title", selected_channel_display_name);
-            data_bundle.putBoolean("is_muted", is_muted);
+            Intent intent = new Intent("update_from_main");
+            intent.putExtras(data_bundle);
+            activity.sendBroadcast(intent);
+        }
+
+        private void askforRefresh() {
+            Bundle data_bundle = new Bundle();
+            data_bundle.putString("update_type", "REFRESH_SETTINGS");
             Intent intent = new Intent("update_from_main");
             intent.putExtras(data_bundle);
             activity.sendBroadcast(intent);
@@ -459,12 +474,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         void broadcastfrommain(String location) {
             Bundle data_bundle = new Bundle();
             data_bundle.putString("update_type", "LIST_CHANGE");
-     //       data_bundle.putParcelableArrayList("speakers_list", speakers_list);
-            data_bundle.putBoolean("is_current_role_speaker", is_current_role_speaker);
-            data_bundle.putBoolean("is_current_user_admin", is_current_user_admin);;
             data_bundle.putString("event_title", selected_channel_display_name);
-            Log.d("debug_voice", "Sending is_muted " + String.valueOf(is_muted));
-            data_bundle.putBoolean("is_muted", is_muted);
             Intent intent = new Intent("update_from_main");
             intent.putExtras(data_bundle);
             activity.sendBroadcast(intent);
@@ -565,15 +575,20 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         adapter = new NewsFeedAdapter(activity, all_feeds);
         adapter.setClickListener(this);
         ImageView start_a_room_cta = view.findViewById(R.id.start_a_room_cta);
+        if ((!User.getLoggedInUser().IsStartRoomEnabled)) {
+            start_a_room_cta.setVisibility(View.INVISIBLE);
+        }
+
         start_a_room_cta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (is_current_user_admin && !selected_event_id.equals(-1)) {
+                UserSettings us = UserSettings.getSettings();
+                if (us.is_current_user_admin && !selected_event_id.equals(-1)) {
                     showDialogForCurrentRoomExit("Action Moderator", "You are an active moderator of a room. To create the room you have to leave the conversation. Do you want to leave the room before creating new room?");
                 } else if (!selected_event_id.equals(-1)) {
                     showDialogForCurrentRoomExit("Action Conversation", "Active conversation in progress. Do you want to leave the room before creating new room?");
                 } else {
-                    showDialogRoomCreate();
+                    RoomHelper.showDialogRoomCreate(activity);
                 }
             }
         });
@@ -710,7 +725,8 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
     private void initAgoraEngineAndJoinChannel(String channel_name, String agora_rtc_token, String agora_rtm_token) {
         initializeAgoraEngine();
         Integer role = -1;
-        if (is_current_role_speaker) {
+        UserSettings us = UserSettings.getSettings();
+        if (us.is_current_role_speaker) {
             role = Constants.CLIENT_ROLE_BROADCASTER;
         } else {
             role = Constants.CLIENT_ROLE_AUDIENCE;
@@ -728,10 +744,12 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
 
     private void initializeAgoraEngine() {
         try {
+            UserSettings us = UserSettings.getSettings();
 
            // is_current_role_speaker = true;
-            if (is_current_user_admin) {
-                is_current_role_speaker = Boolean.TRUE;
+            if (us.is_current_user_admin) {
+                us.is_current_role_speaker = Boolean.TRUE;
+                us.save();
             }
             mRtcEngine = RtcEngine.create(activity, getString(R.string.agora_app_id), mRtcEventHandler);
             //mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING);
@@ -739,13 +757,13 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
             mRtcEngine.setAudioProfile(Constants.AUDIO_PROFILE_MUSIC_HIGH_QUALITY_STEREO, Constants.AUDIO_SCENARIO_MEETING);
             mRtcEngine.setDefaultAudioRoutetoSpeakerphone(true);
             Integer role = -1;
-            if (is_current_role_speaker) {
+            if (us.is_current_role_speaker) {
                 role = Constants.CLIENT_ROLE_BROADCASTER;
             } else {
                 role = Constants.CLIENT_ROLE_AUDIENCE;
             }
             mRtcEngine.setClientRole(role);
-            is_muted = true;
+            us.is_muted = true; us.save();
             mRtcEngine.muteLocalAudioStream(true);
             mRtcEngine.disableVideo();
             mRtcEngine.enableAudioVolumeIndication(200, 3, true);
@@ -761,11 +779,12 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         final User user = User.getLoggedInUser();
         mRtcEngine.joinChannel(accessToken,channel_name, "Extra Optional Data", user.UserID);
 
-        mRtcEngine.muteLocalAudioStream(is_muted);
+        mRtcEngine.muteLocalAudioStream(true);
         UserInfo t = new UserInfo();
         mRtcEngine.getUserInfoByUid(user.UserID, t);
 
-        if (is_current_role_speaker) {
+        UserSettings us = UserSettings.getSettings();
+        if (us.is_current_role_speaker) {
             new UsersInRoom(Boolean.TRUE, Boolean.TRUE, user.UserID, user.FirstName, user.ProfilePicURL).save();
         }
         loadRoomFragment();
@@ -830,7 +849,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
     }
 
 
-    private void switch_roles(Integer role, Integer user_id) {
+    private void switch_roles_on_server(Integer role, Integer user_id) {
         final User user = User.getLoggedInUser();
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
@@ -858,9 +877,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
     }
 
     private void leave_channel_server_update() {
-        if (is_current_user_admin || is_current_role_speaker) {
-            return;
-        }
+        UserSettings us = UserSettings.getSettings();
         final User user = User.getLoggedInUser();
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
@@ -967,14 +984,10 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         if (!is_room_fragment_loaded) {
             Bundle args = new Bundle();
             args.putString("update_type", "LIST_CHANGE");
-       //     args.putParcelableArrayList("speakers_list", speakers_list);
-            args.putBoolean("is_current_role_speaker", is_current_role_speaker);
             args.putString("event_title", selected_channel_display_name);
-            args.putBoolean("is_current_user_admin", is_current_user_admin);;
-            args.putBoolean("is_muted", is_muted);
             args.putInt("event_id", selected_event_id);
             Fragment fr = new RoomDisplayFragment();
-            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+            FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
             ft.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top);
             fr.setArguments(args);
             ft.add(R.id.fragment_holder, fr);
@@ -985,7 +998,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
 
 
     private void loadFragmentWithoutupdate(Fragment fragment_to_start) {
-            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+            FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
             ft.add(R.id.fragment_holder, fragment_to_start);
             ft.commit();
     }
@@ -1000,10 +1013,10 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
             return;
         }
 
+        leave_channel_server_update();
         selected_event_id = all_feeds.get(index).eventID;
         selected_channel_display_name = all_feeds.get(index).eventTitle;
             if (checkPermission(activity)) {
-                leave_channel_server_update();
                 process_leave_channel();
                 processAndConnectToAChannel(selected_channel, selected_event_id);
             }
@@ -1021,7 +1034,9 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
     private void processAndConnectToAChannel(String channel_name, Integer event_id) {
         UsersInRoom.deleteAllRecords();
         UserSettings.deleteAll();
-
+        UserSettings us = new UserSettings();
+        us.UserID = User.getLoggedInUserID();
+        us.save();
         Log.d("debug_audio", "speaker list clear");
 
         final User user = User.getLoggedInUser();
@@ -1043,16 +1058,19 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                     for (int i = 0; i < all_moderator_ids.length(); i++) {
                         moderator_ids.add(all_moderator_ids.getInt(i));
                     }
+
+                    UserSettings us = UserSettings.getSettings();
                     if (current_role_id.equals(0)) {
-                        is_current_role_speaker = Boolean.TRUE;
-                        is_current_user_admin = Boolean.TRUE;
+                        us.is_current_role_speaker = Boolean.TRUE;
+                        us.is_current_user_admin = Boolean.TRUE;
                     } else if (current_role_id.equals(1)) {
-                        is_current_role_speaker = Boolean.TRUE;
-                        is_current_user_admin = Boolean.FALSE;
+                        us.is_current_role_speaker = Boolean.TRUE;
+                        us.is_current_user_admin = Boolean.FALSE;
                     } else {
-                        is_current_role_speaker = Boolean.FALSE;
-                        is_current_user_admin = Boolean.FALSE;
+                        us.is_current_role_speaker = Boolean.FALSE;
+                        us.is_current_user_admin = Boolean.FALSE;
                     }
+                    us.save();
 
                     initAgoraEngineAndJoinChannel(channel_name, agora_rtc_token, agora_rtm_token);
                 } catch (JSONException e) {
@@ -1215,53 +1233,19 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
 
 
     void process_mute_unmute() {
-        Boolean new_state = !is_muted;
-        server_update(User.getLoggedInUserID(), String.valueOf(selected_event_id), is_muted ? "unmute" : "mute", new ServerCallBack() {
+        UserSettings us = UserSettings.getSettings();
+        RoomHelper.server_update(User.getLoggedInUserID(), String.valueOf(selected_event_id), us.is_muted ? "mute" : "unmute", new ServerCallBack() {
             @Override
             public void onSuccess() {
-                if (is_muted) {
-                    mRtcEngine.muteLocalAudioStream(false);
-                    is_muted = false;
-                } else {
-                    mRtcEngine.muteLocalAudioStream(true);
-                    is_muted = true;
-                }
+                mRtcEngine.muteLocalAudioStream(us.is_muted);
             }
         });
 
-        UsersInRoom.changeMuteState(User.getLoggedInUserID(), new_state);
-
-        // update the list of speakers
-//        speakers_list.get(User.getLoggedInUserID()).IsMuted = is_muted;
+        UsersInRoom.changeMuteState(User.getLoggedInUserID(), us.is_muted);
     }
 
 
-    private void sendPing() {
-        User user = User.getLoggedInUser();
-        AsyncHttpClient client = new AsyncHttpClient();
-        RequestParams params = new RequestParams();
-        params.add("event_id", String.valueOf(selected_event_id));
 
-
-        JsonHttpResponseHandler jrep= new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Log.d("debug_data", "sent ping success");
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
-            }
-        };
-
-        client.addHeader("Accept", "application/json");
-        client.addHeader("Authorization", "Token " + user.AccessToken);
-        client.post( App.getBaseURL() + "page/send_a_ping", params, jrep);
-    }
 
 
     private final Handler handler = new Handler();
@@ -1269,7 +1253,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         public void run() {
             //
             // Do the stuff
-            sendPing();
+            RoomHelper.sendPing(selected_event_id);
             //
 
             handler.postDelayed(this, 20000);
@@ -1297,8 +1281,6 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         if (!is_bottom_sheet_visible) {
          //   makeBottomCTAHtLess(this.getView());
             Bundle args = new Bundle();
-            args.putBoolean("is_current_role_speaker", is_current_role_speaker);
-            args.putBoolean("is_muted", is_muted);
             args.putString("event_title", selected_channel_display_name);
             args.putInt("event_id", selected_event_id);
             Fragment frg = new BottomFragment();
@@ -1395,33 +1377,6 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         return true;
     }
 
-
-    private void send_hand_raise_request() {
-        has_raised_hand = true;
-        final User user = User.getLoggedInUser();
-        AsyncHttpClient client = new AsyncHttpClient();
-        RequestParams params = new RequestParams();
-        params.add("event_id", String.valueOf(selected_event_id));
-
-        JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
-            }
-        };
-
-        client.addHeader("Accept", "application/json");
-        client.addHeader("Authorization", "Token " + user.AccessToken);
-        client.post(App.getBaseURL() + "page/raise_hand", params, jrep);
-    }
-
     private void send_create_room_request(String title) {
         final User user = User.getLoggedInUser();
         AsyncHttpClient client = new AsyncHttpClient();
@@ -1463,17 +1418,8 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         showDialogExit(title, description, new ServerCallBack() {
             @Override
             public void onSuccess() {
-                showDialogRoomCreate();
+                RoomHelper.showDialogRoomCreate(activity);
             }
         });
-    }
-
-    private void showDialogRoomCreate() {
-
-        Fragment fr = new RoomCreateBottomSheetDialogFragment();
-        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-        ft.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top);
-        ft.add(R.id.fragment_holder, fr);
-        ft.commit();
     }
 }

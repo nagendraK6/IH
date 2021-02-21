@@ -70,51 +70,26 @@
             android:orientation="horizontal"
             android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="10dp"
-            android:layout_height="50dp">
-            <TextView
-                android:layout_marginStart="20dp"
-                android:background="@drawable/room_actions_button"
-                android:layout_marginBottom="20dp"
+            android:layout_height="70dp">
+            <RelativeLayout
                 android:id="@+id/leave_quitely"
-                android:layout_marginLeft="40dp"
-                android:textAlignment="center"
-                android:paddingTop="5dp"
-                android:textColor="@color/Black"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="✌🏽 Leave room">
-            </TextView>
-            <TextView
-                android:layout_marginRight="20dp"
-                android:background="@drawable/room_actions_button"
-                android:layout_marginBottom="10dp"
-                android:visibility="visible"
-                android:id="@+id/raise_hand"
-                android:layout_alignParentRight="true"
-                android:textAlignment="center"
-                android:paddingTop="5dp"
-                android:textColor="@color/Black"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="✋🏽 Raise Hand">
-            </TextView>
-            <TextView
-                android:layout_marginRight="20dp"
-                android:background="@drawable/room_actions_button"
-                android:layout_marginBottom="10dp"
-                android:visibility="invisible"
-                android:id="@+id/hand_down"
-                android:layout_alignParentRight="true"
-                android:textAlignment="center"
-                android:paddingTop="5dp"
-                android:textColor="@color/Black"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Bring Hand">
-            </TextView>
+                android:layout_height="70dp">
+                <TextView
+                    android:layout_marginStart="20dp"
+                    android:background="@drawable/room_actions_button"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginLeft="40dp"
+                    android:textAlignment="center"
+                    android:paddingTop="5dp"
+                    android:textColor="@color/Black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="✌🏽 Leave room">
+                </TextView>
+            </RelativeLayout>
             <ImageView
-                android:visibility="invisible"
+                android:visibility="visible"
                 android:layout_marginRight="40dp"
                 android:background="@drawable/mic_on_room_view"
                 android:layout_marginBottom="10dp"
@@ -126,6 +101,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
             </ImageView>
+            <TextView
+                android:layout_marginRight="100dp"
+                android:background="@drawable/hand_raise_dark"
+                android:layout_marginBottom="10dp"
+                android:visibility="visible"
+                android:id="@+id/hand_raise_audience_admin"
+                android:layout_alignParentRight="true"
+                android:textAlignment="center"
+                android:paddingTop="5dp"
+                android:paddingLeft="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            </TextView>
         </RelativeLayout>
     </RelativeLayout>
 </RelativeLayout>

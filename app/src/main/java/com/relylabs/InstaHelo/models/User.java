@@ -67,6 +67,11 @@ public class User extends Model {
     @Column(name = "ShowWelcomeScreen")
     public Boolean ShowWelcomeScreen;
 
+
+    @Column(name = "IsStartRoomEnabled")
+    public Boolean IsStartRoomEnabled;
+
+
     public User() {
         super();
         this.IsOTPVerified = false;
@@ -77,6 +82,7 @@ public class User extends Model {
         this.BioDescription = "";
         this.CompletedOnboarding = false;
         this.InvitesCount = 0;
+        this.IsStartRoomEnabled = false;
     }
 
 

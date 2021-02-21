@@ -79,6 +79,12 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.ViewHo
         }
 
         NewsFeedCardElementAdapter adapter = new NewsFeedCardElementAdapter(holder.itemView.getContext(), mData.get(position).userElements);
+        adapter.setClickListener(new NewsFeedCardElementAdapter.ItemClickListener() {
+            @Override
+            public void onTagClick(int index) {
+                if (mClickListener != null) mClickListener.onTagClick(position);
+            }
+        });
         holder.speaker_audience_list.setAdapter(adapter);
 
         PreCachingLayoutManager layoutManager = new PreCachingLayoutManager(holder.itemView.getContext());

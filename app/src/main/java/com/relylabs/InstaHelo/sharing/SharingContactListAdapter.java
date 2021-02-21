@@ -103,11 +103,12 @@ public class SharingContactListAdapter extends RecyclerView.Adapter<SharingConta
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 String phone = contact_numbers.get(position).toString();
                 Boolean isInstalledWhatsapp =isAppInstalled("com.whatsapp");
+                sendInvite(phone);
                 if(isInstalledWhatsapp){
                     /*if (!phone.startsWith("+91")){
                         phone = "+91" + phone;
                     }*/
-                    String message = "Hey!, come join me at InstaHelo.";
+                    String message = "Hey " + contact_names.get(position) + " - I have an invite to InstaHelo and want you to join. I added you using " + phone +  ", so make sure to use that number when you register. Here is the link!  https://play.google.com/store/apps/details?id=com.relylabs.InstaHelo";
                     try {
                         String url = "https://api.whatsapp.com/send?phone="+ phone +"&text=" + URLEncoder.encode(message, "UTF-8");
                         i.setPackage("com.whatsapp");
@@ -122,8 +123,6 @@ public class SharingContactListAdapter extends RecyclerView.Adapter<SharingConta
                 else{
                     
                 }
-                sendInvite(phone);
-
             }
         });
 
@@ -132,6 +131,9 @@ public class SharingContactListAdapter extends RecyclerView.Adapter<SharingConta
         RequestParams params = new RequestParams();
         params.add("username",username);
         final User user = User.getLoggedInUser();
+        if (user.InvitesCount <= 0) {
+            return;
+        }
         AsyncHttpClient client = new AsyncHttpClient();
         JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
             @Override

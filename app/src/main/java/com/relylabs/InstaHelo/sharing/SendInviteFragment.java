@@ -103,11 +103,7 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
             public boolean onQueryTextChange(String newText) {
                 //    adapter.getFilter().filter(newText);
                 Log.d("search",newText);
-                if(newText==""){
-                    contact_names = contact_names_permanent;
-                    contact_numbers = contact_numbers_permanent;
-                }
-                else{
+                if(!newText.equals("")) {
                     contact_names.clear();
                     contact_numbers.clear();
                     for (int i=0;i<contact_names_permanent.size();i++){
@@ -117,9 +113,10 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
                             contact_numbers.add(contact_numbers_permanent.get(i));
                         }
                     }
+
+                    adapter.notifyDataSetChanged();
                 }
 
-                adapter.notifyDataSetChanged();
                 return false;
             }
         });

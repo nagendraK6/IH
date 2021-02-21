@@ -1,49 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingBottom="8dp">
+    <RelativeLayout
+        android:layout_marginTop="10dp"
+        android:background="@drawable/border_top_bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/white_hand"
+            android:src="@drawable/hand_white"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/white_hand"
+            android:layout_width="wrap_content"
+            android:id="@+id/raise_hand_title"
+            android:layout_height="wrap_content"
+            android:text="Raised Hands"
+            android:textSize="24dp"/>
 
+        <TextView
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_below="@+id/raise_hand_title"
+            android:layout_toRightOf="@+id/white_hand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="The approved persons become speakers"
+            android:textSize="16dp"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_marginTop="100dp"
+            android:id="@+id/pending_hand_raise_users"
+            android:background="@color/White"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+    </RelativeLayout>
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/txt_download"
-        style="@style/BottomSheetItem"
-        android:drawableStart="@drawable/mic_off_self_user"
-        android:drawableLeft="@drawable/mic_off_self_user"
-        android:text="Download"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/txt_copy"
-        style="@style/BottomSheetItem"
-        android:drawableStart="@drawable/mic_off_self_user"
-        android:drawableLeft="@drawable/mic_off_self_user"
-        android:text="Copy"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_download" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/txt_share"
-        style="@style/BottomSheetItem"
-        android:layout_marginTop="8dp"
-        android:drawableStart="@drawable/mic_off_self_user"
-        android:drawableLeft="@drawable/mic_off_self_user"
-        android:text="Share"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_copy" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/txt_whats_app"
-        style="@style/BottomSheetItem"
-        android:drawableStart="@drawable/mic_off_self_user"
-        android:drawableLeft="@drawable/mic_off_self_user"
-        android:text="Whats App"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_share" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

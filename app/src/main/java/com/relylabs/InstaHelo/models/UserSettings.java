@@ -18,8 +18,8 @@ public class UserSettings extends Model {
     public Integer selected_event_id;
 
 
-    @Column(name = "selected_channel")
-    public String selected_channel;
+    @Column(name = "selected_channel_name")
+    public String selected_channel_name;
 
 
     @Column(name = "selected_channel_display_name")
@@ -39,16 +39,24 @@ public class UserSettings extends Model {
     @Column(name = "is_muted")
     public Boolean is_muted;
 
+    @Column(name = "is_self_hand_raised")
+    public Boolean is_self_hand_raised;
+
+
+    @Column(name = "audience_hand_raised")
+    public Boolean audience_hand_raised;
 
     public UserSettings() {
         super();
         this.is_muted = false;
         this.is_bottom_sheet_visible = false;
-        this.selected_channel = "";
+        this.selected_channel_name = "";
+        this.is_self_hand_raised = false;
         this.selected_channel_display_name = "";
         this.selected_event_id = -1;
         this.is_current_role_speaker = false;
         this.is_current_user_admin = false;
+        this.audience_hand_raised = false;
     }
 
 
