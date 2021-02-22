@@ -121,7 +121,11 @@ public class SharingContactListAdapter extends RecyclerView.Adapter<SharingConta
                     }
                 }
                 else{
-                    
+                    Intent smsIntent = new Intent(Intent.ACTION_VIEW);
+                    smsIntent.setType("vnd.android-dir/mms-sms");
+                    smsIntent.putExtra("address", phone);
+                    smsIntent.putExtra("sms_body","Hey!, come join me at InstaHelo");
+                    context.startActivity(smsIntent);
                 }
             }
         });

@@ -75,4 +75,10 @@ We are thrilled to have you onboard ! \n\nWe are adding people gradually to Inst
     <!-- strings.xml -->
     <string name="didn_t_rece">Didnot receive? Resend</string>
     <string name="terms_of_service">By entering your phone number, you\'re agreeing to our Terms Of Service and Privacy Policy. Thanks!</string>
+    <string name="followers">followers</string>
+    <string name="following">following</string>
+    <string name="member_of">Member of</string>
+    <string name="nominated">Nominated by</string>
+    <string name="Followers">Followers</string>
+    <string name="following_string">Following</string>
 </resources>
