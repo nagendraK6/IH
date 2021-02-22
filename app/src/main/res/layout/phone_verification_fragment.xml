@@ -18,7 +18,9 @@
 
     <TextView
         android:id="@+id/phone_no"
-        android:layout_width="wrap_content"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
@@ -26,6 +28,7 @@
         android:layout_marginTop="52dp"
         android:gravity="center_horizontal"
         android:inputType="textMultiLine"
+        android:scrollHorizontally="false"
         android:maxLines="2"
         android:text="Enter your 4 digits OTP we sent you"
         android:textColor="@color/neartagtextcolor"
