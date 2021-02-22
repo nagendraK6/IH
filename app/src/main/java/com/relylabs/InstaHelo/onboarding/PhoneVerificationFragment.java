@@ -434,11 +434,13 @@ public class PhoneVerificationFragment extends Fragment {
                         user.InvitesCount = response.getInt("total_invites_count");
                         user.ShowWelcomeScreen = Boolean.TRUE;
                         user.UserID = response.getInt("user_id");
+                        user.IsStartRoomEnabled = response.getBoolean("IsStartRoomEnabled");
                     }
                     catch(Exception e){
                         Log.d("User_not_invited",response.toString());
                         user.InviterImageURL = "";
                         user.IsInvited = Boolean.FALSE;
+                        user.IsStartRoomEnabled = Boolean.FALSE;
                         user.InviterName = "";
                         user.FirstName = "";
                         user.LastName = "";

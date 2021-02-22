@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="8dp">
+    <RelativeLayout
+        android:layout_marginTop="10dp"
+        android:background="@drawable/border_top_bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/white_hand"
+            android:src="@drawable/hand_white"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/white_hand"
+            android:layout_width="wrap_content"
+            android:id="@+id/raise_hand_title"
+            android:layout_height="wrap_content"
+            android:text="Raised Hands"
+            android:textSize="24dp"/>
+
+        <TextView
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_below="@+id/raise_hand_title"
+            android:layout_toRightOf="@+id/white_hand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="The approved persons become speakers"
+            android:textSize="16dp"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_marginTop="100dp"
+            android:id="@+id/pending_hand_raise_users"
+            android:background="@color/White"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+    </RelativeLayout>
+
+</RelativeLayout>

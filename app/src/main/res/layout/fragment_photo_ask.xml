@@ -5,33 +5,18 @@
     android:layout_height="match_parent"
     android:background="@color/neartagtheme"
     android:orientation="vertical">
-    <!-- Form-fields -->
-    <!-- Great choice, lets add a photo now -->
-
-
-    <RelativeLayout
-        android:id="@+id/relLayout1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <include layout="@layout/snippet_app_skip_header" />
-    </RelativeLayout>
 
     <TextView
         android:id="@+id/great_choic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/relLayout1"
+        android:layout_marginTop="100dp"
+        android:textAppearance="@style/OnboardingTop"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="82dp"
-        android:layout_marginLeft="82dp"
-        android:layout_marginTop="18dp"
-        android:layout_marginEnd="84dp"
         android:gravity="center_horizontal|center_vertical"
-        android:text="Great choice, lets add a photo now"
-        android:textSize="16dp" />
+        android:text="Great choice, lets add a photo now" />
 
     <ImageView
         android:id="@+id/form_fields"
@@ -39,7 +24,7 @@
         android:layout_height="128dp"
         android:layout_below="@+id/great_choic"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="50dp"
         android:background="@drawable/form_fields" />
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -48,24 +33,19 @@
         android:layout_height="128dp"
         android:layout_below="@+id/great_choic"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="50dp"
         android:visibility="invisible" />
 
     <TextView
         android:id="@+id/next_photo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/form_fields"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
-        android:layout_marginTop="252dp"
+        android:layout_marginBottom="150dp"
         android:background="@drawable/next_disabled"
-        android:gravity="center_horizontal"
-        android:paddingLeft="17dp"
-
-        android:paddingTop="12dp"
-        android:paddingRight="34dp"
-        android:paddingBottom="12dp" />
+        android:gravity="center_horizontal" />
 
 
     <ProgressBar

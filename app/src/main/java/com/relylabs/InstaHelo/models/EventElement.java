@@ -6,32 +6,17 @@ import com.activeandroid.annotation.Table;
 
 import java.util.ArrayList;
 
-@Table(name = "EventElement")
-public class EventElement  extends Model {
 
-    @Column(name = "eventID", unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
+
+public class EventElement {
+
     public Integer eventID;
 
-    @Column(name = "eventTitle")
     public String eventTitle;
 
+    public String eventChannelName;
 
-    public EventElement() {
-        super();
-        this.eventID = -1;
-    }
+    public ArrayList<String> eventPhotoUrls;
 
-    public EventElement(
-            Integer eventID,
-            String eventTitle
-    ) {
-        super();
-        this.eventID = eventID;
-        this.eventTitle = eventTitle;
-    }
-
-
-    public String getEventTitle() {
-        return eventTitle;
-    }
+    public ArrayList<EventCardUserElement> userElements;
 }

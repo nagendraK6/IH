@@ -72,7 +72,13 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         final User user = User.getLoggedInUser();
-        String invite_number = "YOU HAVE " + user.InvitesCount.toString() + " INVITES";
+        String invite_number;
+        if (user.InvitesCount <= 0){
+            invite_number = "YOU DO NOT HAVE ANY INVITES LEFT";
+        }
+        else{
+            invite_number = "YOU HAVE " + user.InvitesCount.toString() + " INVITES";
+        }
         TextView invite_top = (TextView) view.findViewById(R.id.main_desc_with_invite_count);
         invite_top.setText(invite_number);
         ImageView left_move = view.findViewById(R.id.move_back);
@@ -103,11 +109,12 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
             public boolean onQueryTextChange(String newText) {
                 //    adapter.getFilter().filter(newText);
                 Log.d("search",newText);
-                if(newText==""){
-                    contact_names = contact_names_permanent;
-                    contact_numbers = contact_numbers_permanent;
-                }
-                else{
+                if(newText.length()==0){
+                    contact_names.clear();
+                    contact_numbers.clear();
+                    contact_names.addAll(contact_names_permanent);
+                    contact_numbers.addAll((contact_numbers_permanent));
+                } else {
                     contact_names.clear();
                     contact_numbers.clear();
                     for (int i=0;i<contact_names_permanent.size();i++){
@@ -117,9 +124,10 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
                             contact_numbers.add(contact_numbers_permanent.get(i));
                         }
                     }
+
+                    adapter.notifyDataSetChanged();
                 }
 
-                adapter.notifyDataSetChanged();
                 return false;
             }
         });
@@ -288,7 +296,11 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
 
                             contact_numbers.clear();
                             contact_names.clear();
+                            contact_numbers_permanent.clear();
+                            contact_names_permanent.clear();
                             contact_name.addAll(new_contact_names);
+                            contact_names_permanent.addAll(new_contact_names);
+                            contact_numbers_permanent.addAll(new_contact_numbers);
                             contact_numbers.addAll(new_contact_numbers);
                             adapter.notifyDataSetChanged();
                         }

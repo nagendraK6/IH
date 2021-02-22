@@ -46,8 +46,8 @@
     <TextView
         android:id="@+id/get_started"
         android:layout_below="@+id/we_are_thri"
-        android:layout_width="180dp"
-        android:layout_height="50dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
         android:layout_marginBottom="110dp"

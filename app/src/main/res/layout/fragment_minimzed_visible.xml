@@ -2,14 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="#99F1EFE4"
     android:layout_height="wrap_content">
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/start_a_room"
-        android:layout_above="@+id/active_room_shortcut"
-        android:layout_height="40dp"/>
     <RelativeLayout
         android:layout_width="match_parent"
         android:id="@+id/active_room_shortcut"
@@ -60,11 +53,11 @@
             android:text="✌🏽">
         </TextView>
         <TextView
-            android:layout_marginRight="30dp"
-            android:background="@drawable/leave_room_circular_bg"
+            android:layout_marginRight="160dp"
+            android:background="@drawable/raise_hand_without_notification"
             android:layout_marginBottom="10dp"
-            android:visibility="invisible"
-            android:id="@+id/raise_hand"
+            android:visibility="visible"
+            android:id="@+id/hand_raise_audience_admin"
             android:layout_alignParentRight="true"
             android:textAlignment="center"
             android:paddingTop="5dp"
@@ -72,8 +65,7 @@
             android:layout_marginTop="40dp"
             android:textColor="@color/Black"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="✋🏽 ">
+            android:layout_height="wrap_content">
         </TextView>
         <TextView
             android:background="@drawable/mic_on_room_view"

@@ -13,21 +13,26 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="18dp"
-        android:layout_marginTop="38dp"
+        android:layout_marginTop="55dp"
         android:src="@drawable/left_move_button" />
 
     <TextView
         android:id="@+id/phone_no"
-        android:layout_width="wrap_content"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="52dp"
         android:gravity="center_horizontal"
+        android:inputType="textMultiLine"
+        android:scrollHorizontally="false"
+        android:maxLines="2"
         android:text="Enter your 4 digits OTP we sent you"
         android:textColor="@color/neartagtextcolor"
-        android:textSize="16sp" />
+        android:textSize="20sp" />
 
     <LinearLayout
         android:id="@+id/otp_box"
@@ -126,15 +131,10 @@
         android:layout_alignTop="@+id/didn_t_rece"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
-        android:layout_marginTop="230dp"
+        android:layout_marginTop="143dp"
         android:background="@drawable/next_disabled"
         android:gravity="center_horizontal|center_vertical"
-        android:paddingLeft="17dp"
-        android:paddingTop="12dp"
-        android:paddingRight="34dp"
-        android:paddingBottom="12dp"
-        android:textColor="#ffffff"
-        android:textSize="16dp" />
+        android:textColor="#FFFFFF" />
 
     <TextView
         android:id="@+id/re_send"
