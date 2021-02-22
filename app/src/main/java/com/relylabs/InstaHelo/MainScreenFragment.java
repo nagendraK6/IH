@@ -615,12 +615,12 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
             Picasso.get().load(user.ProfilePicURL).into(img);
         }
 
-        /*img.setOnClickListener(new View.OnClickListener() {
+        img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 loadFragmentWithoutupdate(new Profile_Screen_Fragment());
             }
-        });*/
+        });
 
         fetch_all_events();
 
