@@ -1,4 +1,4 @@
-package com.relylabs.InstaHelo.followerList;
+package com.relylabs.InstaHelo.notification;
 
 import android.os.Bundle;
 
@@ -35,17 +35,17 @@ import java.util.ArrayList;
 import cz.msebera.android.httpclient.Header;
 
 
-public class FollowerList extends Fragment {
+public class NotificationList extends Fragment {
 
 
-    private  ArrayList<String> names = new ArrayList<String>();
-    private  ArrayList<String> usernames = new ArrayList<String>();
-    private  ArrayList<String> bio = new ArrayList<String>();
-    private  ArrayList<String> img = new ArrayList<String>();
+    private  ArrayList<String> text_arr = new ArrayList<String>();
+    private  ArrayList<String> username = new ArrayList<String>();
+    private  ArrayList<String> img_arr = new ArrayList<String>();
+    private  ArrayList<String> time_arr = new ArrayList<String>();
     private  ArrayList<String> currStatus = new ArrayList<>();
     View fragment_view;
     RecyclerView recyclerView;
-    FollowerListAdapter adapter;
+    NotificationListAdapter adapter;
     SpinKitView busy;
 
     @Override
@@ -57,21 +57,20 @@ public class FollowerList extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_follower_list, container, false);
+        return inflater.inflate(R.layout.fragment_notification_list, container, false);
     }
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        busy = view.findViewById(R.id.loading_channel_token_fetch3);
+        busy = view.findViewById(R.id.loading_channel_token_fetch2);
         fragment_view = view;
-        ImageView back = view.findViewById(R.id.prev_button_follow);
+        ImageView back = view.findViewById(R.id.prev_button_notification);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 removefragment();
-//                loadFragment(new Profile_Screen_Fragment());
             }
         });
-        getFollowing();
+        getNotifications();
         prepareRecyclerView();
 
     }
@@ -79,7 +78,7 @@ public class FollowerList extends Fragment {
     public void onDestroy() {
         super.onDestroy();
     }
-    public void getFollowing(){
+    public void getNotifications(){
         show_busy_indicator();
         final User user = User.getLoggedInUser();
         AsyncHttpClient client = new AsyncHttpClient();
@@ -88,38 +87,24 @@ public class FollowerList extends Fragment {
         JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                hide_busy_indicator();
                 try {
-                    hide_busy_indicator();
-                    String error_message = response.getString("error_message");
-                    Log.d("/followers",response.toString());
-                    JSONArray name = response.getJSONArray("names");
-                    JSONArray username = response.getJSONArray("usernames");
-                    JSONArray bio_temp = response.getJSONArray("bio");
-                    JSONArray img_temp = response.getJSONArray(("img"));
-                    JSONArray follower_status = response.getJSONArray("follower_status");
-                    if(name!=null){
-                        for (int i=0;i<name.length();i++){
-                            names.add(name.getString(i));
-                            currStatus.add(follower_status.getString(i));
+                    Log.d("response_noti", response.toString());
+                    JSONArray text_json = response.getJSONArray("text_arr");
+                    JSONArray user_name = response.getJSONArray("username");
+                    JSONArray img_arr_json = response.getJSONArray("img_arr");
+                    JSONArray time_arr_json = response.getJSONArray("time_arr");
+                    if (text_json != null) {
+                        for (int i = 0; i < text_json.length(); i++) {
+                            text_arr.add(text_json.getString(i));
+                            username.add(user_name.getString(i));
+                            img_arr.add(img_arr_json.getString(i));
+                            time_arr.add(time_arr_json.getString(i));
                         }
+                        adapter.notifyDataSetChanged();
                     }
-                    if(username!=null){
-                        for (int i=0;i<username.length();i++){
-                            usernames.add(username.getString(i));
-                        }
-                    }
-                    if(bio_temp!=null){
-                        for(int i=0;i<bio_temp.length();i++){
-                            bio.add(bio_temp.getString(i));
-                        }
-                    }
-                    if(img_temp!=null){
-                        for(int i=0;i<img_temp.length();i++){
-                            img.add(img_temp.getString(i));
-                        }
-                    }
-                    adapter.notifyDataSetChanged();
-                } catch (JSONException e) {
+                }
+                catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
@@ -136,7 +121,7 @@ public class FollowerList extends Fragment {
 
         client.addHeader("Accept", "application/json");
         client.addHeader("Authorization", "Token " + user.AccessToken);
-        client.post(App.getBaseURL() + "registration/followers_list", params, jrep);
+        client.post(App.getBaseURL() + "registration/get_notifications", params, jrep);
     }
 
 
@@ -150,13 +135,13 @@ public class FollowerList extends Fragment {
     }
     private void loadFragment(Fragment fragment_to_start) {
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_holder, fragment_to_start);
+        ft.add(R.id.fragment_holder, fragment_to_start);
         ft.commit();
     }
     void prepareRecyclerView() {
-        recyclerView = fragment_view.findViewById(R.id.list_follower);
+        recyclerView = fragment_view.findViewById(R.id.list_notification);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
-        adapter = new FollowerListAdapter(getContext(), names, usernames,bio, img,currStatus);
+        adapter = new NotificationListAdapter(getContext(), text_arr, username,img_arr,time_arr);
         recyclerView.setAdapter(adapter);
 
     }

@@ -42,6 +42,7 @@ public class FollowingList extends Fragment {
     private  ArrayList<String> usernames = new ArrayList<String>();
     private  ArrayList<String> bio = new ArrayList<String>();
     private  ArrayList<String> img = new ArrayList<String>();
+    private  ArrayList<String> currStatus = new ArrayList<>();
     SpinKitView busy;
     View fragment_view;
     RecyclerView recyclerView;
@@ -98,6 +99,7 @@ public class FollowingList extends Fragment {
                     if(name!=null){
                         for (int i=0;i<name.length();i++){
                             names.add(name.getString(i));
+                            currStatus.add("Following");
                         }
                     }
                     if(username!=null){
@@ -153,7 +155,7 @@ public class FollowingList extends Fragment {
     void prepareRecyclerView() {
         recyclerView = fragment_view.findViewById(R.id.list_follower);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
-        adapter = new FollowingListAdapter(getContext(), names, usernames,bio, img);
+        adapter = new FollowingListAdapter(getContext(), names, usernames,bio, img,currStatus);
 //        adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
 

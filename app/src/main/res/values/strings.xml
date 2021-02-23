@@ -60,8 +60,6 @@
     <string name="invited_name_format_2" translatable="false"> Welcome again 🎉</string>
 
 
-
-
     <string name="welcome">👋 Welcome</string>
     <!-- strings.xml -->
     <string name="we_are_thri">
@@ -81,4 +79,7 @@ We are thrilled to have you onboard ! \n\nWe are adding people gradually to Inst
     <string name="nominated">Nominated by</string>
     <string name="Followers">Followers</string>
     <string name="following_string">Following</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="notification">Notifications</string>
 </resources>

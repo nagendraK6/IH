@@ -2,6 +2,8 @@ package com.relylabs.InstaHelo.followerList;
 
 import android.content.Context;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
@@ -13,10 +15,21 @@ import android.widget.TextView;
 
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.shape.CornerFamily;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+import com.relylabs.InstaHelo.App;
 import com.relylabs.InstaHelo.R;
+import com.relylabs.InstaHelo.Utils.Logger;
+import com.relylabs.InstaHelo.models.User;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.WeakHashMap;
+
+import cz.msebera.android.httpclient.Header;
 
 
 public class FollowerListAdapter extends RecyclerView.Adapter<FollowerListAdapter.ViewHolder> {
@@ -25,15 +38,17 @@ public class FollowerListAdapter extends RecyclerView.Adapter<FollowerListAdapte
     private LayoutInflater mInflater;
     private FollowerListAdapter.ItemClickListener mClickListener;
     private Context context;
+    private ArrayList<String> currStatus;
     private static final int MY_PERMISSIONS_REQUEST_SEND_SMS =0 ;
     // data is passed into the constructor
-    FollowerListAdapter(Context context, ArrayList<String> names, ArrayList<String> usernames,ArrayList<String> bio,ArrayList<String> img) {
+    FollowerListAdapter(Context context, ArrayList<String> names, ArrayList<String> usernames,ArrayList<String> bio,ArrayList<String> img,ArrayList<String> currentStatus) {
         this.mInflater = LayoutInflater.from(context);
         this.names = names;
         this.usernames = usernames;
         this.bio = bio;
         this.img = img;
         this.context = context;
+        this.currStatus = currentStatus;
     }
 
     @Override
@@ -55,10 +70,75 @@ public class FollowerListAdapter extends RecyclerView.Adapter<FollowerListAdapte
 
             }
         });
+        holder.follow.setText(this.currStatus.get(position));
         holder.follow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("follow_click","Clicked follow");
+                String curr_status = currStatus.get(position);
+                if(curr_status.equals("Following")){
+
+                    final User user = User.getLoggedInUser();
+                    AsyncHttpClient client = new AsyncHttpClient();
+                    boolean running = false;
+                    RequestParams params = new RequestParams();
+                    params.add("username",usernames.get(position));
+                    JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+//                            hide_busy_indicator();
+                            currStatus.set(position,"Follow");
+                            Log.d("response_follow",response.toString());
+                            holder.follow.setText("Follow");
+                        }
+
+
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
+                            WeakHashMap<String, String> log_data = new WeakHashMap<>();
+                            log_data.put(Logger.STATUS, Integer.toString(statusCode));
+                            log_data.put(Logger.JSON, obj.toString());
+                            log_data.put(Logger.THROWABLE, t.toString());
+
+                        }
+                    };
+
+                    client.addHeader("Accept", "application/json");
+                    client.addHeader("Authorization", "Token " + user.AccessToken);
+                    client.post(App.getBaseURL() + "registration/unfollow_user", params, jrep);
+                }
+                else if(curr_status.equals("Follow") ){
+
+                    final User user = User.getLoggedInUser();
+                    AsyncHttpClient client = new AsyncHttpClient();
+                    boolean running = false;
+                    RequestParams params = new RequestParams();
+                    params.add("username",usernames.get(position));
+                    JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+//                            hide_busy_indicator();
+                            currStatus.set(position,"Following");
+                            Log.d("response_follow",response.toString());
+                            holder.follow.setText("Following");
+                        }
+
+
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
+                            WeakHashMap<String, String> log_data = new WeakHashMap<>();
+                            log_data.put(Logger.STATUS, Integer.toString(statusCode));
+                            log_data.put(Logger.JSON, obj.toString());
+                            log_data.put(Logger.THROWABLE, t.toString());
+
+                        }
+                    };
+
+                    client.addHeader("Accept", "application/json");
+                    client.addHeader("Authorization", "Token " + user.AccessToken);
+                    client.post(App.getBaseURL() + "registration/follow_user", params, jrep);
+                }
 
             }
         });
@@ -102,8 +182,8 @@ public class FollowerListAdapter extends RecyclerView.Adapter<FollowerListAdapte
             name = itemView.findViewById(R.id.name);
             username = itemView.findViewById(R.id.username_follow);
             description = itemView.findViewById(R.id.description);
-            follow = itemView.findViewById(R.id.follow);
-            prof = itemView.findViewById(R.id.profile_img_follow);
+            follow = itemView.findViewById(R.id.time);
+            prof = itemView.findViewById(R.id.profile_img_noti);
             itemView.setOnClickListener(this);
             v = itemView;
         }
@@ -124,7 +204,11 @@ public class FollowerListAdapter extends RecyclerView.Adapter<FollowerListAdapte
     public interface ItemClickListener {
         void onItemClick(int position);
     }
-
+//    private void loadFragment(Fragment fragment_to_start) {
+//        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+//        ft.add(R.id.fragment_holder, fragment_to_start);
+//        ft.commit();
+//    }
     @Override
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
     }

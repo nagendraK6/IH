@@ -37,4 +37,5 @@
     <color name="DarkGrey">#737373 </color>
     <color name="Black">#000 </color>
     <color name="main_screen_text_color">#4A4A4A</color>
+    <color name="follower_blue">#2879C2</color>
 </resources>

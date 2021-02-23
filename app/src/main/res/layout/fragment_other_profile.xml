@@ -75,7 +75,6 @@
         android:layout_alignStart="@+id/profile_img"
         android:layout_marginStart="0dp"
         android:layout_marginTop="20sp"
-        android:text="TextView"
         android:textColor="@color/Black"
         android:textSize="21sp"
         android:textStyle="bold" />
@@ -90,7 +89,6 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="0dp"
         android:textColor="@color/Black"
-        android:text="TextView"
         android:textSize="18sp" />
 
     <TextView
@@ -174,5 +172,17 @@
         android:textColor="@color/Black"
         android:layout_toEndOf="@+id/profile_img_noti"
         android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/follow_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/profile_img"
+        android:layout_alignBottom="@+id/profile_img"
+        android:layout_marginStart="69dp"
+        android:layout_marginTop="29dp"
+        android:layout_marginBottom="27dp"
+        android:layout_toEndOf="@+id/profile_img"
+        android:textSize="18sp" />
 
 </RelativeLayout>

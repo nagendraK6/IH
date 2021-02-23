@@ -28,17 +28,16 @@ import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.WeakHashMap;
 
 import cz.msebera.android.httpclient.Header;
 
 
-public class Profile_Screen_Fragment extends Fragment {
-
-
+public class OtherProfile extends Fragment {
     public String inviterUsername = "";
-
+    public String follow_text = "";
     SpinKitView busy;
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,7 +48,7 @@ public class Profile_Screen_Fragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.profile_screen_fragment, container, false);
+        return inflater.inflate(R.layout.fragment_other_profile, container, false);
     }
     private void removefragment() {
         Fragment f = getActivity().getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
@@ -70,41 +69,7 @@ public class Profile_Screen_Fragment extends Fragment {
                 removefragment();
             }
         });
-        TextView followerBtn = view.findViewById(R.id.textView12);
-        followerBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadFragment(new FollowerList());
-            }
-        });
 
-        TextView followingBtn = view.findViewById(R.id.textView15);
-        followingBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadFragment(new FollowingList());
-            }
-        });
-        ShapeableImageView prof = view.findViewById(R.id.profile_img);
-        float radius = getResources().getDimension(R.dimen.default_corner_radius_profile_page);
-        prof.setShapeAppearanceModel(prof.getShapeAppearanceModel()
-                .toBuilder()
-                .setTopRightCorner(CornerFamily.ROUNDED,radius)
-                .setTopLeftCorner(CornerFamily.ROUNDED,radius)
-                .setBottomLeftCorner(CornerFamily.ROUNDED,radius)
-                .setBottomRightCorner(CornerFamily.ROUNDED,radius)
-                .build());
-        TextView name = view.findViewById(R.id.name_user);
-        TextView username = view.findViewById(R.id.username);
-        TextView user_bio_old = view.findViewById(R.id.user_bio);
-
-
-        name.setText(user.FirstName + " " + user.LastName);
-        user_bio_old.setText(user.BioDescription);
-        username.setText(user.Username);
-        if (!user.ProfilePicURL.equals("")) {
-            Picasso.get().load(user.ProfilePicURL).into(prof);
-        }
         ShapeableImageView inviter_img = view.findViewById(R.id.profile_img_noti);
         inviter_img.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,16 +83,91 @@ public class Profile_Screen_Fragment extends Fragment {
                 }
             }
         });
+        TextView follow_btn = view.findViewById(R.id.follow_btn);
+        String username_display = getArguments().getString("username");
+        follow_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(follow_text.equals("Following")){
+
+                    final User user = User.getLoggedInUser();
+                    AsyncHttpClient client = new AsyncHttpClient();
+                    boolean running = false;
+                    RequestParams params = new RequestParams();
+                    params.add("username",username_display);
+                    JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+//                            hide_busy_indicator();
+                            follow_text = "Follow";
+                            Log.d("response_follow",response.toString());
+                            follow_btn.setText("Follow");
+                        }
+
+
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
+                            WeakHashMap<String, String> log_data = new WeakHashMap<>();
+                            log_data.put(Logger.STATUS, Integer.toString(statusCode));
+                            log_data.put(Logger.JSON, obj.toString());
+                            log_data.put(Logger.THROWABLE, t.toString());
+
+                        }
+                    };
+
+                    client.addHeader("Accept", "application/json");
+                    client.addHeader("Authorization", "Token " + user.AccessToken);
+                    client.post(App.getBaseURL() + "registration/unfollow_user", params, jrep);
+                }
+                else if(follow_text.equals("Follow") ){
+
+                    final User user = User.getLoggedInUser();
+                    AsyncHttpClient client = new AsyncHttpClient();
+                    boolean running = false;
+                    RequestParams params = new RequestParams();
+                    params.add("username",username_display);
+                    JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+//                            hide_busy_indicator();
+                            follow_text = "Following";
+                            Log.d("response_follow",response.toString());
+                            follow_btn.setText("Following");
+                        }
+
+
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
+                            WeakHashMap<String, String> log_data = new WeakHashMap<>();
+                            log_data.put(Logger.STATUS, Integer.toString(statusCode));
+                            log_data.put(Logger.JSON, obj.toString());
+                            log_data.put(Logger.THROWABLE, t.toString());
+
+                        }
+                    };
+
+                    client.addHeader("Accept", "application/json");
+                    client.addHeader("Authorization", "Token " + user.AccessToken);
+                    client.post(App.getBaseURL() + "registration/follow_user", params, jrep);
+                }
+
+            }
+        });
+
         getProfileInfo(view);
 
     }
 
     public void getProfileInfo(View view){
         show_busy_indicator();
+        String username_display = getArguments().getString("username");
         final User user = User.getLoggedInUser();
         AsyncHttpClient client = new AsyncHttpClient();
         boolean running = false;
         RequestParams params = new RequestParams();
+        params.add("username",username_display);
         JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -141,7 +181,25 @@ public class Profile_Screen_Fragment extends Fragment {
                         String inviter_image = response.getString("inviter_img");
                         String joined_at = response.getString("joined_at");
                         String bio = response.getString("bio");
+                        follow_text = response.getString("follow_text");
+                        TextView follow_btn = view.findViewById(R.id.follow_btn);
+                        follow_btn.setText(follow_text);
                         inviterUsername = response.getString("inviterUsername");
+                        String user_name = response.getString("name");
+//                        String user_username = response.getString("username");
+                        String prof_url = response.getString("prof_url");
+                        ShapeableImageView prof = view.findViewById(R.id.profile_img);
+                        if(!prof_url.equals("")){
+                            float radius = getResources().getDimension(R.dimen.default_corner_radius_profile_page);
+                            prof.setShapeAppearanceModel(prof.getShapeAppearanceModel()
+                                    .toBuilder()
+                                    .setTopRightCorner(CornerFamily.ROUNDED,radius)
+                                    .setTopLeftCorner(CornerFamily.ROUNDED,radius)
+                                    .setBottomLeftCorner(CornerFamily.ROUNDED,radius)
+                                    .setBottomRightCorner(CornerFamily.ROUNDED,radius)
+                                    .build());
+                            Picasso.get().load(prof_url).into(prof);
+                        }
                         ShapeableImageView inviter_img = view.findViewById(R.id.profile_img_noti);
                         if (!inviter_image.equals("")) {
                             float radius = getResources().getDimension(R.dimen.default_corner_radius_profile_inviter);
@@ -156,7 +214,10 @@ public class Profile_Screen_Fragment extends Fragment {
                         }
                         TextView follow = view.findViewById(R.id.follower);
                         TextView following_text = view.findViewById(R.id.following);
-
+                        TextView name = view.findViewById(R.id.name_user);
+                        name.setText(user_name);
+                        TextView username = view.findViewById(R.id.username);
+                        username.setText(username_display);
                         follow.setText(String.valueOf(follower));
                         following_text.setText(String.valueOf(following));
                         TextView joined = view.findViewById(R.id.joined);
@@ -189,7 +250,7 @@ public class Profile_Screen_Fragment extends Fragment {
 
         client.addHeader("Accept", "application/json");
         client.addHeader("Authorization", "Token " + user.AccessToken);
-        client.post(App.getBaseURL() + "registration/profile_info", params, jrep);
+        client.post(App.getBaseURL() + "registration/other_profile_info", params, jrep);
     }
     private void loadFragment(Fragment fragment_to_start) {
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
