@@ -64,14 +64,16 @@ public class FollowingListAdapter extends RecyclerView.Adapter<FollowingListAdap
         });
 
         float radius = context.getResources().getDimension(R.dimen.default_corner_radius_profile_follow);
-        holder.prof.setShapeAppearanceModel(holder.prof.getShapeAppearanceModel()
-                .toBuilder()
-                .setTopRightCorner(CornerFamily.ROUNDED,radius)
-                .setTopLeftCorner(CornerFamily.ROUNDED,radius)
-                .setBottomLeftCorner(CornerFamily.ROUNDED,radius)
-                .setBottomRightCorner(CornerFamily.ROUNDED,radius)
-                .build());
-        Picasso.get().load(this.img.get(position)).into(holder.prof);
+        if (!this.img.get(position).equals("")) {
+            holder.prof.setShapeAppearanceModel(holder.prof.getShapeAppearanceModel()
+                    .toBuilder()
+                    .setTopRightCorner(CornerFamily.ROUNDED, radius)
+                    .setTopLeftCorner(CornerFamily.ROUNDED, radius)
+                    .setBottomLeftCorner(CornerFamily.ROUNDED, radius)
+                    .setBottomRightCorner(CornerFamily.ROUNDED, radius)
+                    .build());
+            Picasso.get().load(this.img.get(position)).into(holder.prof);
+        }
 
 
     }

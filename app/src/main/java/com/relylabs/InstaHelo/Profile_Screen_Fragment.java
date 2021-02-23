@@ -102,7 +102,9 @@ public class Profile_Screen_Fragment extends Fragment {
         name.setText(user.FirstName + " " + user.LastName);
         user_bio_old.setText(user.BioDescription);
         username.setText(user.Username);
-        Picasso.get().load(user.ProfilePicURL).into(prof);
+        if (!user.ProfilePicURL.equals("")) {
+            Picasso.get().load(user.ProfilePicURL).into(prof);
+        }
         getProfileInfo(view);
 
     }
@@ -127,15 +129,17 @@ public class Profile_Screen_Fragment extends Fragment {
                         String joined_at = response.getString("joined_at");
                         String bio = response.getString("bio");
                         ShapeableImageView inviter_img = view.findViewById(R.id.profile_img_follow);
-                        float radius = getResources().getDimension(R.dimen.default_corner_radius_profile_inviter);
-                        inviter_img.setShapeAppearanceModel(inviter_img.getShapeAppearanceModel()
-                                .toBuilder()
-                                .setTopRightCorner(CornerFamily.ROUNDED,radius)
-                                .setTopLeftCorner(CornerFamily.ROUNDED,radius)
-                                .setBottomLeftCorner(CornerFamily.ROUNDED,radius)
-                                .setBottomRightCorner(CornerFamily.ROUNDED,radius)
-                                .build());
-                        Picasso.get().load(inviter_image).into(inviter_img);
+                        if (!inviter_image.equals("")) {
+                            float radius = getResources().getDimension(R.dimen.default_corner_radius_profile_inviter);
+                            inviter_img.setShapeAppearanceModel(inviter_img.getShapeAppearanceModel()
+                                    .toBuilder()
+                                    .setTopRightCorner(CornerFamily.ROUNDED, radius)
+                                    .setTopLeftCorner(CornerFamily.ROUNDED, radius)
+                                    .setBottomLeftCorner(CornerFamily.ROUNDED, radius)
+                                    .setBottomRightCorner(CornerFamily.ROUNDED, radius)
+                                    .build());
+                            Picasso.get().load(inviter_image).into(inviter_img);
+                        }
                         TextView follow = view.findViewById(R.id.follower);
                         TextView following_text = view.findViewById(R.id.following);
 
