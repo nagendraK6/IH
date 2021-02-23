@@ -76,11 +76,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, new Random().nextInt(100), intent,
-                PendingIntent.FLAG_ONE_SHOT);
+                PendingIntent.FLAG_UPDATE_CURRENT);
         long when = System.currentTimeMillis();
-        //mNotifyBuilder.setVibrate(new long[]{1000, 1000, 1000, 1000, 1000, 1000});
-        //Uri sound_uri  = Uri.parse("uri://" +R.raw.notification);
-        //Uri sound_uri = Uri.parse("android.resource://com.relylabs.phirki/notification.mp3");
 
         return new NotificationCompat.Builder(this, channel_id)
                 .setContentTitle(title)
@@ -100,10 +97,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         int width = (int) ctx.getResources().getDimension(android.R.dimen.notification_large_icon_width);
         int height = (int) ctx.getResources().getDimension(android.R.dimen.notification_large_icon_height);
-        // String msg = bm.getWidth() + "x" + bm.getHeight() + " --> " + width +
-        // "x" + height;
-        // RLog.d(NotificationUtil.class, msg);
-        //Log.d("debug_data", "is null " + (bm == null));
         return Bitmap.createScaledBitmap(bm, width, height, false);
     }
 

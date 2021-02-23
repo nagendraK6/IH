@@ -44,6 +44,7 @@ import com.relylabs.InstaHelo.models.EventElement;
 import com.relylabs.InstaHelo.models.User;
 import com.relylabs.InstaHelo.models.UserSettings;
 import com.relylabs.InstaHelo.models.UsersInRoom;
+import com.relylabs.InstaHelo.notification.NotificationList;
 import com.relylabs.InstaHelo.rooms.RoomCreateBottomSheetDialogFragment;
 import com.relylabs.InstaHelo.sharing.SendInviteFragment;
 import com.squareup.picasso.Picasso;
@@ -101,6 +102,10 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         selected_event_id = event_id;
         processAndConnectToAChannel(channe_name, event_id);
     }
+
+
+    String agora_rtc_token = "";
+    String agora_rtm_token = "";
 
     BroadcastReceiver broadCastNewMessage = new BroadcastReceiver() {
         @Override
@@ -172,15 +177,23 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                     break;
 
                 case "MUTE_UNMUTE_CLICK":
-                    process_mute_unmute();
+                    if (checkPermission(activity)) {
+                        process_mute_unmute();
+                    }
+                    break;
+
+                case "MUTE_UNMUTE_CLICK_RECONNECT":
+                    process_mute_unmute_with_reconnect();
                     break;
             }
             Log.d("debug_data", "received broadcast " + user_action);
         }
     };
 
-    private static final int PERMISSION_REQ_ID_RECORD_AUDIO = 22;
     private static final String LOG_TAG = "debug_data";
+
+    private static final int PERMISSION_REQ_ID_RECORD_AUDIO = 0;
+    private static final int PERMISSION_REQ_ID_RECORD_AUDIO_INIT = 1;
 
 
     NewsFeedAdapter adapter;
@@ -309,6 +322,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                     mRtcEngine.muteLocalAudioStream(true);
                     us  = UserSettings.getSettings();
                     us.is_current_role_speaker = false;
+
                     us.is_muted = true;
                     us.save();
                     Log.d("debug_audio", "Updating channel users");
@@ -622,7 +636,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
             }
         });
 
-        fetch_all_events();
+        fetch_all_events(true);
 
 
         View invited_view = view.findViewById(R.id.invite_card);
@@ -657,6 +671,14 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                 }
             }
         });
+
+        ImageView notification = view.findViewById(R.id.notification);
+        notification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadFragmentWithoutupdate(new NotificationList());
+            }
+        });
     }
 
 
@@ -671,6 +693,12 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         show_inviter_card = true;
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        fetch_all_events(false);
+    }
 
     private void hideInvitesView(View v) {
         RelativeLayout inviter_card = v.findViewById(R.id.invite_card);
@@ -699,38 +727,8 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         bottom_cta_card.setLayoutParams(params);
     }
 
-    public boolean checkPermission(final Context context) {
-        int currentAPIVersion = Build.VERSION.SDK_INT;
-        if (currentAPIVersion >= android.os.Build.VERSION_CODES.M) {
-            if (
-                    ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED
-            ) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, android.Manifest.permission.RECORD_AUDIO)) {
-                    requestPermissions(new String[]{android.Manifest.permission.RECORD_AUDIO}, PERMISSION_REQ_ID_RECORD_AUDIO);
-                } else {
-                    requestPermissions(new String[]{android.Manifest.permission.RECORD_AUDIO}, PERMISSION_REQ_ID_RECORD_AUDIO);
-                }
-                return false;
-            } else {
-                return true;
-            }
-        } else {
-            return true;
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int RC, String per[], int[] PResult) {
-        super.onRequestPermissionsResult(RC, per, PResult);
-        if (PResult.length > 0 && PResult[0] == PackageManager.PERMISSION_GRANTED) {
-            processAndConnectToAChannel(selected_channel, selected_event_id);
-        } else {
-            Toast.makeText(activity, "Permission is needed to start audio call", Toast.LENGTH_LONG).show();
-        }
-    }
-
-    private void initAgoraEngineAndJoinChannel(String channel_name, String agora_rtc_token, String agora_rtm_token) {
-        initializeAgoraEngine();
+    private void initAgoraEngineAndJoinChannel(String channel_name, String agora_rtc_token, String agora_rtm_token, Boolean muted, Boolean load_room) {
+        initializeAgoraEngine(muted);
         Integer role = -1;
         UserSettings us = UserSettings.getSettings();
         if (us.is_current_role_speaker) {
@@ -743,13 +741,13 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
             public void onSuccess() {
                 runTimer();
                 hide_busy_indicator();
-                joinChannelRTC(channel_name, agora_rtc_token, agora_rtm_token);
+                joinChannelRTC(channel_name, agora_rtc_token, agora_rtm_token, muted, load_room);
             }
         });
 
     }
 
-    private void initializeAgoraEngine() {
+    private void initializeAgoraEngine(Boolean muted) {
         try {
             UserSettings us = UserSettings.getSettings();
 
@@ -759,7 +757,6 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                 us.save();
             }
             mRtcEngine = RtcEngine.create(activity, getString(R.string.agora_app_id), mRtcEventHandler);
-            //mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING);
             mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING);
             mRtcEngine.setAudioProfile(Constants.AUDIO_PROFILE_MUSIC_HIGH_QUALITY_STEREO, Constants.AUDIO_SCENARIO_MEETING);
             mRtcEngine.setDefaultAudioRoutetoSpeakerphone(true);
@@ -770,8 +767,9 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                 role = Constants.CLIENT_ROLE_AUDIENCE;
             }
             mRtcEngine.setClientRole(role);
-            us.is_muted = true; us.save();
-            mRtcEngine.muteLocalAudioStream(true);
+            us.is_muted = muted;
+            us.save();
+            mRtcEngine.muteLocalAudioStream(muted);
             mRtcEngine.disableVideo();
             mRtcEngine.enableAudioVolumeIndication(200, 3, true);
         } catch (Exception e) {
@@ -781,20 +779,23 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         }
     }
 
-    private void joinChannelRTC(String channel_name, String accessToken, String agora_rtm_token) {// Call the joinChannel method to join a channel.
+    private void joinChannelRTC(String channel_name, String accessToken, String agora_rtm_token, Boolean muted, Boolean load_fragment) {// Call the joinChannel method to join a channel.
         // The uid is not specified. The SDK will assign one automatically.
         final User user = User.getLoggedInUser();
         mRtcEngine.joinChannel(accessToken,channel_name, "Extra Optional Data", user.UserID);
 
-        mRtcEngine.muteLocalAudioStream(true);
+        mRtcEngine.muteLocalAudioStream(muted);
         UserInfo t = new UserInfo();
         mRtcEngine.getUserInfoByUid(user.UserID, t);
 
         UserSettings us = UserSettings.getSettings();
         if (us.is_current_role_speaker) {
-            new UsersInRoom(Boolean.TRUE, Boolean.TRUE, user.UserID, user.FirstName, user.ProfilePicURL).save();
+            new UsersInRoom(Boolean.TRUE, muted, user.UserID, user.FirstName, user.ProfilePicURL).save();
         }
-        loadRoomFragment();
+
+        if (load_fragment) {
+            loadRoomFragment();
+        }
         initRTM();
         joinChannelRTM(channel_name, agora_rtm_token);
     }
@@ -1023,10 +1024,10 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         leave_channel_server_update();
         selected_event_id = all_feeds.get(index).eventID;
         selected_channel_display_name = all_feeds.get(index).eventTitle;
-            if (checkPermission(activity)) {
-                process_leave_channel();
-                processAndConnectToAChannel(selected_channel, selected_event_id);
-            }
+        if (checkPermissionInitial(activity)) {
+            process_leave_channel();
+            processAndConnectToAChannel(selected_channel, selected_event_id);
+        }
     }
 
 
@@ -1058,8 +1059,8 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
                     Log.d("debug_data", "Insde token processing");
-                    String agora_rtc_token = response.getString("agora_token");
-                    String agora_rtm_token = response.getString("agora_rtm_token");
+                    agora_rtc_token = response.getString("agora_token");
+                    agora_rtm_token = response.getString("agora_rtm_token");
                     Integer current_role_id = response.getInt("my_current_role");
                     JSONArray all_moderator_ids = response.getJSONArray("moderator_user_ids");
                     for (int i = 0; i < all_moderator_ids.length(); i++) {
@@ -1079,7 +1080,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                     }
                     us.save();
 
-                    initAgoraEngineAndJoinChannel(channel_name, agora_rtc_token, agora_rtm_token);
+                    initAgoraEngineAndJoinChannel(channel_name, agora_rtc_token, agora_rtm_token, true, true);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -1131,10 +1132,12 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         Log.d("debug_channel", "Leave channel success");
     }
 
-    void fetch_all_events() {
+    void fetch_all_events(boolean with_indicator) {
         final User user = User.getLoggedInUser();
         Log.d("debug_audio", "fetch all events");
-        show_busy_indicator();
+        if (with_indicator) {
+            show_busy_indicator();
+        }
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
 
@@ -1180,7 +1183,9 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                     all_feeds.addAll(all_event_data);
                     adapter.notifyDataSetChanged();
 
-                    hide_busy_indicator();
+                    if (with_indicator) {
+                        hide_busy_indicator();
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -1239,16 +1244,63 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
     }
 
 
+    public boolean checkPermission(final Context context) {
+        int currentAPIVersion = Build.VERSION.SDK_INT;
+        if (currentAPIVersion >= android.os.Build.VERSION_CODES.M) {
+            if (
+                    ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED
+            ) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, android.Manifest.permission.RECORD_AUDIO)) {
+                    requestPermissions(new String[]{android.Manifest.permission.RECORD_AUDIO}, PERMISSION_REQ_ID_RECORD_AUDIO);
+                } else {
+                    requestPermissions(new String[]{android.Manifest.permission.RECORD_AUDIO}, PERMISSION_REQ_ID_RECORD_AUDIO);
+                }
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+
+
+    public boolean checkPermissionInitial(final Context context) {
+        int currentAPIVersion = Build.VERSION.SDK_INT;
+        if (currentAPIVersion >= android.os.Build.VERSION_CODES.M) {
+            if (
+                    ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED
+            ) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, android.Manifest.permission.RECORD_AUDIO)) {
+                    requestPermissions(new String[]{android.Manifest.permission.RECORD_AUDIO}, PERMISSION_REQ_ID_RECORD_AUDIO_INIT);
+                } else {
+                    requestPermissions(new String[]{android.Manifest.permission.RECORD_AUDIO}, PERMISSION_REQ_ID_RECORD_AUDIO_INIT);
+                }
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+
+
     void process_mute_unmute() {
         UserSettings us = UserSettings.getSettings();
         RoomHelper.server_update(User.getLoggedInUserID(), String.valueOf(selected_event_id), us.is_muted ? "mute" : "unmute", new ServerCallBack() {
             @Override
             public void onSuccess() {
-                mRtcEngine.muteLocalAudioStream(us.is_muted);
+               mRtcEngine.muteLocalAudioStream(us.is_muted);
             }
         });
 
         UsersInRoom.changeMuteState(User.getLoggedInUserID(), us.is_muted);
+    }
+
+    void process_mute_unmute_with_reconnect() {
+        process_leave_channel();
+        initAgoraEngineAndJoinChannel(selected_channel, agora_rtc_token, agora_rtm_token, false, false);
     }
 
 
@@ -1256,24 +1308,54 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
 
 
     private final Handler handler = new Handler();
+
     private Runnable runnable = new Runnable() {
         public void run() {
-            //
-            // Do the stuff
-            RoomHelper.sendPing(selected_event_id);
-            //
-
+            Log.d("debug_ping", "Sending ping");
             handler.postDelayed(this, 20000);
+            RoomHelper.sendPing(selected_event_id);
         }
     };
 
+    private final Handler handlerExit = new Handler();
+
+    private Runnable runnableExit = new Runnable() {
+        public void run() {
+            Log.d("debug_ping", "Sending Leave Request: Check");
+            if (UsersInRoom.getAllSpeakers().size() == 0) {
+                askforexit();
+                Log.d("debug_ping", "Sending Leave Request: Sucess");
+            }
+            handlerExit.postDelayed(this, 300000);
+        }
+    };
+
+
+    private void askforexit() {
+        Bundle data_bundle = new Bundle();
+        data_bundle.putString("update_type", "EXIT_ROOM");
+        Intent intent = new Intent("update_from_main");
+        intent.putExtras(data_bundle);
+        activity.sendBroadcast(intent);
+    }
+
     private void runTimer() {
-        runnable.run();
+        handler.postDelayed(runnable, 20000);
+        handlerExit.postDelayed(runnableExit, 300000);
+
+     //   runnable.run();
     }
 
     private void stopTimer() {
         if(runnable != null){
             handler.removeCallbacks(runnable);
+            Log.d("debug_ping", "Timer stopped");
+            //cancel timer task and assign null
+        }
+
+        if(runnableExit != null){
+            handlerExit.removeCallbacks(runnableExit);
+            Log.d("debug_ping", "Timer stopped Exit");
             //cancel timer task and assign null
         }
     }
@@ -1397,7 +1479,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                 processExit();
                 Integer event_id = null;
                 try {
-                    fetch_all_events();
+                    fetch_all_events(true);
                     event_id = response.getInt("event_id");
                     String event_channel_name = response.getString("event_channel_name");
                     join_a_room_after_start(event_id, title, event_channel_name);
@@ -1419,6 +1501,33 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         client.addHeader("Authorization", "Token " + user.AccessToken);
         client.post(App.getBaseURL() + "page/create_a_room", params, jrep);
     }
+
+
+    @Override
+    public void onRequestPermissionsResult(int RC, String per[], int[] PResult) {
+        super.onRequestPermissionsResult(RC, per, PResult);
+        if (PResult.length > 0 && PResult[0] == PackageManager.PERMISSION_GRANTED) {
+            if (RC ==PERMISSION_REQ_ID_RECORD_AUDIO) {
+                process_mute_unmute_with_reconnect();
+            } else if (RC == PERMISSION_REQ_ID_RECORD_AUDIO_INIT) {
+                processAndConnectToAChannel(selected_channel, selected_event_id);
+            }
+        } else {
+            if (RC == PERMISSION_REQ_ID_RECORD_AUDIO_INIT) {
+                processAndConnectToAChannel(selected_channel, selected_event_id);
+            }
+            Toast.makeText(activity, "Permission is needed to start Talking", Toast.LENGTH_LONG).show();
+            UserSettings us = UserSettings.getSettings();
+            us.is_muted = true;
+            us.save();
+            Bundle data_bundle = new Bundle();
+            data_bundle.putString("update_type", "REFRESH_SETTINGS");
+            Intent intent = new Intent("update_from_main");
+            intent.putExtras(data_bundle);
+            activity.sendBroadcast(intent);
+        }
+    }
+
 
 
     private void showDialogForCurrentRoomExit(String title, String description) {

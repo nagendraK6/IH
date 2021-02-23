@@ -156,8 +156,9 @@ public class FriendsToFollow extends Fragment  implements FriendToFollowListAdap
                     String error_message = response.getString("error_message");
                     JSONArray all_contacts_to_follow = response.getJSONArray("all_contacts");
                     if (all_contacts_to_follow.length() == 0) {
-//                        loadFragment(new SuggestedProfileToFollowFragment());
-                        nextScreen(activity_ref);
+                        loadFragment(new SuggestedProfileToFollowFragment());
+                        return;
+                       // nextScreen(activity_ref);
                     }
 
 
@@ -178,10 +179,12 @@ public class FriendsToFollow extends Fragment  implements FriendToFollowListAdap
             @Override
             public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
                 Log.d("debug_data", "" + res);
+                loadFragment(new SuggestedProfileToFollowFragment());
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject obj) {
+                loadFragment(new SuggestedProfileToFollowFragment());
             }
         };
 
@@ -214,17 +217,19 @@ public class FriendsToFollow extends Fragment  implements FriendToFollowListAdap
         JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-//                loadFragment(new SuggestedProfileToFollowFragment());
-                nextScreen(activity_ref);
+                loadFragment(new SuggestedProfileToFollowFragment());
+             //   nextScreen(activity_ref);
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
                 Log.d("debug_data", "" + res);
+                loadFragment(new SuggestedProfileToFollowFragment());
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject obj) {
+                loadFragment(new SuggestedProfileToFollowFragment());
             }
         };
 

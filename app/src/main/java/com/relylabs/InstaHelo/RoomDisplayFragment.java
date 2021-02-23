@@ -14,8 +14,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,6 +28,7 @@ import android.widget.TextView;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.shape.CornerFamily;
 import com.loopj.android.http.AsyncHttpClient;
@@ -62,6 +65,7 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
 
     RecyclerView recyclerView_s, recyclerView_a;
 
+    SpinKitView busy;
 
     RoomsUsersDisplayListAdapter speaker_adapter, audience_adapter;
 
@@ -93,7 +97,6 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
               //      .getParcelableArrayListExtra("speakers_list");
 
             if (update_type.equals("LIST_CHANGE")) {
-
 
              //   ArrayList<UsersInRoom> t = UsersInRoom.getAllSpeakers();
                 incrementalAdd();
@@ -133,6 +136,11 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
                 processMuteUnmuteSettings();
                 fetchListenersData();
                 setCurrentImageHandRaise();
+            }
+
+            if (update_type.equals("EXIT_ROOM")) {
+                broadcastLocalUpdate("LEAVE_CHANNEL");
+                removefragment();
             }
         }
     };
@@ -216,6 +224,7 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
         exit_room.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                show_busy_indicator();
                 broadcastLocalUpdate("LEAVE_CHANNEL");
                 removefragment();
             }
@@ -288,7 +297,10 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
         setupAudiences(view);
        // updatePostingDetails(t);
         fetchListenersData();
+        busy = view.findViewById(R.id.loading_channel_token_fetch);
     }
+
+
 
     void processMuteUnmuteSettings() {
         UserSettings us = UserSettings.getSettings();
@@ -437,6 +449,22 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
     }
 
 
+    void show_busy_indicator() {
+        busy.setVisibility(View.VISIBLE);
+    }
+
+    void hide_busy_indicator() {
+
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //Your code
+                busy.setVisibility(View.INVISIBLE);
+            }
+        });
+    }
+
+
     private void setCurrentImageHandRaise() {
         UserSettings us  = UserSettings.getSettings();
         if (us.is_current_user_admin && us.audience_hand_raised) {
@@ -451,12 +479,12 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
 
         if (!us.is_current_role_speaker && us.is_self_hand_raised) {
             hand_raise_audience_admin.setBackground(activity.getDrawable(R.drawable.hand_raise_dark));
-            Log.d("debug_audio", "Audience tapped hand");
+            Log.d("debug_audio", "Audience state  = tapped hand");
         }
 
         if (!us.is_current_role_speaker && !us.is_self_hand_raised) {
             hand_raise_audience_admin.setBackground(activity.getDrawable(R.drawable.raise_hand_without_notification));
-            Log.d("debug_audio", "Audience tapped hand raise down");
+            Log.d("debug_audio", "Audience state = apped hand raise down");
         }
 
 

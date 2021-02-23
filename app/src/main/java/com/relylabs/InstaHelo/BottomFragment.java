@@ -40,6 +40,9 @@ public class BottomFragment extends Fragment implements IOnBackPressed {
                     processMuteUnmuteSettings();
                     processRaiseHandSettings();
                     break;
+                case "EXIT_ROOM":
+                    broadcastLocalUpdate("LEAVE_CHANNEL");
+                    return;
             }
         }
     };

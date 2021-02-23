@@ -51,6 +51,8 @@
 
         <activity
             android:name=".MainActivity"
+            android:clearTaskOnLaunch="true"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
