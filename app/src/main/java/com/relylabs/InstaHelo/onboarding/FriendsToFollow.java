@@ -37,6 +37,7 @@ import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.Header;
 
+import static com.relylabs.InstaHelo.Utils.Helper.cleanPhoneNo;
 import static com.relylabs.InstaHelo.Utils.Helper.nextScreen;
 
 public class FriendsToFollow extends Fragment  implements FriendToFollowListAdapter.ItemClickListener  {
@@ -125,11 +126,11 @@ public class FriendsToFollow extends Fragment  implements FriendToFollowListAdap
                     }
 
                     pCur.close();
-                    if (phone.length() >= 10) {
-                        phone = phone.replaceAll("[()\\s-]", "");
-                        contacts.add(new Contact(name, phone));
+                    String refinedPhone = cleanPhoneNo(phone);
+                    if(!refinedPhone.equals("ERROR")){
+                        contacts.add(new Contact(name, refinedPhone));
                         contact_names.add(name);
-                        contact_numbers.add(phone);
+                        contact_numbers.add(refinedPhone);
                     }
                 }
             }

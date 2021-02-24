@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.telephony.TelephonyManager;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextPaint;
@@ -12,6 +13,7 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.View;
+import android.webkit.CookieSyncManager;
 import android.widget.TextView;
 
 import androidx.fragment.app.FragmentActivity;
@@ -36,8 +38,12 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.util.ArrayList;
 
+import static com.activeandroid.Cache.getContext;
+
 
 public class Helper {
+    private static CookieSyncManager PhoneNumberUtil;
+
     public static void setTags(TextView pTextView, String pTagString) {
         SpannableString string = new SpannableString(pTagString);
 
@@ -223,6 +229,33 @@ public class Helper {
         else if(currentStep.equals("CONTACT_REQUEST")){
             ft.replace(R.id.fragment_holder, new SuggestedProfileToFollowFragment());
             ft.commit();
+        }
+    }
+
+    public static String cleanPhoneNo(String phone){
+        String refined = phone.replaceAll("[^0-9+]", "");
+        if(refined.length()<10){
+            return "ERROR";
+        }
+        if(refined.substring(0, 1).equals("+")){
+            return refined;
+        }
+        else{
+            refined = StringUtils.stripStart(refined, "0");
+            if(refined.length()<10){
+                return "ERROR";
+            }
+            else{
+                String country_code = "+91";
+                refined = country_code + refined;
+                if(refined.length()<10){
+                    return "ERROR";
+                }
+                else{
+                    return refined;
+                }
+
+            }
         }
     }
 

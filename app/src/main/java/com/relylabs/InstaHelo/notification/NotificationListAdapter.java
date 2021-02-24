@@ -1,15 +1,20 @@
 package com.relylabs.InstaHelo.notification;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.shape.CornerFamily;
+import com.relylabs.InstaHelo.OtherProfile;
 import com.relylabs.InstaHelo.R;
 import com.squareup.picasso.Picasso;
 
@@ -68,6 +73,16 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
         }
         String ti = p.format(time_date);
         holder.time.setText(ti);
+        holder.prof.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                OtherProfile otherprof = new OtherProfile();
+                Bundle args = new Bundle();
+                args.putString("username", username.get(position));
+                otherprof.setArguments(args);
+                loadFragment(otherprof,v);
+            }
+        });
     }
 
 
@@ -108,7 +123,13 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
     public interface ItemClickListener {
         void onItemClick(int position);
     }
+    private void loadFragment(Fragment fragment_to_start, View view) {
+        AppCompatActivity activity = (AppCompatActivity) view.getContext();
 
+        FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
+        ft.add(R.id.fragment_holder, fragment_to_start);
+        ft.commit();
+    }
     @Override
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
     }

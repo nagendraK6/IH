@@ -51,6 +51,7 @@ import java.util.ArrayList;
 import cz.msebera.android.httpclient.Header;
 
 import static androidx.core.content.ContextCompat.getSystemService;
+import static com.relylabs.InstaHelo.Utils.Helper.cleanPhoneNo;
 
 public class SendInviteFragment extends Fragment implements SharingContactListAdapter.ItemClickListener  {
 
@@ -180,13 +181,11 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
                     }
 
                     pCur.close();
-                    if (phone.length() >= 10) {
-                        phone = phone.replaceAll("[()\\s-]", "");
-                        contacts.add(new Contact(name, phone));
+                    String refinedPhone = cleanPhoneNo(phone);
+                    if(!refinedPhone.equals("ERROR")){
+                        contacts.add(new Contact(name, refinedPhone));
                         contact_names.add(name);
-                        contact_numbers.add(phone);
-                        contact_names_permanent.add(name);
-                        contact_numbers_permanent.add(phone);
+                        contact_numbers.add(refinedPhone);
                     }
                 }
             }
@@ -313,7 +312,6 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
                 public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
                     Log.d("debug_data", "" + res);
                 }
-
                 @Override
                 public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject obj) {
                 }

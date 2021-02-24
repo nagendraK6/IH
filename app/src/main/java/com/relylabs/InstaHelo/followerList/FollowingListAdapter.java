@@ -2,8 +2,12 @@ package com.relylabs.InstaHelo.followerList;
 
 import android.content.Context;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +21,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.relylabs.InstaHelo.App;
+import com.relylabs.InstaHelo.OtherProfile;
 import com.relylabs.InstaHelo.R;
 import com.relylabs.InstaHelo.Utils.Logger;
 import com.relylabs.InstaHelo.models.User;
@@ -60,7 +65,18 @@ public class FollowingListAdapter extends RecyclerView.Adapter<FollowingListAdap
     public void onBindViewHolder(final FollowingListAdapter.ViewHolder holder, final int position) {
         holder.name.setText(this.names.get(position));
         holder.username.setText("("+this.usernames.get(position)+")");
-        holder.description.setText(this.bio.get(position));
+        String currBio = this.bio.get(position);
+        if(currBio.length()>50){
+            currBio = currBio.substring(0,50);
+            currBio = currBio + "...";
+        }
+        holder.description.setText(currBio);
+        holder.description.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                holder.description.setText(bio.get(position));
+            }
+        });
         holder.name.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -150,6 +166,16 @@ public class FollowingListAdapter extends RecyclerView.Adapter<FollowingListAdap
                     .build());
             Picasso.get().load(this.img.get(position)).into(holder.prof);
         }
+        holder.prof.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                OtherProfile otherprof = new OtherProfile();
+                Bundle args = new Bundle();
+                args.putString("username", usernames.get(position));
+                otherprof.setArguments(args);
+                loadFragment(otherprof,v);
+            }
+        });
 
 
     }
@@ -200,7 +226,13 @@ public class FollowingListAdapter extends RecyclerView.Adapter<FollowingListAdap
     public interface ItemClickListener {
         void onItemClick(int position);
     }
+    private void loadFragment(Fragment fragment_to_start, View view) {
+        AppCompatActivity activity = (AppCompatActivity) view.getContext();
 
+        FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
+        ft.add(R.id.fragment_holder, fragment_to_start);
+        ft.commit();
+    }
     @Override
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
     }

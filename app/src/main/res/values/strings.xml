@@ -79,7 +79,5 @@ We are thrilled to have you onboard ! \n\nWe are adding people gradually to Inst
     <string name="nominated">Nominated by</string>
     <string name="Followers">Followers</string>
     <string name="following_string">Following</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="notification">Notifications</string>
 </resources>
