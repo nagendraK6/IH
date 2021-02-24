@@ -93,16 +93,9 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
         public void onReceive(Context context, Intent intent) {
             String update_type = intent.getStringExtra("update_type");
             Log.d("debug_audio", "Received update from the main: " + update_type);
-         //   ArrayList<UsersInRoom> t = intent
-              //      .getParcelableArrayListExtra("speakers_list");
 
             if (update_type.equals("LIST_CHANGE")) {
-
-             //   ArrayList<UsersInRoom> t = UsersInRoom.getAllSpeakers();
                 incrementalAdd();
-          //      speakers.clear();
-           //     speakers.addAll(t);
-           //     speaker_adapter.notifyDataSetChanged();
                 processMuteUnmuteSettings();
                 fetchListenersData();
                 setCurrentImageHandRaise();

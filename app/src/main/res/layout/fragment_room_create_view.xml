@@ -6,27 +6,36 @@
     android:layout_width="match_parent"
     android:background="@color/neartagtheme"
     android:layout_height="match_parent">
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_marginTop="30dp"
-        android:layout_marginLeft="30dp"
-        android:id="@+id/back_button"
-        android:src="@drawable/left_move_button"
-        android:layout_height="wrap_content" />
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:focusable="true"
     android:clickable="true"
     android:layout_width="match_parent"
     android:background="@drawable/room_display_top_border"
-    android:layout_marginTop="100dp"
     android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="20dp"
+        android:text="cancel"
+        android:id="@+id/cancel"
+        android:textAppearance="@style/OnboardingTop"
+        android:textSize="16sp"
+        android:textColor="#2879C2"
+        android:layout_centerHorizontal="true"
+        />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="30dp"
             android:text="Start a Room"
             android:id="@+id/intro_line"
             android:textAppearance="@style/OnboardingTop"
@@ -39,8 +48,8 @@
             android:layout_below="@+id/intro_line"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16sp"
-            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="30dp"
             android:id="@+id/intro_second"
             android:text="Set the topic of the room*"
             android:textAppearance="@style/OnboardingTop"
@@ -54,26 +63,56 @@
             android:layout_below="@+id/intro_second"
             android:layout_centerHorizontal="true"
             android:layout_gravity="center"
-            android:layout_marginLeft="80dp"
-            android:layout_marginRight="80dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:layout_marginTop="30dp"
             android:background="@drawable/main_screen_no_ask"
             android:focusable="true"
             android:gravity="center"
-            android:lines="3"
-            android:minLines="3"
+            android:lines="2"
+            android:minLines="2"
             android:textColorHint="@color/texthintcolor"
             android:textSize="18sp" />
 
-
+    <RadioGroup
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/edit_room_title"
+        android:id="@+id/room_choice"
+        android:checkedButton="@+id/social_room"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:text="Public"
+            android:id="@+id/public_room"
+            android:layout_height="wrap_content">
+        </RadioButton>
         <TextView
-            android:layout_below="@+id/edit_room_title"
+            android:text="Anyone can join"
+            android:layout_marginLeft="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <RadioButton
+            android:layout_marginTop="20dp"
+            android:layout_width="wrap_content"
+            android:text="Social"
+            android:id="@+id/social_room"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_marginLeft="30dp"
+            android:text="Only the followers of speakers can join"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </RadioGroup>
+        <TextView
+            android:layout_below="@+id/room_choice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="30dp"
             android:id="@+id/submit_room_create"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/next_disabled"
+            android:background="@drawable/start_a_room_disabled"
             android:layout_marginBottom="50dp"
             />
     </RelativeLayout>

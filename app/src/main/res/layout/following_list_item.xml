@@ -54,12 +54,12 @@
         android:text="TextView" />
 
     <TextView
-        android:id="@+id/time"
+        android:id="@+id/user_action"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/profile_img_noti"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="15dp"
         android:layout_marginEnd="0dp"
-        android:text="Following" />
+        android:background="@drawable/follow_cta_action" />
 </RelativeLayout>

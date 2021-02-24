@@ -83,11 +83,29 @@ public class FollowingListAdapter extends RecyclerView.Adapter<FollowingListAdap
                 if (mClickListener != null) mClickListener.onItemClick(position);
             }
         });
+        if (this.currStatus.get(position).equals("Follow")) {
+            holder.follow.setBackground(holder.itemView.getContext().getDrawable(R.drawable.follow_cta_action));
+        } else {
+            holder.follow.setBackground(holder.itemView.getContext().getDrawable(R.drawable.following_state));
+        }
+
+        holder.prof.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                OtherProfile otherprof = new OtherProfile();
+                Bundle args = new Bundle();
+                args.putString("username", usernames.get(position));
+                otherprof.setArguments(args);
+                loadFragment(otherprof,v);
+            }
+        });
+
         holder.follow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String curr_status = currStatus.get(position);
                 if(curr_status.equals("Following")){
+                    holder.follow.setBackground(holder.itemView.getContext().getDrawable(R.drawable.follow_cta_action));
 
                     final User user = User.getLoggedInUser();
                     AsyncHttpClient client = new AsyncHttpClient();
@@ -100,7 +118,7 @@ public class FollowingListAdapter extends RecyclerView.Adapter<FollowingListAdap
 //                            hide_busy_indicator();
                             currStatus.set(position,"Follow");
                             Log.d("response_follow",response.toString());
-                            holder.follow.setText("Follow");
+                            holder.follow.setBackground(holder.itemView.getContext().getDrawable(R.drawable.follow_cta_action));
                         }
 
 
@@ -120,7 +138,7 @@ public class FollowingListAdapter extends RecyclerView.Adapter<FollowingListAdap
                     client.post(App.getBaseURL() + "registration/unfollow_user", params, jrep);
                 }
                 else if(curr_status.equals("Follow")){
-
+                    holder.follow.setBackground(holder.itemView.getContext().getDrawable(R.drawable.following_state));
                     final User user = User.getLoggedInUser();
                     AsyncHttpClient client = new AsyncHttpClient();
                     boolean running = false;
@@ -132,7 +150,7 @@ public class FollowingListAdapter extends RecyclerView.Adapter<FollowingListAdap
 //                            hide_busy_indicator();
                             currStatus.set(position,"Following");
                             Log.d("response_follow",response.toString());
-                            holder.follow.setText("Following");
+                            holder.follow.setBackground(holder.itemView.getContext().getDrawable(R.drawable.following_state));
                         }
 
 
@@ -204,7 +222,7 @@ public class FollowingListAdapter extends RecyclerView.Adapter<FollowingListAdap
             name = itemView.findViewById(R.id.name);
             username = itemView.findViewById(R.id.username_follow);
             description = itemView.findViewById(R.id.description);
-            follow = itemView.findViewById(R.id.time);
+            follow = itemView.findViewById(R.id.user_action);
             prof = itemView.findViewById(R.id.profile_img_noti);
             itemView.setOnClickListener(this);
             v = itemView;
@@ -220,6 +238,13 @@ public class FollowingListAdapter extends RecyclerView.Adapter<FollowingListAdap
     // allows clicks events to be caught
     public void setClickListener(FollowingListAdapter.ItemClickListener itemClickListener) {
         this.mClickListener = itemClickListener;
+    }
+
+    private void loadFragment(Fragment fragment_to_start, View view) {
+        AppCompatActivity activity = (AppCompatActivity) view.getContext();
+        FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
+        ft.add(R.id.fragment_holder, fragment_to_start);
+        ft.commit();
     }
 
     // parent activity will implement this method to respond to click events

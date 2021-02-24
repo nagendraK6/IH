@@ -141,7 +141,6 @@ public class MainActivity extends AppCompatActivity {
         if (user.UserSteps.equals(("SUGGESTED_PROFILE"))){
             return new SuggestedProfileToFollowFragment();
         }
-//        if()
 
         return new MainScreenFragment();
     }

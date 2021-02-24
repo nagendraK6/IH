@@ -63,7 +63,7 @@ public class FollowingList extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         busy = view.findViewById(R.id.loading_channel_token_fetch2);
         fragment_view = view;
-        ImageView back = view.findViewById(R.id.prev_button_follow);
+        View back = view.findViewById(R.id.prev_button_follow);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

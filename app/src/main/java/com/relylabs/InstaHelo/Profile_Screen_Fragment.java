@@ -63,7 +63,7 @@ public class Profile_Screen_Fragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         busy = view.findViewById(R.id.loading_channel_token_fetch_profile);
         final User user = User.getLoggedInUser();
-        ImageView back = view.findViewById(R.id.prev_button2);
+        View back = view.findViewById(R.id.prev_button2);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

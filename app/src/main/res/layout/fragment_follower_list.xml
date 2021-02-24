@@ -19,15 +19,19 @@
         android:visibility="invisible"
         app:SpinKit_Color="@color/Grey" />
 
-    <ImageView
+    <RelativeLayout
         android:id="@+id/prev_button_follow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="38dp"
-        android:src="@drawable/left_move_button" />
+        android:layout_width="80dp"
+        android:layout_height="80dp">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="38dp"
+            android:src="@drawable/left_move_button" />
+    </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list_follower"
