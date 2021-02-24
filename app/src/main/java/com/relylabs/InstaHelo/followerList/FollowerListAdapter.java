@@ -2,10 +2,12 @@ package com.relylabs.InstaHelo.followerList;
 
 import android.content.Context;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +21,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.relylabs.InstaHelo.App;
+import com.relylabs.InstaHelo.OtherProfile;
 import com.relylabs.InstaHelo.R;
 import com.relylabs.InstaHelo.Utils.Logger;
 import com.relylabs.InstaHelo.models.User;
@@ -62,7 +65,18 @@ public class FollowerListAdapter extends RecyclerView.Adapter<FollowerListAdapte
     public void onBindViewHolder(final FollowerListAdapter.ViewHolder holder, final int position) {
         holder.name.setText(this.names.get(position));
         holder.username.setText("("+this.usernames.get(position)+")");
-        holder.description.setText(this.bio.get(position));
+        String currBio = this.bio.get(position);
+        if(currBio.length()>50){
+            currBio = currBio.substring(0,50);
+            currBio = currBio + "...";
+        }
+        holder.description.setText(currBio);
+        holder.description.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                holder.description.setText(bio.get(position));
+            }
+        });
         holder.name.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,12 +84,33 @@ public class FollowerListAdapter extends RecyclerView.Adapter<FollowerListAdapte
 
             }
         });
-        holder.follow.setText(this.currStatus.get(position));
+
+        if (this.currStatus.get(position).equals("Follow")) {
+            holder.follow.setBackground(holder.itemView.getContext().getDrawable(R.drawable.follow_cta_action));
+        } else {
+            holder.follow.setBackground(holder.itemView.getContext().getDrawable(R.drawable.following_state));
+        }
+
+
+        holder.prof.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                OtherProfile otherprof = new OtherProfile();
+                Bundle args = new Bundle();
+                args.putString("username", usernames.get(position));
+                otherprof.setArguments(args);
+                loadFragment(otherprof,v);
+            }
+        });
+
         holder.follow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String curr_status = currStatus.get(position);
                 if(curr_status.equals("Following")){
+
+                    /// immediate change the state
+                        holder.follow.setBackground(holder.itemView.getContext().getDrawable(R.drawable.follow_cta_action));
 
                     final User user = User.getLoggedInUser();
                     AsyncHttpClient client = new AsyncHttpClient();
@@ -88,7 +123,7 @@ public class FollowerListAdapter extends RecyclerView.Adapter<FollowerListAdapte
 //                            hide_busy_indicator();
                             currStatus.set(position,"Follow");
                             Log.d("response_follow",response.toString());
-                            holder.follow.setText("Follow");
+                            holder.follow.setBackground(holder.itemView.getContext().getDrawable(R.drawable.follow_cta_action));
                         }
 
 
@@ -108,6 +143,7 @@ public class FollowerListAdapter extends RecyclerView.Adapter<FollowerListAdapte
                     client.post(App.getBaseURL() + "registration/unfollow_user", params, jrep);
                 }
                 else if(curr_status.equals("Follow") ){
+                    holder.follow.setBackground(holder.itemView.getContext().getDrawable(R.drawable.following_state));
 
                     final User user = User.getLoggedInUser();
                     AsyncHttpClient client = new AsyncHttpClient();
@@ -120,7 +156,7 @@ public class FollowerListAdapter extends RecyclerView.Adapter<FollowerListAdapte
 //                            hide_busy_indicator();
                             currStatus.set(position,"Following");
                             Log.d("response_follow",response.toString());
-                            holder.follow.setText("Following");
+                            holder.follow.setBackground(holder.itemView.getContext().getDrawable(R.drawable.following_state));
                         }
 
 
@@ -182,7 +218,7 @@ public class FollowerListAdapter extends RecyclerView.Adapter<FollowerListAdapte
             name = itemView.findViewById(R.id.name);
             username = itemView.findViewById(R.id.username_follow);
             description = itemView.findViewById(R.id.description);
-            follow = itemView.findViewById(R.id.time);
+            follow = itemView.findViewById(R.id.user_action);
             prof = itemView.findViewById(R.id.profile_img_noti);
             itemView.setOnClickListener(this);
             v = itemView;
@@ -204,11 +240,14 @@ public class FollowerListAdapter extends RecyclerView.Adapter<FollowerListAdapte
     public interface ItemClickListener {
         void onItemClick(int position);
     }
-//    private void loadFragment(Fragment fragment_to_start) {
-//        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-//        ft.add(R.id.fragment_holder, fragment_to_start);
-//        ft.commit();
-//    }
+
+    private void loadFragment(Fragment fragment_to_start,View view) {
+        AppCompatActivity activity = (AppCompatActivity) view.getContext();
+        FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
+        ft.add(R.id.fragment_holder, fragment_to_start);
+        ft.commit();
+    }
+
     @Override
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
     }

@@ -86,6 +86,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         process_leave_channel();
         is_room_fragment_loaded = false;
         selected_event_id = -1;
+        Log.d("debug_channel", "Stopping timer");
         stopTimer();
         unloadFragmentBottom();
     }
@@ -106,6 +107,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
 
     String agora_rtc_token = "";
     String agora_rtm_token = "";
+    Boolean is_rtm_released = false;
 
     BroadcastReceiver broadCastNewMessage = new BroadcastReceiver() {
         @Override
@@ -138,7 +140,10 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                 case "ROOM_CREATE":
                     String room_title =  intent
                             .getStringExtra("room_title");
-                    send_create_room_request(room_title);
+                    String room_type =  intent
+                            .getStringExtra("room_type");
+
+                    send_create_room_request(room_title, room_type);
                     break;
 
 
@@ -182,9 +187,9 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                     }
                     break;
 
-                case "MUTE_UNMUTE_CLICK_RECONNECT":
+                /*case "MUTE_UNMUTE_CLICK_RECONNECT":
                     process_mute_unmute_with_reconnect();
-                    break;
+                    break;*/
             }
             Log.d("debug_data", "received broadcast " + user_action);
         }
@@ -589,9 +594,10 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         adapter = new NewsFeedAdapter(activity, all_feeds);
         adapter.setClickListener(this);
         ImageView start_a_room_cta = view.findViewById(R.id.start_a_room_cta);
-        if ((!User.getLoggedInUser().IsStartRoomEnabled)) {
-            start_a_room_cta.setVisibility(View.INVISIBLE);
-        }
+       // if ((!User.getLoggedInUser().IsStartRoomEnabled)) {
+      //      start_a_room_cta.setVisibility(View.INVISIBLE);
+      //  }
+      //  }
 
         start_a_room_cta.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -638,12 +644,19 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
 
         fetch_all_events(true);
 
+        ImageView invite = view.findViewById(R.id.invite);
+        invite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideInvitesView(view);
+                loadFragmentWithoutupdate(new SendInviteFragment());
+            }
+        });
 
         View invited_view = view.findViewById(R.id.invite_card);
         invited_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               loadFragmentWithoutupdate(new SendInviteFragment());
                // openBottomSheetDialog();
             }
         });
@@ -652,7 +665,6 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         fetch_all_invites_count();
 
 
-        ImageView invite = view.findViewById(R.id.invite);
         if (user.ShowWelcomeScreen) {
             changeViewToShow(view);
             user.ShowWelcomeScreen = Boolean.FALSE;
@@ -661,16 +673,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         } else {
             hideInvitesView(view);
         }
-        invite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (show_inviter_card) {
-                    hideInvitesView(view);
-                } else {
-                    changeViewToShow(view);
-                }
-            }
-        });
+
 
         ImageView notification = view.findViewById(R.id.notification);
         notification.setOnClickListener(new View.OnClickListener() {
@@ -771,6 +774,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
             us.save();
             mRtcEngine.muteLocalAudioStream(muted);
             mRtcEngine.disableVideo();
+            mRtcEngine.disableAudio();
             mRtcEngine.enableAudioVolumeIndication(200, 3, true);
         } catch (Exception e) {
             Log.e(LOG_TAG, Log.getStackTraceString(e));
@@ -952,22 +956,24 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                 }
             });
 
-            mRtmClient.logout(new ResultCallback<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    Log.d("debug_data", "RTM logout success");
-                }
+            /*
+                mRtmClient.logout(new ResultCallback<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("debug_data", "RTM logout success");
+                    }
 
-                @Override
-                public void onFailure(ErrorInfo errorInfo) {
-
-                }
-            });
-
+                    @Override
+                    public void onFailure(ErrorInfo errorInfo) {
+                        Log.d("debug_data", "RTM logout failed");
+                    }
+                });
+            mRtmClient.release();*/
         } catch (Exception ex) {
             Log.d("debug_data", "RTM cleanup issue");
         }
 
+        is_rtm_released = true;
     }
 
     @Override
@@ -1128,7 +1134,9 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
             e.printStackTrace();
         }
 
-        leaveRTMChannel();
+        if (!is_rtm_released) {
+            leaveRTMChannel();
+        }
         Log.d("debug_channel", "Leave channel success");
     }
 
@@ -1291,6 +1299,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         RoomHelper.server_update(User.getLoggedInUserID(), String.valueOf(selected_event_id), us.is_muted ? "mute" : "unmute", new ServerCallBack() {
             @Override
             public void onSuccess() {
+                mRtcEngine.enableAudio();
                mRtcEngine.muteLocalAudioStream(us.is_muted);
             }
         });
@@ -1298,10 +1307,12 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         UsersInRoom.changeMuteState(User.getLoggedInUserID(), us.is_muted);
     }
 
+    /*
     void process_mute_unmute_with_reconnect() {
         process_leave_channel();
         initAgoraEngineAndJoinChannel(selected_channel, agora_rtc_token, agora_rtm_token, false, false);
-    }
+    }*/
+
 
 
 
@@ -1466,11 +1477,13 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         return true;
     }
 
-    private void send_create_room_request(String title) {
+    private void send_create_room_request(String title, String room_type) {
         final User user = User.getLoggedInUser();
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
         params.add("event_title", title);
+        params.add("room_type", room_type);
+
         show_busy_indicator();
 
         JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
@@ -1508,23 +1521,43 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         super.onRequestPermissionsResult(RC, per, PResult);
         if (PResult.length > 0 && PResult[0] == PackageManager.PERMISSION_GRANTED) {
             if (RC ==PERMISSION_REQ_ID_RECORD_AUDIO) {
-                process_mute_unmute_with_reconnect();
+                process_mute_unmute();
+           //     process_mute_unmute_with_reconnect();
             } else if (RC == PERMISSION_REQ_ID_RECORD_AUDIO_INIT) {
                 processAndConnectToAChannel(selected_channel, selected_event_id);
             }
         } else {
             if (RC == PERMISSION_REQ_ID_RECORD_AUDIO_INIT) {
                 processAndConnectToAChannel(selected_channel, selected_event_id);
+            }  else {
+                Toast.makeText(activity, "Permission is needed to start Talking", Toast.LENGTH_LONG).show();
+                UserSettings us = UserSettings.getSettings();
+                us.is_muted = true;
+                us.save();
+
+                // unmute set if the user is in speaker state
+                ArrayList<UsersInRoom> all_room_users = UsersInRoom.getAllSpeakers();
+                for (int i  =0 ;i < all_room_users.size(); i++) {
+                    if (all_room_users.get(i).UserId.equals(User.getLoggedInUserID())) {
+                        all_room_users.get(i).IsMuted = true;
+                        all_room_users.get(i).save();
+                    }
+                }
+
+                Bundle data_bundle = new Bundle();
+                data_bundle.putString("update_type", "MUTE_UNMUTE");
+                data_bundle.putBoolean("is_muted", true);
+                data_bundle.putInt("user_id", User.getLoggedInUserID());
+                Intent intent = new Intent("update_from_main");
+                intent.putExtras(data_bundle);
+                activity.sendBroadcast(intent);
+
+
+                data_bundle.putString("update_type", "REFRESH_SETTINGS");
+                intent.putExtras(data_bundle);
+                activity.sendBroadcast(intent);
+
             }
-            Toast.makeText(activity, "Permission is needed to start Talking", Toast.LENGTH_LONG).show();
-            UserSettings us = UserSettings.getSettings();
-            us.is_muted = true;
-            us.save();
-            Bundle data_bundle = new Bundle();
-            data_bundle.putString("update_type", "REFRESH_SETTINGS");
-            Intent intent = new Intent("update_from_main");
-            intent.putExtras(data_bundle);
-            activity.sendBroadcast(intent);
         }
     }
 

@@ -1,9 +1,13 @@
 package com.relylabs.InstaHelo.Utils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -31,6 +35,24 @@ public class RoomHelper {
         ft.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top);
         ft.add(R.id.fragment_holder, fr);
         ft.commit();
+    }
+
+    public static  boolean IsInternetConnect(FragmentActivity activity) {
+        if (activity != null) {
+            ConnectivityManager cm = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+            if (null != activeNetwork) {
+                if(activeNetwork.getType() != ConnectivityManager.TYPE_WIFI &&
+                        activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
+                    return false;
+
+                }
+            } else {
+                return  false;
+            }
+        }
+
+        return true;
     }
 
 

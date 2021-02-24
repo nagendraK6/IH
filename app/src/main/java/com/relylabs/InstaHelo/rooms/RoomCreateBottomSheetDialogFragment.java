@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -65,7 +66,10 @@ public class RoomCreateBottomSheetDialogFragment extends Fragment  {
     TextView edit_room_title;
     TextView next_button;
     String room_title = "";
-    ImageView back_button;
+    TextView  back_button;
+    RadioGroup room_selection;
+    String room_type = "social";
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -92,7 +96,21 @@ public class RoomCreateBottomSheetDialogFragment extends Fragment  {
         super.onViewCreated(view, savedInstanceState);
         edit_room_title = view.findViewById(R.id.edit_room_title);
         next_button = view.findViewById(R.id.submit_room_create);
-        back_button = view.findViewById(R.id.back_button);
+        back_button = view.findViewById(R.id.cancel);
+        room_selection = view.findViewById(R.id.room_choice);
+        room_selection.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch(checkedId) {
+                    case R.id.social_room:
+                        room_type = "social";
+                            break;
+                    case R.id.public_room:
+                        room_type = "public";
+                            break;
+                }
+            }
+        });
         back_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,7 +136,7 @@ public class RoomCreateBottomSheetDialogFragment extends Fragment  {
                 if (room_title.length()  > 0 ) {
                     next_button.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.create_room_enabled));
                 } else {
-                    next_button.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.next_disabled));
+                    next_button.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.start_a_room_disabled));
                 }
             }
 
@@ -129,7 +147,7 @@ public class RoomCreateBottomSheetDialogFragment extends Fragment  {
             @Override
             public void onClick(View v) {
                 if (room_title.length()  > 0 ) {
-                    broadcastLocalUpdate("ROOM_CREATE", room_title);
+                    broadcastLocalUpdate("ROOM_CREATE", room_title, room_type);
                     removefragment();
                 }
             }
@@ -154,10 +172,11 @@ public class RoomCreateBottomSheetDialogFragment extends Fragment  {
         });
     }
 
-    private  void broadcastLocalUpdate(String action, String title) {
+    private  void broadcastLocalUpdate(String action, String title, String room_type) {
         Bundle data_bundle = new Bundle();
         data_bundle.putString("user_action", action);
         data_bundle.putString("room_title", title);
+        data_bundle.putString("room_type", room_type);
         Intent intent = new Intent("update_from_room");
         intent.putExtras(data_bundle);
         if (activity != null) {
