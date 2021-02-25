@@ -148,17 +148,11 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
 
     private void incrementalAdd() {
         ArrayList<UsersInRoom> new_list = UsersInRoom.getAllSpeakers();
-        //if (new_list.size() == speakers.size()) {
             final RoomsUsersDisplayListDiffsCallback diffCallback = new RoomsUsersDisplayListDiffsCallback(speakers, new_list);
             final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
             speakers.clear();
             speakers.addAll(new_list);
             diffResult.dispatchUpdatesTo(speaker_adapter);
-        /*} else {
-         speakers.clear();
-         speakers.addAll(new_list);
-         speaker_adapter.notifyDataSetChanged();
-        }*/
     }
 
 

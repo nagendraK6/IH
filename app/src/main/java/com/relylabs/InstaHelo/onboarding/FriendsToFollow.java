@@ -8,25 +8,20 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Context;
-import android.database.Cursor;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.os.Bundle;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.relylabs.InstaHelo.App;
+import com.relylabs.InstaHelo.MainScreenFragment;
 import com.relylabs.InstaHelo.R;
-import com.relylabs.InstaHelo.Utils.Helper;
-import com.relylabs.InstaHelo.models.Contact;
 import com.relylabs.InstaHelo.models.User;
 
 import org.json.JSONArray;
@@ -37,8 +32,6 @@ import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.Header;
 
-import static com.relylabs.InstaHelo.Utils.Helper.cleanPhoneNo;
-import static com.relylabs.InstaHelo.Utils.Helper.nextScreen;
 
 public class FriendsToFollow extends Fragment  implements FriendToFollowListAdapter.ItemClickListener  {
     public FragmentActivity activity_ref;
@@ -97,59 +90,13 @@ public class FriendsToFollow extends Fragment  implements FriendToFollowListAdap
         suggested_profile_image_urls = new ArrayList<>();
         user_ids_to_follow = new ArrayList<>();
         user_ids_to_send_status = new ArrayList<>();
-        readContacts();
-        upload_to_server_contacts(contact_names, contact_numbers);
+        fetch_contacts();
     }
 
-    public ArrayList<Contact> readContacts(){
-        contact_names = new ArrayList<>();
-        contact_numbers = new ArrayList<>();
-        ArrayList<Contact> contacts = new ArrayList<>();
-        ContentResolver cr = activity_ref.getContentResolver();
-        Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
-                null, null, null, null);
-
-        if (cur.getCount() > 0) {
-            while (cur.moveToNext()) {
-                String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
-                String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-                if (Integer.parseInt(cur.getString(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
-                    // get the phone number
-                    Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,
-                            ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = ?",
-                            new String[]{id}, null);
-
-                    String phone = "";
-                    while (pCur.moveToNext()) {
-                        phone = pCur.getString(
-                                pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                    }
-
-                    pCur.close();
-                    String refinedPhone = cleanPhoneNo(phone);
-                    if(!refinedPhone.equals("ERROR")){
-                        contacts.add(new Contact(name, refinedPhone));
-                        contact_names.add(name);
-                        contact_numbers.add(refinedPhone);
-                    }
-                }
-            }
-        }
-
-        return contacts;
-    }
-
-    private void upload_to_server_contacts(ArrayList<String> contact_name, ArrayList<String> contact_number) {
+    private void fetch_contacts() {
         final User user = User.getLoggedInUser();
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
-
-        JSONArray mJSONArray_names = new JSONArray(contact_name);
-        JSONArray mJSONArray_numbers = new JSONArray(contact_number);
-
-        params.add("contact_names", mJSONArray_names.toString());
-        params.add("contact_numbers", mJSONArray_numbers.toString());
-
         JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -157,7 +104,7 @@ public class FriendsToFollow extends Fragment  implements FriendToFollowListAdap
                     String error_message = response.getString("error_message");
                     JSONArray all_contacts_to_follow = response.getJSONArray("all_contacts");
                     if (all_contacts_to_follow.length() == 0) {
-                        loadFragment(new SuggestedProfileToFollowFragment());
+                        loadFragment(new MainScreenFragment());
                         return;
                        // nextScreen(activity_ref);
                     }
@@ -180,18 +127,18 @@ public class FriendsToFollow extends Fragment  implements FriendToFollowListAdap
             @Override
             public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
                 Log.d("debug_data", "" + res);
-                loadFragment(new SuggestedProfileToFollowFragment());
+                loadFragment(new MainScreenFragment());
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject obj) {
-                loadFragment(new SuggestedProfileToFollowFragment());
+                loadFragment(new MainScreenFragment());
             }
         };
 
         client.addHeader("Accept", "application/json");
         client.addHeader("Authorization", "Token " + user.AccessToken);
-        client.post(App.getBaseURL() + "registration/check_contact_users", params, jrep);
+        client.post(App.getBaseURL() + "registration/get_suggested_friends", params, jrep);
     }
 
     @Override
@@ -218,19 +165,19 @@ public class FriendsToFollow extends Fragment  implements FriendToFollowListAdap
         JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                loadFragment(new SuggestedProfileToFollowFragment());
+                loadFragment(new MainScreenFragment());
              //   nextScreen(activity_ref);
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
                 Log.d("debug_data", "" + res);
-                loadFragment(new SuggestedProfileToFollowFragment());
+                loadFragment(new MainScreenFragment());
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject obj) {
-                loadFragment(new SuggestedProfileToFollowFragment());
+                loadFragment(new MainScreenFragment());
             }
         };
 

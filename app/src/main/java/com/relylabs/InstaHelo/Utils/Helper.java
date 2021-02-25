@@ -183,11 +183,11 @@ public class Helper {
             ft.commit();
         }
         else if(currentStep.equals("CONTACT_REQUEST")){
-            ft.replace(R.id.fragment_holder, new FriendsToFollow());
+            ft.replace(R.id.fragment_holder, new SuggestedProfileToFollowFragment());
             ft.commit();
         }
         else if(currentStep.equals("FRIENDS_TO_FOLLOW")){
-            ft.replace(R.id.fragment_holder, new SuggestedProfileToFollowFragment());
+            ft.replace(R.id.fragment_holder, new FriendsToFollow());
             ft.commit();
         }
         else if(currentStep.equals("MAIN_SCREEN")){
@@ -232,7 +232,22 @@ public class Helper {
         }
     }
 
-    public static String cleanPhoneNo(String phone){
+    public static String getCountryDialCode(Context context){
+        String contryId = null;
+        String contryDialCode = null;
+        TelephonyManager telephonyMngr = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        contryId = telephonyMngr.getSimCountryIso().toUpperCase();
+        String[] arrContryCode=context.getResources().getStringArray(R.array.DialingCountryCode);
+        for(int i=0; i<arrContryCode.length; i++){
+            String[] arrDial = arrContryCode[i].split(",");
+            if(arrDial[1].trim().equals(contryId.trim())){
+                contryDialCode = arrDial[0];
+                break;
+            }
+        }
+        return contryDialCode;
+    }
+    public static String cleanPhoneNo(String phone,Context context){
         String refined = phone.replaceAll("[^0-9+]", "");
         if(refined.length()<10){
             return "ERROR";
@@ -246,17 +261,15 @@ public class Helper {
                 return "ERROR";
             }
             else{
-                String country_code = "+91";
-                refined = country_code + refined;
+                String country_code = getCountryDialCode(context);
+                refined = "+"  +country_code + refined;
                 if(refined.length()<10){
                     return "ERROR";
                 }
                 else{
                     return refined;
                 }
-
             }
         }
     }
-
 }

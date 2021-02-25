@@ -11,6 +11,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Build;
@@ -69,7 +70,15 @@ public class ContactRequestFragment extends Fragment {
                 if(checkPermission(getContext())) {
                     Log.d("Contact","here in contact next click");
 //                    loadFragment(new FriendsToFollow());
-                        nextScreen(activity_ref);
+                    Bundle data_bundle = new Bundle();
+                    Intent intent = new Intent("contact_update");
+                    intent.putExtras(data_bundle);
+                    if (activity_ref != null) {
+                        activity_ref.sendBroadcast(intent);
+                    }
+
+                    loadFragment(new SuggestedProfileToFollowFragment());
+                    //    nextScreen(activity_ref);
                 }
             }
         });
@@ -113,12 +122,22 @@ public class ContactRequestFragment extends Fragment {
     @Override
     public void onRequestPermissionsResult(int RC, String per[], int[] PResult) {
         super.onRequestPermissionsResult(RC, per, PResult);
+        Log.d("debug_data", "On permission result");
         if (PResult.length > 0 && PResult[0] == PackageManager.PERMISSION_GRANTED) {
-//            loadFragment(new FriendsToFollow());
-            nextScreen(activity_ref);
-        } else {
+            loadFragment(new FriendsToFollow());
+            // send broadcast to read and upload the contacts
+            Bundle data_bundle = new Bundle();
+            Intent intent = new Intent("contact_update");
+            intent.putExtras(data_bundle);
+            Log.d("debug_data", "Asking main thread for upload");
+            if (activity_ref != null) {
+                Log.d("debug_data", "Main thread request sent");
+                activity_ref.sendBroadcast(intent);
+            }
             loadFragment(new SuggestedProfileToFollowFragment());
-//            nextScreen(activity_ref);
+        } else {
+            Log.d("debug_data", "Permission denied");
+            loadFragment(new SuggestedProfileToFollowFragment());
         }
     }
 

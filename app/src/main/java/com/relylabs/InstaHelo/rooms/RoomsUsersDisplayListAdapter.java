@@ -78,6 +78,7 @@ public class RoomsUsersDisplayListAdapter extends RecyclerView.Adapter<RoomsUser
     public void onBindViewHolder(@NonNull ViewHolder holder, int position, @NonNull List<Object> payloads) {
        // super.onBindViewHolder(holder, position, payloads);
         int viewType = getItemViewType(position);
+
         Boolean is_muted = false, IsSpeaker = false, IsdataFetchRequired = false;
         String profileImageURL = "";
         if (payloads.isEmpty()) {
@@ -235,7 +236,6 @@ public class RoomsUsersDisplayListAdapter extends RecyclerView.Adapter<RoomsUser
         ShapeableImageView speaker_listener_moderator_image;
          ImageView voice_action;
          TextView speaker_listener_moderator_name;
-
         ViewHolder(View itemView) {
             super(itemView);
             speaker_listener_moderator_image = itemView.findViewById(R.id.speaker_listener_moderator_image);

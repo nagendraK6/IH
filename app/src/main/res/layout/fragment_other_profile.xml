@@ -30,7 +30,7 @@
         android:layout_marginTop="0dp"
         android:layout_toEndOf="@+id/follower"
         android:text="@string/followers"
-        android:textColor="@color/follower_blue"
+        android:textColor="@color/neartagtextcolor"
         android:textSize="18sp" />
 
     <TextView
@@ -44,9 +44,8 @@
         android:layout_marginBottom="0dp"
         android:layout_toEndOf="@+id/following"
         android:text="@string/following"
-        android:textColor="@color/follower_blue"
+        android:textColor="@color/neartagtextcolor"
         android:textSize="18sp" />
-
     <ImageView
         android:id="@+id/prev_button2"
         android:layout_width="wrap_content"
@@ -174,15 +173,11 @@
         android:textSize="14sp" />
 
     <TextView
+        android:layout_alignParentRight="true"
         android:id="@+id/follow_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/profile_img"
-        android:layout_alignBottom="@+id/profile_img"
-        android:layout_marginStart="69dp"
-        android:layout_marginTop="29dp"
-        android:layout_marginBottom="27dp"
-        android:layout_toEndOf="@+id/profile_img"
-        android:textSize="18sp" />
+        android:layout_marginRight="50dp"
+        android:layout_marginTop="140dp" />
 
 </RelativeLayout>

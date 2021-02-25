@@ -89,7 +89,7 @@ public class OtherProfile extends Fragment {
             @Override
             public void onClick(View v) {
                 if(follow_text.equals("Following")){
-
+                    follow_btn.setBackground(view.getContext().getDrawable(R.drawable.follow_cta_action));
                     final User user = User.getLoggedInUser();
                     AsyncHttpClient client = new AsyncHttpClient();
                     boolean running = false;
@@ -101,18 +101,12 @@ public class OtherProfile extends Fragment {
 //                            hide_busy_indicator();
                             follow_text = "Follow";
                             Log.d("response_follow",response.toString());
-                            follow_btn.setText("Follow");
                         }
 
 
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
-                            WeakHashMap<String, String> log_data = new WeakHashMap<>();
-                            log_data.put(Logger.STATUS, Integer.toString(statusCode));
-                            log_data.put(Logger.JSON, obj.toString());
-                            log_data.put(Logger.THROWABLE, t.toString());
-
                         }
                     };
 
@@ -121,7 +115,7 @@ public class OtherProfile extends Fragment {
                     client.post(App.getBaseURL() + "registration/unfollow_user", params, jrep);
                 }
                 else if(follow_text.equals("Follow") ){
-
+                    follow_btn.setBackground(view.getContext().getDrawable(R.drawable.following_state));
                     final User user = User.getLoggedInUser();
                     AsyncHttpClient client = new AsyncHttpClient();
                     boolean running = false;
@@ -130,21 +124,14 @@ public class OtherProfile extends Fragment {
                     JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-//                            hide_busy_indicator();
                             follow_text = "Following";
                             Log.d("response_follow",response.toString());
-                            follow_btn.setText("Following");
                         }
 
 
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
-                            WeakHashMap<String, String> log_data = new WeakHashMap<>();
-                            log_data.put(Logger.STATUS, Integer.toString(statusCode));
-                            log_data.put(Logger.JSON, obj.toString());
-                            log_data.put(Logger.THROWABLE, t.toString());
-
                         }
                     };
 
@@ -183,7 +170,14 @@ public class OtherProfile extends Fragment {
                         String bio = response.getString("bio");
                         follow_text = response.getString("follow_text");
                         TextView follow_btn = view.findViewById(R.id.follow_btn);
-                        follow_btn.setText(follow_text);
+
+
+                        if(follow_text.equals("Following")) {
+                            follow_btn.setBackground(view.getContext().getDrawable(R.drawable.following_state));
+                        } else {
+                            follow_btn.setBackground(view.getContext().getDrawable(R.drawable.follow_cta_action));
+                        }
+
                         inviterUsername = response.getString("inviterUsername");
                         String user_name = response.getString("name");
 //                        String user_username = response.getString("username");
@@ -240,11 +234,6 @@ public class OtherProfile extends Fragment {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
-                WeakHashMap<String, String> log_data = new WeakHashMap<>();
-                log_data.put(Logger.STATUS, Integer.toString(statusCode));
-                log_data.put(Logger.JSON, obj.toString());
-                log_data.put(Logger.THROWABLE, t.toString());
-
             }
         };
 

@@ -132,7 +132,7 @@ public class DisplayUserNameAskFragment extends Fragment {
         send_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View buttonView) {
-                if (StringUtils.isEmpty(user_name.getText().toString()) || user_name.toString().length() < 2) {
+                if (StringUtils.isEmpty(user_name.getText().toString()) || user_name.getText().toString().length() < 2) {
                     return;
                 }
 
