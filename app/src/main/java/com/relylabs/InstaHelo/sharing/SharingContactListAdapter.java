@@ -148,6 +148,12 @@ public class SharingContactListAdapter extends RecyclerView.Adapter<SharingConta
                     int invite_count = response.getInt("invites_count");
                     user.InvitesCount = invite_count;
                     user.save();
+
+                    Contact c = Contact.getContact(username);
+                    if (c != null) {
+                        c.IsInvited = Boolean.TRUE;
+                        c.save();
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

@@ -3,6 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusable="true"
+    android:clickable="true"
     android:background="@color/neartagtheme"
     android:orientation="vertical">
     <ImageView
@@ -57,6 +59,16 @@
             android:text="profile for adding them"></TextView>
     </RelativeLayout>
 
+    <SearchView
+        android:id="@+id/search_contact"
+        android:layout_marginTop="5dp"
+        android:layout_below="@+id/top_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:background="#E1E0D6" />
+
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="479dp"
@@ -85,18 +97,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/show_busy_indicator"/>
-
-    <SearchView
-        android:id="@+id/search_contact"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="6dp"
-        android:layout_marginLeft="50dp"
-        android:layout_marginTop="179dp"
-        android:layout_marginEnd="7dp"
-        android:background="#E1E0D6" />
 
 </RelativeLayout>

@@ -4,22 +4,27 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.TouchDelegate;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -63,10 +68,23 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
     RecyclerView recyclerView;
     SharingContactListAdapter adapter;
     ProgressBar show_busy_indicator;
+    ArrayList<Contact> all_contacts;
+    private FragmentActivity activity;
+    InifiniteListView scrollListener;
+    boolean read_from_memory = true;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        all_contacts = new ArrayList<>();
         return inflater.inflate(R.layout.fragment_contact_list_display, container, false);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity) {
+            activity = (FragmentActivity) context;
+        }
     }
 
     @Override
@@ -82,22 +100,57 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
         }
         TextView invite_top = (TextView) view.findViewById(R.id.main_desc_with_invite_count);
         invite_top.setText(invite_number);
-        ImageView left_move = view.findViewById(R.id.move_back);
+        final ImageView left_move = view.findViewById(R.id.move_back);
+        left_move.post( new Runnable() {
+            // Post in the parent's message queue to make sure the parent
+            // lays out its children before we call getHitRect()
+            public void run() {
+                final Rect r = new Rect();
+                left_move.getHitRect(r);
+                r.top += 24;
+                r.bottom += 24;
+                r.left += 24;
+                r.right += 24;
+                left_move.setTouchDelegate( new TouchDelegate( r , left_move));
+            }
+        });
+
+
         show_busy_indicator = view.findViewById(R.id.show_busy_indicator);
+
+
         left_move.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("debug_f", "Remove started");
                 removefragment();
             }
         });
 
         show_busy_indicator.setVisibility(View.VISIBLE);
         fragment_view = view;
-        if (checkPermission(getContext())) {
-            new StartAsyncTask().execute();
+        if (checkPermission(activity)) {
+            processContacts(false);
+            read_from_memory = false;
+            Bundle data_bundle = new Bundle();
+            Intent intent = new Intent("contact_update");
+            intent.putExtras(data_bundle);
+            Log.d("debug_data", "Asking main thread for upload");
+            if (activity != null) {
+                Log.d("debug_data", "Main thread request sent");
+                activity.sendBroadcast(intent);
+            }
+            //new StartAsyncTask().execute();
+
         }
 
         SearchView search = (SearchView) view.findViewById(R.id.search_contact);
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                search.setIconified(false);
+            }
+        });
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -137,33 +190,35 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
     }
 
 
-    public class StartAsyncTask extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            ArrayList<Contact> all_contacts = readContacts();
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    prepareRecyclerView(all_contacts);
-                    // WORK on UI thread here
-                }
-            });
-            return null;
+    public void processContacts(boolean read_from_memory) {
+        // read contacts from db
+        Log.d("debug_c", "Processing contacts");
+        if (read_from_memory) {
+            all_contacts = readContacts(25);
+            Log.d("debug_c", "Processing contacts. Read memory done");
+        } else {
+            all_contacts = Contact.getTopContactsNotInvited(1000);
+            Log.d("debug_c", "Processing contacts. Read disk done");
+            if (all_contacts.size() == 0) {
+                all_contacts = readContacts(25);
+            }
         }
+
+        Log.d("debug_c", "Processing contacts. Rendering");
+
+        prepareRecyclerView(all_contacts);
     }
 
 
-    public ArrayList<Contact> readContacts(){
-        contact_names = new ArrayList<>();
-        contact_numbers = new ArrayList<>();
-        contact_names_permanent = new ArrayList<>();
-        contact_numbers_permanent = new ArrayList<>();
+
+    public ArrayList<Contact> readContacts(int max_limit){
         ArrayList<Contact> contacts = new ArrayList<>();
-        ContentResolver cr = getActivity().getContentResolver();
+        ContentResolver cr = activity.getContentResolver();
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
                 null, null, null, null);
 
+
+        int i = 0;
         if (cur.getCount() > 0) {
             while (cur.moveToNext()) {
                 String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
@@ -181,11 +236,13 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
                     }
 
                     pCur.close();
-                    String refinedPhone = cleanPhoneNo(phone);
+                    String refinedPhone = cleanPhoneNo(phone, activity);
                     if(!refinedPhone.equals("ERROR")){
-                        contacts.add(new Contact(name, refinedPhone));
-                        contact_names.add(name);
-                        contact_numbers.add(refinedPhone);
+                        contacts.add(new Contact(name, refinedPhone, false, false));
+                        i++;
+                        if (i >= max_limit) {
+                            break;
+                        }
                     }
                 }
             }
@@ -217,20 +274,84 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
     public void onRequestPermissionsResult(int RC, String per[], int[] PResult) {
         super.onRequestPermissionsResult(RC, per, PResult);
         if (PResult.length > 0 && PResult[0] == PackageManager.PERMISSION_GRANTED) {
-            new StartAsyncTask().execute();
+            processContacts(true);
+            Bundle data_bundle = new Bundle();
+            Intent intent = new Intent("contact_update");
+            intent.putExtras(data_bundle);
+            Log.d("debug_data", "Asking main thread for upload");
+            if (activity != null) {
+                Log.d("debug_data", "Main thread request sent");
+                activity.sendBroadcast(intent);
+            }
         }
     }
 
 
     void prepareRecyclerView(ArrayList<Contact> all_contacts) {
+        contact_names = new ArrayList<>();
+        contact_numbers = new ArrayList<>();
+        contact_names_permanent = new ArrayList<>();
+        contact_numbers_permanent = new ArrayList<>();
+
+        for (int i = 0; i < all_contacts.size(); i++) {
+            contact_names_permanent.add(all_contacts.get(i).Name);
+            contact_numbers_permanent.add(all_contacts.get(i).Phone);
+        }
+
+        contact_names.addAll(contact_names_permanent);
+        contact_numbers.addAll(contact_numbers_permanent);
+
+
         recyclerView = fragment_view.findViewById(R.id.contact_list_display);
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(activity);
+        recyclerView.setLayoutManager(layoutManager);
         adapter = new SharingContactListAdapter(getContext(), contact_names, contact_numbers);
         adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
-        upload_to_server_contacts(contact_names, contact_numbers);
         show_busy_indicator.setVisibility(View.INVISIBLE);
+
+       // fetch_contact_list_from_the_server();
     }
+
+
+    public class StartAsyncTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            Log.d("debug_c", "Processing contacts");
+            if (read_from_memory) {
+                all_contacts = readContacts(25);
+                Log.d("debug_c", "Processing contacts. Read memory done");
+            } else {
+                all_contacts = Contact.getTopContactsNotInvited(1000);
+                Log.d("debug_c", "Processing contacts. Read disk done");
+                if (all_contacts.size() == 0) {
+                    all_contacts = readContacts(25);
+                }
+            }
+
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    prepareRecyclerView(all_contacts);
+                    // WORK on UI thread here
+                    Bundle data_bundle = new Bundle();
+                    Intent intent = new Intent("contact_update");
+                    intent.putExtras(data_bundle);
+                    Log.d("debug_data", "Asking main thread for upload if any");
+                    if (activity != null) {
+                        Log.d("debug_data", "Main thread request sent");
+                        activity.sendBroadcast(intent);
+                    }
+                }
+            });
+
+
+
+
+            return null;
+        }
+    }
+
 
     @Override
     public void onDestroy() {
@@ -238,18 +359,14 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
     }
 
 
-    private void loadFragment(Fragment fragment_to_start) {
-        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_holder, fragment_to_start);
-        ft.commit();
-    }
-
         private void removefragment() {
-            Fragment f = getActivity().getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
-            FragmentManager manager = getActivity().getSupportFragmentManager();
+            Log.d("debug_f", "Remove s");
+            Fragment f = activity.getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
+            FragmentManager manager = activity.getSupportFragmentManager();
             FragmentTransaction trans = manager.beginTransaction();
             trans.remove(f);
             trans.commit();
+            Log.d("debug_f", "Remove e");
             manager.popBackStack();
         }
 
@@ -258,67 +375,62 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
 
     }
 
-        private void upload_to_server_contacts(ArrayList<String> contact_name, ArrayList<String> contact_number) {
-            final User user = User.getLoggedInUser();
-            AsyncHttpClient client = new AsyncHttpClient();
-            RequestParams params = new RequestParams();
+    private void fetch_contact_list_from_the_server() {
+        final User user = User.getLoggedInUser();
+        AsyncHttpClient client = new AsyncHttpClient();
+        RequestParams params = new RequestParams();
 
-            JSONArray mJSONArray_names = new JSONArray(contact_name);
-            JSONArray mJSONArray_numbers = new JSONArray(contact_number);
+        JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                try {
+                    String error_message = response.getString("error_message");
+                    JSONArray all_contacts = response.getJSONArray("all_contacts");
+                    Integer contacts_count_on_server = response.getInt("contacts_count_on_server");
 
-            params.add("contact_names", mJSONArray_names.toString());
-            params.add("contact_numbers", mJSONArray_numbers.toString());
-
-            JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    try {
-                        String error_message = response.getString("error_message");
-                        JSONArray all_contact_exclude = response.getJSONArray("all_contact_exclude");
-                        if (all_contact_exclude.length() > 0) {
-                            ArrayList<String> exclude_lst = new ArrayList<>();
-                            for (int i =0 ;i < all_contact_exclude.length(); i++) {
-                                JSONObject contact_info = all_contact_exclude.getJSONObject(i);
-                                exclude_lst.add(contact_info.getString("contact_number"));
-                            }
-
-                            // remove the contact and reload the adapter
-                            ArrayList<String> new_contact_names = new ArrayList<>();
-                            ArrayList<String> new_contact_numbers = new ArrayList<>();
-                            for (int i = 0; i < contact_number.size(); i++) {
-                                if (!exclude_lst.contains(contact_numbers.get(i))) {
-                                    new_contact_names.add(contact_names.get(i));
-                                    new_contact_numbers.add(contact_number.get(i));
-                                }
-                            }
-
-
-                            contact_numbers.clear();
-                            contact_names.clear();
-                            contact_numbers_permanent.clear();
-                            contact_names_permanent.clear();
-                            contact_name.addAll(new_contact_names);
-                            contact_names_permanent.addAll(new_contact_names);
-                            contact_numbers_permanent.addAll(new_contact_numbers);
-                            contact_numbers.addAll(new_contact_numbers);
-                            adapter.notifyDataSetChanged();
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                    if (contacts_count_on_server == 0) {
+                            Log.d("debug_data", "No contact uploaded on server");
+                        return;
                     }
-                }
 
-                @Override
-                public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
-                    Log.d("debug_data", "" + res);
-                }
-                @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject obj) {
-                }
-            };
+                    contact_names_permanent.clear();
+                    contact_numbers.clear();
 
-            client.addHeader("Accept", "application/json");
-            client.addHeader("Authorization", "Token " + user.AccessToken);
-            client.post(App.getBaseURL() + "registration/get_contact_status", params, jrep);
-        }
+                    contact_names.clear();
+                    contact_numbers.clear();
+
+
+                    for (int i = 0; i < all_contacts.length(); i++) {
+                        JSONObject obj = all_contacts.getJSONObject(i);
+                        String name = obj.getString("name");
+                        String phone = obj.getString("number");
+
+
+
+                        contact_names.add(name);
+                        contact_numbers.add(phone);
+                        contact_names_permanent.add(name);
+                        contact_numbers_permanent.add(phone);
+                    }
+
+                    adapter.notifyDataSetChanged();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
+                Log.d("debug_data", "" + res);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject obj) {
+            }
+        };
+
+        client.addHeader("Accept", "application/json");
+        client.addHeader("Authorization", "Token " + user.AccessToken);
+        client.post(App.getBaseURL() + "registration/get_non_invited_users_from_the_contact", params, jrep);
+    }
 }

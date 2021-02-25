@@ -251,13 +251,7 @@ public class FollowingListAdapter extends RecyclerView.Adapter<FollowingListAdap
     public interface ItemClickListener {
         void onItemClick(int position);
     }
-    private void loadFragment(Fragment fragment_to_start, View view) {
-        AppCompatActivity activity = (AppCompatActivity) view.getContext();
 
-        FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
-        ft.add(R.id.fragment_holder, fragment_to_start);
-        ft.commit();
-    }
     @Override
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
     }

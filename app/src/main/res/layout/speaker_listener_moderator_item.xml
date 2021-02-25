@@ -11,13 +11,13 @@
         android:layout_centerHorizontal="true"
         android:layout_height="70dp"/>
     <ImageView
-        android:layout_marginTop="25dp"
-        android:layout_alignLeft="@+id/speaker_listener_moderator_image"
-        android:layout_width="25dp"
-        android:visibility="visible"
-        android:layout_marginLeft="55dp"
-        android:id="@+id/voice_action"
-        android:layout_height="25dp"/>
+            android:layout_marginTop="25dp"
+            android:layout_alignLeft="@+id/speaker_listener_moderator_image"
+            android:layout_width="25dp"
+            android:visibility="visible"
+            android:layout_marginLeft="55dp"
+            android:id="@+id/voice_action"
+            android:layout_height="25dp"/>
     <TextView
         android:layout_below="@+id/speaker_listener_moderator_image"
         android:layout_width="wrap_content"

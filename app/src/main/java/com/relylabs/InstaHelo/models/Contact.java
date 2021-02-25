@@ -3,33 +3,50 @@ package com.relylabs.InstaHelo.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Contact implements Parcelable {
-    private String Name;
-    private String Phone;
-    private Boolean IsSelected;
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Table;
+import com.activeandroid.query.Select;
 
-    public Contact(String name, String phone) {
-        this.Name = name;
-        this.Phone = phone;
-        this.IsSelected = false;
+import java.util.ArrayList;
+import java.util.List;
+
+@Table(name = "Contact")
+public class Contact extends Model {
+
+    @Column(name = "Phone", unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
+    public String Phone;
+
+    @Column(name = "Name")
+    public String Name;
+
+    @Column(name = "IsUploaded")
+    public Boolean IsUploaded;
+
+
+    @Column(name = "IsInvited")
+    public Boolean IsInvited;
+
+
+    public Contact() {
+        super();
+        this.Name = "";
+        this.Phone = "";
+        this.IsUploaded = true;
+        this.IsInvited = true;
     }
 
-    public static final Creator<Contact> CREATOR = new Creator<Contact>() {
-        @Override
-        public Contact createFromParcel(Parcel in) {
-            return new Contact(in);
-        }
+    public Contact(String name, String phone, Boolean is_uploaded, Boolean IsInvited) {
+        this.Name = name;
+        this.Phone = phone;
+        this.IsUploaded = is_uploaded;
+        this.IsInvited = IsInvited;
+    }
 
-        @Override
-        public Contact[] newArray(int size) {
-            return new Contact[size];
-        }
-    };
 
     public String getName() {
         return Name;
     }
-
 
     public String getPhone() {
         return Phone;
@@ -43,29 +60,24 @@ public class Contact implements Parcelable {
         Phone = phone;
     }
 
-    public Boolean getSelected() {
-        return IsSelected;
+    public static ArrayList<Contact> getAllContactsNotUploaded() {
+        // .where("IsUploaded = ?", false).
+        List<Contact> all_contacts = new Select().from(Contact.class).where("IsUploaded = ?", false).execute();
+        return new ArrayList<Contact>(all_contacts);
     }
 
-    public void setSelected(Boolean selected) {
-        IsSelected = selected;
+
+    public static ArrayList<Contact> getTopContactsNotInvited(int max_count) {
+        List<Contact> all_contacts = new Select().from(Contact.class).where("IsInvited = ?", false).limit(max_count).execute();
+        return new ArrayList<Contact>(all_contacts);
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public static boolean checkIfExists(String phone) {
+        Contact c = new Select().from(Contact.class).where("Phone = ?", phone).executeSingle();
+        return c != null;
     }
 
-    protected Contact(Parcel in) {
-        Name = in.readString();
-        Phone = in.readString();
-        IsSelected = in.readByte() == 1;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(Name);
-        dest.writeString(Phone);
-        dest.writeByte((byte) (this.IsSelected ? 1 : 0));
+    public static Contact getContact(String phone) {
+        return new Select().from(Contact.class).where("Phone = ?", phone).executeSingle();
     }
 }

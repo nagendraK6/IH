@@ -593,6 +593,12 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         // Create adapter passing in the sample user data
         adapter = new NewsFeedAdapter(activity, all_feeds);
         adapter.setClickListener(this);
+
+        final User user = User.getLoggedInUser();
+        user.UserSteps = "MAIN_SCREEN";
+        user.CompletedOnboarding = true;
+        user.save();
+
         ImageView start_a_room_cta = view.findViewById(R.id.start_a_room_cta);
        // if ((!User.getLoggedInUser().IsStartRoomEnabled)) {
       //      start_a_room_cta.setVisibility(View.INVISIBLE);
@@ -622,7 +628,6 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         //news_feed_list.setOnClickListener();
 
         ShapeableImageView img = view.findViewById(R.id.user_profile_image);
-        User user = User.getLoggedInUser();
         if (!user.ProfilePicURL.equals("")) {
             float radius = activity.getResources().getDimension(R.dimen.default_corner_radius_profile);
             img.setShapeAppearanceModel(img.getShapeAppearanceModel()
@@ -1015,6 +1020,14 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
             FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
             ft.add(R.id.fragment_holder, fragment_to_start);
             ft.commit();
+    }
+
+
+    private void fragment_add(Fragment fragment_to_start, String name) {
+        FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
+         ft.add(R.id.container, fragment_to_start)
+                .addToBackStack(name);
+        ft.commit();
     }
 
 

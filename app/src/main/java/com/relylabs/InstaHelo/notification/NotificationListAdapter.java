@@ -22,7 +22,9 @@ import org.ocpsoft.prettytime.PrettyTime;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 public class NotificationListAdapter extends RecyclerView.Adapter<NotificationListAdapter.ViewHolder> {
@@ -66,9 +68,14 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
         holder.notification_text.setText(this.text_arr.get(position));
         PrettyTime p = new PrettyTime();
         Date time_date = null;
+        Integer offset = ZonedDateTime.now().getOffset().getTotalSeconds();
         try {
             time_date = inputFormat.parse(this.time_arr.get(position));
-        } catch (ParseException e) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(time_date);
+            calendar.add(Calendar.SECOND,offset);
+            time_date = calendar.getTime();
+        } catch (ParseException e){
             e.printStackTrace();
         }
         String ti = p.format(time_date);
