@@ -98,16 +98,19 @@ public class RoomCreateBottomSheetDialogFragment extends Fragment  {
         next_button = view.findViewById(R.id.submit_room_create);
         back_button = view.findViewById(R.id.cancel);
         room_selection = view.findViewById(R.id.room_choice);
+        TextView helper = view.findViewById(R.id.helperText);
         room_selection.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch(checkedId) {
                     case R.id.social_room:
                         room_type = "social";
+                        helper.setText("Only the followers of speakers can join");
                             break;
                     case R.id.public_room:
                         room_type = "public";
-                            break;
+                        helper.setText("Anyone can join");
+                        break;
                 }
             }
         });
