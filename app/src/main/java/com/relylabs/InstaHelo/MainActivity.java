@@ -2,6 +2,7 @@ package com.relylabs.InstaHelo;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -23,6 +24,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.relylabs.InstaHelo.Utils.RoomHelper;
 import com.relylabs.InstaHelo.models.Contact;
 import com.relylabs.InstaHelo.models.User;
 import com.relylabs.InstaHelo.onboarding.AddBioDetailsFragment;
@@ -37,6 +39,7 @@ import com.relylabs.InstaHelo.onboarding.NonInvitedUserFirstNameAskFragment;
 import com.relylabs.InstaHelo.onboarding.PhoneVerificationFragment;
 import com.relylabs.InstaHelo.onboarding.PhotoAskFragment;
 import com.relylabs.InstaHelo.onboarding.SuggestedProfileToFollowFragment;
+import com.relylabs.InstaHelo.services.ActiveRoomService;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,10 +58,17 @@ public class MainActivity extends AppCompatActivity {
     BroadcastReceiver broadcastintent = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d("debug_data", "Received data from the other fragments to upload contact");
-            readContactsAndStoreLocal();
-            ArrayList<Contact> get_all_pending_contacts = Contact.getAllContactsNotUploaded();
-            upload_to_server_contacts_and_return_invited_users(get_all_pending_contacts);
+            String user_action =  intent
+                    .getStringExtra("user_action");
+            Integer uid;
+            switch (user_action) {
+                case "contact_update":
+                    Log.d("debug_data", "Received data from the other fragments to upload contact");
+                    readContactsAndStoreLocal();
+                    ArrayList<Contact> get_all_pending_contacts = Contact.getAllContactsNotUploaded();
+                    upload_to_server_contacts_and_return_invited_users(get_all_pending_contacts);
+                    break;
+            }
         }
     };
 
@@ -66,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setUpFragment();
 
         FirebaseMessaging.getInstance().getToken()
@@ -85,9 +94,9 @@ public class MainActivity extends AppCompatActivity {
                         editor.commit();
                     }
                 });
-        IntentFilter contact_update = new IntentFilter("contact_update");
+        IntentFilter update_from_fragment = new IntentFilter("update_to_main_activity");
         Log.d("debug_data", "Activity registered to receive update");
-        registerReceiver(broadcastintent, contact_update);
+        registerReceiver(broadcastintent, update_from_fragment);
     }
 
     private void setUpFragment() {
@@ -125,6 +134,11 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
+
+
+
+
+
     public void readContactsAndStoreLocal(){
         ContentResolver cr = MainActivity.this.getContentResolver();
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
@@ -159,6 +173,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        Log.d("debug_data", "activity destroyed");
+        // RoomHelper.sendServiceLeaveChannel(MainActivity.this);
+        super.onDestroy();
+    }
 
     private void upload_to_server_contacts_and_return_invited_users(ArrayList<Contact> contacts) {
         if (contacts.size() == 0) {
@@ -195,13 +215,13 @@ public class MainActivity extends AppCompatActivity {
                     JSONArray alread_invited_users = response.getJSONArray("invited_contacts");
                     Log.d("debug_data", "Already invited list is " + String.valueOf(alread_invited_users.length()));
                     for(int i = 0; i < alread_invited_users.length(); i++) {
-                            String  phn = alread_invited_users.getString(i);
-                            Contact c = Contact.getContact(phn);
-                            if (c != null) {
-                                c.IsInvited = Boolean.TRUE;
-                                c.IsUploaded = Boolean.TRUE;
-                                c.save();
-                            }
+                        String  phn = alread_invited_users.getString(i);
+                        Contact c = Contact.getContact(phn);
+                        if (c != null) {
+                            c.IsInvited = Boolean.TRUE;
+                            c.IsUploaded = Boolean.TRUE;
+                            c.save();
+                        }
                     }
 
                     // else mark users selected as done

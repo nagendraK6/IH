@@ -40,6 +40,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.relylabs.InstaHelo.App;
 import com.relylabs.InstaHelo.R;
+import com.relylabs.InstaHelo.Utils.Helper;
 import com.relylabs.InstaHelo.models.Contact;
 import com.relylabs.InstaHelo.models.User;
 import com.relylabs.InstaHelo.onboarding.FriendToFollowListAdapter;
@@ -131,17 +132,7 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
         fragment_view = view;
         if (checkPermission(activity)) {
             processContacts(false);
-            read_from_memory = false;
-            Bundle data_bundle = new Bundle();
-            Intent intent = new Intent("contact_update");
-            intent.putExtras(data_bundle);
-            Log.d("debug_data", "Asking main thread for upload");
-            if (activity != null) {
-                Log.d("debug_data", "Main thread request sent");
-                activity.sendBroadcast(intent);
-            }
-            //new StartAsyncTask().execute();
-
+            Helper.sendRequestForContactProcess(activity);
         }
 
         SearchView search = (SearchView) view.findViewById(R.id.search_contact);
@@ -275,14 +266,7 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
         super.onRequestPermissionsResult(RC, per, PResult);
         if (PResult.length > 0 && PResult[0] == PackageManager.PERMISSION_GRANTED) {
             processContacts(true);
-            Bundle data_bundle = new Bundle();
-            Intent intent = new Intent("contact_update");
-            intent.putExtras(data_bundle);
-            Log.d("debug_data", "Asking main thread for upload");
-            if (activity != null) {
-                Log.d("debug_data", "Main thread request sent");
-                activity.sendBroadcast(intent);
-            }
+            Helper.sendRequestForContactProcess(activity);
         }
     }
 
@@ -310,7 +294,7 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
         recyclerView.setAdapter(adapter);
         show_busy_indicator.setVisibility(View.INVISIBLE);
 
-       // fetch_contact_list_from_the_server();
+        // fetch_contact_list_from_the_server();
     }
 
 
@@ -333,15 +317,7 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
                 @Override
                 public void run() {
                     prepareRecyclerView(all_contacts);
-                    // WORK on UI thread here
-                    Bundle data_bundle = new Bundle();
-                    Intent intent = new Intent("contact_update");
-                    intent.putExtras(data_bundle);
-                    Log.d("debug_data", "Asking main thread for upload if any");
-                    if (activity != null) {
-                        Log.d("debug_data", "Main thread request sent");
-                        activity.sendBroadcast(intent);
-                    }
+                    Helper.sendRequestForContactProcess(activity);
                 }
             });
 
@@ -359,16 +335,16 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
     }
 
 
-        private void removefragment() {
-            Log.d("debug_f", "Remove s");
-            Fragment f = activity.getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
-            FragmentManager manager = activity.getSupportFragmentManager();
-            FragmentTransaction trans = manager.beginTransaction();
-            trans.remove(f);
-            trans.commit();
-            Log.d("debug_f", "Remove e");
-            manager.popBackStack();
-        }
+    private void removefragment() {
+        Log.d("debug_f", "Remove s");
+        Fragment f = activity.getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
+        FragmentManager manager = activity.getSupportFragmentManager();
+        FragmentTransaction trans = manager.beginTransaction();
+        trans.remove(f);
+        trans.commit();
+        Log.d("debug_f", "Remove e");
+        manager.popBackStack();
+    }
 
     @Override
     public void onItemClick(int position) {
@@ -389,7 +365,7 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
                     Integer contacts_count_on_server = response.getInt("contacts_count_on_server");
 
                     if (contacts_count_on_server == 0) {
-                            Log.d("debug_data", "No contact uploaded on server");
+                        Log.d("debug_data", "No contact uploaded on server");
                         return;
                     }
 

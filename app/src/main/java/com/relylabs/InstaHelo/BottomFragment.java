@@ -47,6 +47,26 @@ public class BottomFragment extends Fragment implements IOnBackPressed {
         }
     };
 
+    BroadcastReceiver broadcastReceiverFromService = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String user_action =  intent
+                    .getStringExtra("update_type");
+            UserSettings us = UserSettings.getSettings();
+            switch (user_action) {
+                case "HAND_RAISE":
+                case "LIST_CHANGE":
+                case "REFRESH_SETTINGS":
+                    processMuteUnmuteSettings();
+                    processRaiseHandSettings();
+                    break;
+                case "EXIT_ROOM":
+                    broadcastLocalUpdate("LEAVE_CHANNEL");
+                    return;
+            }
+        }
+    };
+
 
     TextView mute_unmute_button_bottom;
     String event_title;
@@ -167,6 +187,11 @@ public class BottomFragment extends Fragment implements IOnBackPressed {
         if (activity != null) {
             activity.registerReceiver(broadCastNewMessageBottomFragemnt, new_post);
         }
+
+        IntentFilter update_from_service = new IntentFilter("update_from_service");
+        if (activity != null) {
+            activity.registerReceiver(broadcastReceiverFromService, update_from_service);
+        }
     }
 
 
@@ -214,6 +239,7 @@ public class BottomFragment extends Fragment implements IOnBackPressed {
     @Override
     public void onDestroy() {
         activity.unregisterReceiver(broadCastNewMessageBottomFragemnt);
+        activity.unregisterReceiver(broadcastReceiverFromService);
         super.onDestroy();
     }
 

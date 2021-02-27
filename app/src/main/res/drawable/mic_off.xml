@@ -1,31 +1,29 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="32dp"
-    android:height="32dp"
-    android:viewportWidth="32"
-    android:viewportHeight="32">
-    <group>
-        <path
-            android:fillColor="#EEEAEA"
-            android:pathData="M16 0a12 12 0 1 0 0 24a12 12 0 1 0 0-24z"/>
-        <path
-            android:fillColor="#4A4A4A"
-            android:fillType="evenOdd"
-            android:pathData="M12.04 11.17v0.47c0 2.3 1.86 4.17 4.17 4.17h0.1c2.3 0 4.17-1.87 4.17-4.17v-0.47h-8.44zm-1.04 0v0.58c0 2.84 2.3 5.15 5.15 5.15h0.13c2.85 0 5.16-2.3 5.16-5.15v-0.58H11z"/>
-        <path
-            android:fillColor="#4A4A4A"
-            android:pathData="M12.99 7.19c0-1.76 1.43-3.19 3.19-3.19h0.07c0.85 0 1.66 0.34 2.26 0.93 0.6 0.6 0.93 1.41 0.93 2.26v4.45c0 0.85-0.34 1.66-0.93 2.26-0.6 0.6-1.41 0.93-2.26 0.93h-0.07c-1.76 0-3.19-1.43-3.19-3.19z"/>
-        <path
-            android:strokeColor="#4A4A4A"
-            android:strokeWidth="0.96"
-            android:pathData="M16.42 16.59v2.71"/>
-        <path
-            android:strokeColor="#4A4A4A"
-            android:strokeWidth="0.96"
-            android:pathData="M13.07 18.82h6.37"/>
-        <path
-            android:fillColor="#DF3E3F"
-            android:strokeColor="#EEEAEA"
-            android:strokeWidth="0.52"
-            android:pathData="M12.83 1.64l10.1 17.5l-2.18 1.26l-10.1-17.5z"/>
-    </group>
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#EEEAEA"
+        android:pathData="M12 0a12 12 0 1 0 0 24a12 12 0 1 0 0-24z"/>
+    <path
+        android:fillColor="#4A4A4A"
+        android:fillType="evenOdd"
+        android:pathData="M8.04 11.17v0.47c0 2.3 1.86 4.17 4.17 4.17h0.1c2.3 0 4.17-1.87 4.17-4.17v-0.47H8.04zm-1.04 0v0.58c0 2.84 2.3 5.15 5.15 5.15h0.13c2.85 0 5.16-2.3 5.16-5.15v-0.58H7z"/>
+    <path
+        android:fillColor="#4A4A4A"
+        android:pathData="M8.99 7.19c0-1.76 1.43-3.19 3.19-3.19h0.07c1.76 0 3.19 1.43 3.19 3.19v4.45c0 1.76-1.43 3.19-3.19 3.19h-0.07c-1.76 0-3.19-1.43-3.19-3.19z"/>
+    <path
+        android:strokeColor="#4A4A4A"
+        android:strokeWidth="0.96"
+        android:pathData="M12.42 16.59v2.71"/>
+    <path
+        android:strokeColor="#4A4A4A"
+        android:strokeWidth="0.96"
+        android:pathData="M9.07 18.82h6.37"/>
+    <path
+        android:fillColor="#DF3E3F"
+        android:strokeColor="#EEEAEA"
+        android:strokeWidth="0.52"
+        android:pathData="M8.83 1.64l10.1 17.5l-2.18 1.26L6.65 2.9z"/>
 </vector>

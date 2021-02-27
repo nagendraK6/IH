@@ -1,9 +1,11 @@
 package com.relylabs.InstaHelo.Utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.telephony.TelephonyManager;
 import android.text.Spannable;
@@ -270,6 +272,16 @@ public class Helper {
                     return refined;
                 }
             }
+        }
+    }
+
+    public static void sendRequestForContactProcess(FragmentActivity activity) {
+        Bundle data_bundle = new Bundle();
+        data_bundle.putString("user_action", "contact_update");
+        Intent intent = new Intent("update_to_main_activity");
+        intent.putExtras(data_bundle);
+        if (activity != null) {
+            activity.sendBroadcast(intent);
         }
     }
 }

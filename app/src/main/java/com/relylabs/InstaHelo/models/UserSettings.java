@@ -48,6 +48,8 @@ public class UserSettings extends Model {
 
     public UserSettings() {
         super();
+        User u = User.getLoggedInUser();
+        this.UserID = u.UserID;
         this.is_muted = false;
         this.is_bottom_sheet_visible = false;
         this.selected_channel_name = "";
@@ -59,12 +61,8 @@ public class UserSettings extends Model {
         this.audience_hand_raised = false;
     }
 
-
     public static UserSettings getSettings() {
-        User u = User.getLoggedInUser();
-        Integer uid = u.UserID;
-        return (UserSettings) new Select().from(UserSettings.class)
-                .where("UserId = ?",uid).executeSingle();
+        return (UserSettings) new Select().from(UserSettings.class) .executeSingle();
     }
 
     public static void deleteAll() {

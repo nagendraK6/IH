@@ -31,6 +31,7 @@ import com.loopj.android.http.RequestParams;
 import com.relylabs.InstaHelo.App;
 import com.relylabs.InstaHelo.MainScreenFragment;
 import com.relylabs.InstaHelo.R;
+import com.relylabs.InstaHelo.Utils.Helper;
 import com.relylabs.InstaHelo.models.Contact;
 import com.relylabs.InstaHelo.models.User;
 
@@ -68,17 +69,8 @@ public class ContactRequestFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if(checkPermission(getContext())) {
-                    Log.d("Contact","here in contact next click");
-//                    loadFragment(new FriendsToFollow());
-                    Bundle data_bundle = new Bundle();
-                    Intent intent = new Intent("contact_update");
-                    intent.putExtras(data_bundle);
-                    if (activity_ref != null) {
-                        activity_ref.sendBroadcast(intent);
-                    }
-
+                    Helper.sendRequestForContactProcess(activity_ref);
                     loadFragment(new SuggestedProfileToFollowFragment());
-                    //    nextScreen(activity_ref);
                 }
             }
         });
@@ -124,16 +116,7 @@ public class ContactRequestFragment extends Fragment {
         super.onRequestPermissionsResult(RC, per, PResult);
         Log.d("debug_data", "On permission result");
         if (PResult.length > 0 && PResult[0] == PackageManager.PERMISSION_GRANTED) {
-            loadFragment(new FriendsToFollow());
-            // send broadcast to read and upload the contacts
-            Bundle data_bundle = new Bundle();
-            Intent intent = new Intent("contact_update");
-            intent.putExtras(data_bundle);
-            Log.d("debug_data", "Asking main thread for upload");
-            if (activity_ref != null) {
-                Log.d("debug_data", "Main thread request sent");
-                activity_ref.sendBroadcast(intent);
-            }
+            Helper.sendRequestForContactProcess(activity_ref);
             loadFragment(new SuggestedProfileToFollowFragment());
         } else {
             Log.d("debug_data", "Permission denied");

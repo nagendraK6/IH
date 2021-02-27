@@ -91,15 +91,16 @@
             android:background="@drawable/start_a_room"
             android:layout_height="40dp"/>
     </RelativeLayout>
-    <com.github.ybq.android.spinkit.SpinKitView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    <ProgressBar
         android:id="@+id/loading_channel_token_fetch"
         android:visibility="invisible"
-        style="@style/SpinKitView.Large.Wave"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:indeterminateTintMode="src_atop"
+        android:indeterminateTint="@color/instahelo_blue"
+
         android:layout_centerVertical="true"
         android:layout_centerInParent="true"
-        app:SpinKit_Color="@color/Grey" />
+        android:layout_gravity="center" />
 </RelativeLayout>

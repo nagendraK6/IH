@@ -24,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -65,13 +66,13 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
 
     RecyclerView recyclerView_s, recyclerView_a;
 
-    SpinKitView busy;
+    ProgressBar busy;
 
     RoomsUsersDisplayListAdapter speaker_adapter, audience_adapter;
 
     TextView hand_raise_audience_admin;
     ImageView mute_unmute_button_bottom;
-    Integer event_id = -1;
+
     private FragmentActivity activity;
 
     @Override
@@ -139,26 +140,72 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
     };
 
 
+    BroadcastReceiver broadcastReceiverFromService = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String update_type = intent.getStringExtra("update_type");
+            Log.d("debug_audio", "Received update from the main: " + update_type);
+
+            if (update_type.equals("LIST_CHANGE")) {
+                incrementalAdd();
+                processMuteUnmuteSettings();
+                fetchListenersData();
+                setCurrentImageHandRaise();
+            }
+
+
+            if (update_type.equals("MUTE_UNMUTE")) {
+                Integer uid = intent
+                        .getIntExtra("user_id", -1);
+                Boolean muted = intent.getBooleanExtra("is_muted", true);
+                Integer index  = -1;
+                for (int i = 0; i < speakers.size(); i++) {
+                    if (speakers.get(i).UserId.equals(uid)) {
+                        index = i;
+                    }
+                }
+
+                if (index > -1) {
+                    speakers.get(index).IsMuted = muted;
+                    updateItem(index, muted);
+                }
+
+                setCurrentImageHandRaise();
+            }
+
+            if (update_type.equals("CONNECTION_CHANGE")) {
+                fetchListenersData();
+            }
+
+            if (update_type.equals("REFRESH_SETTINGS")) {
+                processMuteUnmuteSettings();
+                fetchListenersData();
+                setCurrentImageHandRaise();
+            }
+
+            if (update_type.equals("EXIT_ROOM")) {
+                broadcastLocalUpdate("LEAVE_CHANNEL");
+                removefragment();
+            }
+        }
+    };
+
+
     private  void updateItem(Integer index, Boolean muted) {
-            Bundle diff = new Bundle();
-                diff.putBoolean("IsMuted", muted);
-                speaker_adapter.notifyItemChanged(index, diff);
+        Bundle diff = new Bundle();
+        diff.putBoolean("IsMuted", muted);
+        speaker_adapter.notifyItemChanged(index, diff);
     }
 
 
     private void incrementalAdd() {
         ArrayList<UsersInRoom> new_list = UsersInRoom.getAllSpeakers();
-            final RoomsUsersDisplayListDiffsCallback diffCallback = new RoomsUsersDisplayListDiffsCallback(speakers, new_list);
-            final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
-            speakers.clear();
-            speakers.addAll(new_list);
-            diffResult.dispatchUpdatesTo(speaker_adapter);
+        final RoomsUsersDisplayListDiffsCallback diffCallback = new RoomsUsersDisplayListDiffsCallback(speakers, new_list);
+        final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
+        speakers.clear();
+        speakers.addAll(new_list);
+        diffResult.dispatchUpdatesTo(speaker_adapter);
     }
-
-
-
-
-
 
 
     @Nullable
@@ -223,45 +270,52 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
         }
 
 
+        IntentFilter update_from_service = new IntentFilter("update_from_service");
+        if (activity != null) {
+            activity.registerReceiver(broadcastReceiverFromService, update_from_service);
+        }
+
+
+
+
         audiences = new ArrayList<>();
         speakers = new ArrayList<>();
         speakers = UsersInRoom.getAllSpeakers();
 
-        String event_title = getArguments().getString("event_title");
+        String event_title = UserSettings.getSettings().selected_channel_display_name;
         TextView title_of_room = view.findViewById(R.id.title_of_room);
         title_of_room.setText(event_title);
         mute_unmute_button_bottom.setVisibility(View.VISIBLE);
 
-            mute_unmute_button_bottom.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    UserSettings us = UserSettings.getSettings();
-                    if (us.is_muted) {
-                        us.is_muted = false;
-                    } else {
-                        us.is_muted = true;
-                    }
-                    us.save();
-
-                    User lg_user = User.getLoggedInUser();
-                    int index_impacted = -1;
-                    for (int i = 0; i < speakers.size(); i++) {
-                        if (speakers.get(i).UserId.equals(lg_user.UserID)) {
-                            speakers.get(i).IsMuted =  us.is_muted;
-                            index_impacted = i;
-                        }
-                    }
-
-                    updateItem(index_impacted,  us.is_muted);
-                   // speaker_adapter.notifyDataSetChanged();
-                    processMuteUnmuteSettings();
-
-
-                    broadcastLocalUpdate("MUTE_UNMUTE_CLICK");
+        mute_unmute_button_bottom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UserSettings us = UserSettings.getSettings();
+                if (us.is_muted) {
+                    us.is_muted = false;
+                } else {
+                    us.is_muted = true;
                 }
-            });
+                us.save();
 
-        event_id = getArguments().getInt("event_id", -1);
+                User lg_user = User.getLoggedInUser();
+                int index_impacted = -1;
+                for (int i = 0; i < speakers.size(); i++) {
+                    if (speakers.get(i).UserId.equals(lg_user.UserID)) {
+                        speakers.get(i).IsMuted =  us.is_muted;
+                        index_impacted = i;
+                    }
+                }
+
+                updateItem(index_impacted,  us.is_muted);
+                // speaker_adapter.notifyDataSetChanged();
+                processMuteUnmuteSettings();
+
+
+                broadcastLocalUpdate("MUTE_UNMUTE_CLICK");
+            }
+        });
+
         UserSettings us = UserSettings.getSettings();
         hand_raise_audience_admin = view.findViewById(R.id.hand_raise_audience_admin);
         if (!us.is_current_user_admin && us.is_current_role_speaker) {
@@ -279,10 +333,10 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
 
 
         processMuteUnmuteSettings();
-       // speakers = UsersInRoom.getAllSpeakers();
+        // speakers = UsersInRoom.getAllSpeakers();
         setupSpeakers(view);
         setupAudiences(view);
-       // updatePostingDetails(t);
+        // updatePostingDetails(t);
         fetchListenersData();
         busy = view.findViewById(R.id.loading_channel_token_fetch);
     }
@@ -352,6 +406,7 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
     @Override
     public void onDestroy() {
         activity.unregisterReceiver(broadCastNewMessage);
+        activity.unregisterReceiver(broadcastReceiverFromService);
         super.onDestroy();
     }
 
@@ -373,7 +428,8 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
         User user = User.getLoggedInUser();
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
-        params.add("event_id", String.valueOf(event_id));
+        UserSettings us = UserSettings.getSettings();
+        params.add("event_id", String.valueOf(us.selected_event_id));
 
 
         JsonHttpResponseHandler jrep= new JsonHttpResponseHandler() {
@@ -384,14 +440,15 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
                     if (error_message.equals("SUCCESS")) {
                         JSONArray all_data = response.getJSONArray("all_audiences");
                         ArrayList<UsersInRoom> all_audiences = new ArrayList<>();
+                        Log.d("debug_data", "Audience Count " + String.valueOf(all_audiences.size()));
                         for (int i  = 0 ; i < all_data.length(); i++) {
                             JSONObject obj = all_data.getJSONObject(i);
                             all_audiences.add(new UsersInRoom(
-                               Boolean.FALSE,
-                               Boolean.TRUE,
-                               obj.getInt("id"),
-                               obj.getString("name"),
-                               obj.getString("profile_image_url")
+                                    Boolean.FALSE,
+                                    Boolean.TRUE,
+                                    obj.getInt("id"),
+                                    obj.getString("name"),
+                                    obj.getString("profile_image_url")
                             ));
                         }
 
@@ -406,10 +463,12 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
+                Log.d("debug_data", "Audience fetch failed");
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
+                Log.d("debug_data", "Audience fetch failed");
             }
         };
 
@@ -488,7 +547,7 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
         if (us.is_current_user_admin) {
             HandRaiseUsersListDialogFragment bottomSheetDialog = new HandRaiseUsersListDialogFragment();
             Bundle bundle = new Bundle();
-            bundle.putInt("event_id", event_id);
+            bundle.putInt("event_id", us.selected_event_id);
             bottomSheetDialog.setArguments(bundle);
 
             bottomSheetDialog.show(getFragmentManager(), "TAG");
