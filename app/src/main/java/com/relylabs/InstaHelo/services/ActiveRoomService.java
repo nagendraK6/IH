@@ -32,6 +32,7 @@ import com.relylabs.InstaHelo.RoomDisplayFragment;
 import com.relylabs.InstaHelo.ServerCallBack;
 import com.relylabs.InstaHelo.Utils.RoomHelper;
 import com.relylabs.InstaHelo.models.EventElement;
+import com.relylabs.InstaHelo.models.RelySystem;
 import com.relylabs.InstaHelo.models.User;
 import com.relylabs.InstaHelo.models.UserSettings;
 import com.relylabs.InstaHelo.models.UsersInRoom;
@@ -583,7 +584,15 @@ public class ActiveRoomService extends Service {
                 Log.d("debug_ping", "Sending Leave Request: Success");
                 processExit(true, selected_event_id);
             }
-            handlerExit.postDelayed(this, 300000);
+
+            // check if the app is in background > 30 mins
+            RelySystem rs = RelySystem.getSystemSettings();
+            if (!rs.is_foreground && System.currentTimeMillis()/1000 - rs.timestamp_updated > 3600) {
+                Log.d("debug_ping", "App in background for more than 30 mins");
+                askforexit();
+                processExit(true, selected_event_id);
+            }
+            handlerExit.postDelayed(this, 60000);
         }
     };
 
@@ -598,7 +607,7 @@ public class ActiveRoomService extends Service {
 
     private void runTimer() {
         handler.postDelayed(runnable, 20000);
-        handlerExit.postDelayed(runnableExit, 300000);
+        handlerExit.postDelayed(runnableExit, 60000);
     }
 
     private void stopTimer() {

@@ -114,7 +114,11 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                     Log.d("debug_data", "Receive request to load fragment");
                     hide_busy_indicator();
                     loadRoomFragment();
-                    /*processExit(); */
+                    break;
+
+                case "REFRESH_FEED":
+                    Log.d("debug_data", "Request for refresh feed");
+                    fetch_all_events(false);
                     break;
             }
             Log.d("debug_data", "received broadcast " + user_action);
@@ -133,7 +137,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                 case "LEAVE_CHANNEL":
                     process_leave_channel();
                     unloadFragmentBottom();
-                    /*processExit(); */
+                    fetch_all_events(false);
                     break;
 
                 // audience sending MAKE_SPEAKER_REQUEST
@@ -184,6 +188,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                 case "MINIMISED":
                     loadFragmentInBottom();
                     is_room_fragment_loaded = false;
+                     fetch_all_events(false);
                     break;
 
                 case "EXPAND_ROOM":
@@ -452,7 +457,6 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         }
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
-
         JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -662,7 +666,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                 /* processExit(); */
                 Integer event_id = null;
                 try {
-                    fetch_all_events(true);
+                    fetch_all_events(false);
                     event_id = response.getInt("event_id");
                     String event_channel_name = response.getString("event_channel_name");
                     // send request to service for starting the room

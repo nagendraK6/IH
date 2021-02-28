@@ -45,11 +45,10 @@
             android:name="AA_DB_NAME"
             android:value="InstalHeloDB" />
         <meta-data
-            android:name="AA_DB_VERSION"  android:value="3" />
+            android:name="AA_DB_VERSION"  android:value="4" />
         <meta-data
             android:name="AA_MODELS"
-            android:value="com.relylabs.Instahelo.models.User, com.relylabs.Instahelo.models.UsersInRoom, com.relylabs.Instahelo.models.UserSettings, com.relylabs.Instahelo.models.Contact" />
-
+            android:value="com.relylabs.Instahelo.models.User, com.relylabs.Instahelo.models.UsersInRoom, com.relylabs.Instahelo.models.UserSettings, com.relylabs.Instahelo.models.Contact, com.relylabs.Instahelo.models.RelySystem" />
         <activity
             android:name=".MainActivity"
             android:clearTaskOnLaunch="true"
@@ -72,13 +71,10 @@
 
         <service
             android:name="com.relylabs.InstaHelo.services.MyFirebaseMessagingService"
-            android:enabled="true"
-            android:exported="true"
-            android:stopWithTask="false">
+            android:exported="false">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVNET" />
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
-
         </service>
 
     </application>
