@@ -41,7 +41,7 @@
         android:focusable="true"
         android:gravity="center"
         android:lines="8"
-        android:minLines="6"
+        android:minLines="4"
         android:textColorHint="@color/texthintcolor"
         android:textSize="18sp" />
 
@@ -51,7 +51,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/edit_display_bio"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="15dp"
         android:src="@drawable/next_disabled" />
     <ProgressBar
         android:layout_gravity="center"

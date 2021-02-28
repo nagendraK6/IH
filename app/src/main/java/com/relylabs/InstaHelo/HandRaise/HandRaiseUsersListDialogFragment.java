@@ -62,7 +62,8 @@ public class HandRaiseUsersListDialogFragment extends BottomSheetDialogFragment 
             public void onTagClick(int index, String action) {
                 // remove the current pending user from the list and update the list
                 broadcast(all_pending_users.get(index).UserId, action);
-                ArrayList<UserWithImage> new_list = all_pending_users;
+                ArrayList<UserWithImage> new_list = new ArrayList<>();
+                new_list.addAll(all_pending_users);
                 new_list.remove(index);
                 all_pending_users.clear();
                 all_pending_users.addAll(new_list);

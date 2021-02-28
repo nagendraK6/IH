@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.github.ybq.android.spinkit.SpinKitView;
@@ -38,7 +39,7 @@ import cz.msebera.android.httpclient.Header;
 public class OtherProfile extends Fragment {
     public String inviterUsername = "";
     public String follow_text = "";
-    SpinKitView busy;
+    ProgressBar busy;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +61,7 @@ public class OtherProfile extends Fragment {
     }
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        busy = view.findViewById(R.id.loading_channel_token_fetch_profile);
+        busy = view.findViewById(R.id.loading_channel_token_fetch);
         final User user = User.getLoggedInUser();
         ImageView back = view.findViewById(R.id.prev_button2);
         back.setOnClickListener(new View.OnClickListener() {
@@ -98,12 +99,9 @@ public class OtherProfile extends Fragment {
                     JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-//                            hide_busy_indicator();
                             follow_text = "Follow";
                             Log.d("response_follow",response.toString());
                         }
-
-
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {

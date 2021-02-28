@@ -336,6 +336,10 @@ public class PhoneVerificationFragment extends Fragment {
 
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
+        if (user != null) {
+            params.add("phone_no", user.PhoneNo);
+            params.add("country_code", user.CountryCode);
+        }
 
         JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
             @Override
@@ -361,7 +365,6 @@ public class PhoneVerificationFragment extends Fragment {
         };
 
         client.addHeader("Accept", "application/json");
-        client.addHeader("Authorization", "Token " + user.AccessToken);
         client.post(App.getBaseURL() + "registration/otp_resend", params, jrep);
     }
 

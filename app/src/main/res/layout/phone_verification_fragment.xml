@@ -131,7 +131,7 @@
         android:layout_alignTop="@+id/didn_t_rece"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
-        android:layout_marginTop="143dp"
+        android:layout_marginTop="123dp"
         android:background="@drawable/next_disabled"
         android:gravity="center_horizontal|center_vertical"
         android:textColor="#FFFFFF" />

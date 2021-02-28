@@ -352,7 +352,7 @@ public class ActiveRoomService extends Service {
             us.save();
             mRtcEngine.disableVideo();
             mRtcEngine.enableAudio();
-            mRtcEngine.enableAudioVolumeIndication(200, 3, true);
+            mRtcEngine.enableAudioVolumeIndication(1000, 3, true);
         } catch (Exception e) {
             Log.e(LOG_TAG, Log.getStackTraceString(e));
 
@@ -662,7 +662,7 @@ public class ActiveRoomService extends Service {
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("InstaHelo Room")
                 .setContentText(channel_display_name)
-                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentIntent(pendingIntent)
                 .build();
         startForeground(1, notification);
@@ -864,7 +864,32 @@ public class ActiveRoomService extends Service {
         @Override
         public void onAudioVolumeIndication(AudioVolumeInfo[] speakers, int totalVolume) {
             super.onAudioVolumeIndication(speakers, totalVolume);
-            // Log.d("debug_data", "speaking now uid " + String.valueOf(speakers[0].uid) + "   Total volume " + String.valueOf(totalVolume) );
+            Log.d("debug_speaker", "speaking now uid " + String.valueOf(speakers[0].uid) + "   Total volume " + String.valueOf(totalVolume) );
+            ArrayList<Integer> uids = new ArrayList<>();
+            ArrayList<Integer> speaking_on_off = new ArrayList<>();
+            for (int i = 0 ;i < speakers.length; i++) {
+                if (speakers[i].uid == 0) {
+                    //self user
+                    uids.add(User.getLoggedInUserID());
+                } else {
+                    uids.add(speakers[i].uid);
+                }
+
+                if (totalVolume > 10) {
+                    speaking_on_off.add(1);
+                } else {
+                    speaking_on_off.add(0);
+                }
+            }
+
+            Bundle data_bundle = new Bundle();
+            data_bundle.putIntegerArrayList("uids", uids);
+            data_bundle.putIntegerArrayList("speaking_on_off", speaking_on_off);
+            data_bundle.putString("update_type", "VOLUME_INDICATOR");
+            Intent intent = new Intent("update_from_service");
+            intent.putExtras(data_bundle);
+            getApplicationContext().sendBroadcast(intent);
+
         }
 
         public void onActiveSpeaker(int uid) {

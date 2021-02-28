@@ -106,7 +106,7 @@
                 android:background="@drawable/hand_raise_dark"
                 android:layout_marginBottom="10dp"
                 android:visibility="visible"
-                android:id="@+id/hand_raise_audience_admin"
+                android:id="@+id/hand_raise_admin"
                 android:layout_alignParentRight="true"
                 android:textAlignment="center"
                 android:paddingTop="5dp"
@@ -114,6 +114,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
             </TextView>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/hand_raise_audience"
+                android:background="@drawable/hand_raise_big"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="20dp"
+                />
         </RelativeLayout>
     </RelativeLayout>
     <ProgressBar

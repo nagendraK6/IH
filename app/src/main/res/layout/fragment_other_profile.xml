@@ -10,16 +10,18 @@
     android:clickable="true"
     android:orientation="vertical">
 
-    <com.github.ybq.android.spinkit.SpinKitView
-        android:id="@+id/loading_channel_token_fetch_profile"
-        style="@style/SpinKitView.Large.Wave"
+
+    <ProgressBar
+        android:id="@+id/loading_channel_token_fetch"
+        android:visibility="invisible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:indeterminateTintMode="src_atop"
+        android:indeterminateTint="@color/instahelo_blue"
+
         android:layout_centerVertical="true"
-        android:layout_gravity="center"
-        android:visibility="invisible"
-        app:SpinKit_Color="@color/Grey" />
+        android:layout_centerInParent="true"
+        android:layout_gravity="center" />
 
     <TextView
         android:id="@+id/textView12"

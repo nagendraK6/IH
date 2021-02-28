@@ -70,7 +70,7 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
 
     RoomsUsersDisplayListAdapter speaker_adapter, audience_adapter;
 
-    TextView hand_raise_audience_admin;
+    TextView hand_raise_admin, hand_raise_audience;
     ImageView mute_unmute_button_bottom;
 
     private FragmentActivity activity;
@@ -153,6 +153,12 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
                 setCurrentImageHandRaise();
             }
 
+            if (update_type.equals("VOLUME_INDICATOR")) {
+                ArrayList<Integer> uids = intent.getIntegerArrayListExtra("uids");
+                ArrayList<Integer> speaking_on_off = intent.getIntegerArrayListExtra("speaking_on_off");
+                updateItems(uids, speaking_on_off);
+            }
+
 
             if (update_type.equals("MUTE_UNMUTE")) {
                 Integer uid = intent
@@ -196,6 +202,36 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
         diff.putBoolean("IsMuted", muted);
         speaker_adapter.notifyItemChanged(index, diff);
     }
+
+    private void update_speaking_indicator(Integer index, Boolean is_speaking) {
+        Bundle diff = new Bundle();
+        diff.putBoolean("IsSpeaking", is_speaking);
+        speaker_adapter.notifyItemChanged(index, diff);
+    }
+
+    private void updateItems(ArrayList<Integer> uids, ArrayList<Integer> speaking_on_off) {
+        for (int i  = 0; i < uids.size(); i++) {
+            Integer index = get_speaker_index(uids.get(i));
+            if (index > -1) {
+                if (speaking_on_off.get(i) == 1) {
+                    update_speaking_indicator(index, true);
+                } else {
+                    update_speaking_indicator(index, false);
+                }
+            }
+        }
+    }
+
+    private  Integer get_speaker_index(Integer uid) {
+        for (int i = 0; i < speakers.size(); i++) {
+            if (speakers.get(i).UserId.equals(uid)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
 
 
     private void incrementalAdd() {
@@ -317,12 +353,18 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
         });
 
         UserSettings us = UserSettings.getSettings();
-        hand_raise_audience_admin = view.findViewById(R.id.hand_raise_audience_admin);
-        if (!us.is_current_user_admin && us.is_current_role_speaker) {
-            hand_raise_audience_admin.setVisibility(View.INVISIBLE);
-        }
 
-        hand_raise_audience_admin.setOnClickListener(new View.OnClickListener() {
+        hand_raise_admin = view.findViewById(R.id.hand_raise_admin);
+        hand_raise_audience = view.findViewById(R.id.hand_raise_audience);
+
+        hand_raise_admin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                processHandRaiseClick();
+            }
+        });
+
+        hand_raise_audience.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 processHandRaiseClick();
@@ -513,37 +555,39 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
 
     private void setCurrentImageHandRaise() {
         UserSettings us  = UserSettings.getSettings();
+
         if (us.is_current_user_admin && us.audience_hand_raised) {
-            hand_raise_audience_admin.setBackground(activity.getDrawable(R.drawable.raise_hand_with_notification));
-            Log.d("debug_audio", "Set image hand with notification");
+            hand_raise_admin.setVisibility(View.VISIBLE);
+            hand_raise_admin.setBackground(activity.getDrawable(R.drawable.raise_hand_with_notification));
+            hand_raise_audience.setVisibility(View.INVISIBLE);
         }
 
         if (us.is_current_user_admin && !us.audience_hand_raised) {
-            hand_raise_audience_admin.setBackground(activity.getDrawable(R.drawable.raise_hand_without_notification));
-            Log.d("debug_audio", "Set image hand without notification");
+            hand_raise_admin.setVisibility(View.VISIBLE);
+            hand_raise_admin.setBackground(activity.getDrawable(R.drawable.raise_hand_without_notification));
+            hand_raise_audience.setVisibility(View.INVISIBLE);
         }
 
         if (!us.is_current_role_speaker && us.is_self_hand_raised) {
-            hand_raise_audience_admin.setBackground(activity.getDrawable(R.drawable.hand_raise_dark));
-            Log.d("debug_audio", "Audience state  = tapped hand");
+            hand_raise_admin.setVisibility(View.INVISIBLE);
+            hand_raise_audience.setBackground(activity.getDrawable(R.drawable.hand_down_big));
+            hand_raise_audience.setVisibility(View.VISIBLE);
         }
 
         if (!us.is_current_role_speaker && !us.is_self_hand_raised) {
-            hand_raise_audience_admin.setBackground(activity.getDrawable(R.drawable.raise_hand_without_notification));
-            Log.d("debug_audio", "Audience state = apped hand raise down");
+            hand_raise_admin.setVisibility(View.INVISIBLE);
+            hand_raise_audience.setBackground(activity.getDrawable(R.drawable.hand_raise_big));
+            hand_raise_audience.setVisibility(View.VISIBLE);
         }
-
 
         if (!us.is_current_user_admin && us.is_current_role_speaker) {
-            hand_raise_audience_admin.setVisibility(View.INVISIBLE);
-        } else {
-            hand_raise_audience_admin.setVisibility(View.VISIBLE);
+            hand_raise_audience.setVisibility(View.INVISIBLE);
+            hand_raise_admin.setVisibility(View.INVISIBLE);
         }
-    }
+     }
 
     private void processHandRaiseClick() {
         UserSettings us = UserSettings.getSettings();
-
         if (us.is_current_user_admin) {
             HandRaiseUsersListDialogFragment bottomSheetDialog = new HandRaiseUsersListDialogFragment();
             Bundle bundle = new Bundle();

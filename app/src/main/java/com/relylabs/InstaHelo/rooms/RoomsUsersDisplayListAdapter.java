@@ -79,7 +79,7 @@ public class RoomsUsersDisplayListAdapter extends RecyclerView.Adapter<RoomsUser
        // super.onBindViewHolder(holder, position, payloads);
         int viewType = getItemViewType(position);
 
-        Boolean is_muted = false, IsSpeaker = false, IsdataFetchRequired = false;
+        Boolean is_muted = false, IsSpeaker = false, IsdataFetchRequired = false, IsSpeaking  = false;
         String profileImageURL = "";
         if (payloads.isEmpty()) {
             super.onBindViewHolder(holder, position, payloads);
@@ -90,9 +90,33 @@ public class RoomsUsersDisplayListAdapter extends RecyclerView.Adapter<RoomsUser
                 if (key.equals("IsMuted")) {
                     is_muted = o.getBoolean("IsMuted");
                     if(!is_muted) {
+                        holder.voice_indicator.setVisibility(View.INVISIBLE);
+                        holder.voice_action.setVisibility(View.VISIBLE);
                         holder.voice_action.setBackground(holder.itemView.getContext().getDrawable(R.drawable.mic_on_room_view));
                     } else {
+                        holder.voice_indicator.setVisibility(View.INVISIBLE);
+                        holder.voice_action.setVisibility(View.VISIBLE);
                         holder.voice_action.setBackground(holder.itemView.getContext().getDrawable(R.drawable.mic_off));
+                    }
+
+                    mData.get(position).IsMuted = is_muted;
+                }
+
+                if (key.equals("IsSpeaking")) {
+                    IsSpeaking = o.getBoolean("IsSpeaking");
+                    Log.d("debug_audio", "speaking received in adapter " + String.valueOf(IsSpeaking));
+                    if (IsSpeaking) {
+                        holder.voice_indicator.setVisibility(View.VISIBLE);
+                        holder.voice_action.setVisibility(View.INVISIBLE);
+                    } else {
+                        holder.voice_indicator.setVisibility(View.INVISIBLE);
+                        holder.voice_action.setVisibility(View.VISIBLE);
+                    }
+
+                    if(mData.get(position).IsMuted) {
+                        holder.voice_action.setBackground(holder.itemView.getContext().getDrawable(R.drawable.mic_off));
+                        holder.voice_action.setVisibility(View.VISIBLE);
+                        holder.voice_indicator.setVisibility(View.INVISIBLE);
                     }
                 }
 
@@ -137,6 +161,7 @@ public class RoomsUsersDisplayListAdapter extends RecyclerView.Adapter<RoomsUser
    //     super.onBindViewHolder(holder, position) );
         if (!mData.get(position).IsSpeaker) {
             holder.voice_action.setVisibility(View.INVISIBLE);
+            holder.voice_indicator.setVisibility(View.INVISIBLE);
         } else {
             if(!mData.get(position).IsMuted) {
                 holder.voice_action.setBackground(holder.itemView.getContext().getDrawable(R.drawable.mic_on_room_view));
@@ -161,6 +186,10 @@ public class RoomsUsersDisplayListAdapter extends RecyclerView.Adapter<RoomsUser
         } else {
             holder.speaker_listener_moderator_image.setImageDrawable(holder.itemView.getContext().getDrawable(R.drawable.empty_user_profile_image));
         }
+
+        Glide.with(holder.itemView.getContext())
+                .load(R.drawable.speakinganimation)
+                .into(holder.voice_indicator);
 
 
         if (mData.get(position).IsdataFetchRequired) {
@@ -234,7 +263,7 @@ public class RoomsUsersDisplayListAdapter extends RecyclerView.Adapter<RoomsUser
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ShapeableImageView speaker_listener_moderator_image;
-         ImageView voice_action;
+         ImageView voice_action, voice_indicator;
          TextView speaker_listener_moderator_name;
         ViewHolder(View itemView) {
             super(itemView);
@@ -250,6 +279,7 @@ public class RoomsUsersDisplayListAdapter extends RecyclerView.Adapter<RoomsUser
 
 
             voice_action = itemView.findViewById(R.id.voice_action);
+            voice_indicator = itemView.findViewById(R.id.voice_indicator);
             speaker_listener_moderator_name = itemView.findViewById(R.id.speaker_listener_moderator_name);
             User user = User.getLoggedInUser();
             itemView.setOnClickListener(this);

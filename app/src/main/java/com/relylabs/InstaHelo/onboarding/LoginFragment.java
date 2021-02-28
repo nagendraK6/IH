@@ -181,25 +181,22 @@ public class LoginFragment extends Fragment {
                                         Integer user_id =  response.getInt("user_id");
                                         User user = User.getLoggedInUser();
 
-                                        if(user == null) {
-                                            //
-                                            user = new User();
-                                            user.CountryCode = country_code.getSelectedCountryCodeWithPlus();
-                                            user.PhoneNo = phone_number;
-                                            user.UserID = user_id;
-                                            user.FirstName = "";
-                                            user.LastName = "";
-                                            user.IsOTPVerified = false;
-                                            user.BioDescription = "";
-                                            user.UserSteps = "LOGIN";
-                                            //user.ProfilePicURL = response.getString("profile_image_url");
-                                        } else {
-                                            user.UserID = user_id;
-                                            user.UserSteps = "LOGIN";
+                                        if (user != null) {
+                                            // user back pressed and added new phone number
+                                            user.delete();
                                         }
 
-                                        Logger.log(Logger.PHONE_ADD_REQUEST_SUCCESS);
+                                        user = new User();
+                                        user.CountryCode = country_code.getSelectedCountryCodeWithPlus();
+                                        user.PhoneNo = phone_number;
+                                        user.UserID = user_id;
+                                        user.FirstName = "";
+                                        user.LastName = "";
+                                        user.IsOTPVerified = false;
+                                        user.BioDescription = "";
+                                        user.UserSteps = "LOGIN";
                                         user.save();
+                                        Logger.log(Logger.PHONE_ADD_REQUEST_SUCCESS);
 //                                        loadFragment(new PhoneVerificationFragment());
                                         nextScreen(activity_ref);
                                         // move to code verification

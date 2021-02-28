@@ -63,7 +63,7 @@
         android:layout_below="@+id/name_box"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
-        android:layout_marginTop="201dp"
+        android:layout_marginTop="120dp"
         android:background="@drawable/next_disabled"
         android:gravity="center_horizontal|center_vertical"
         android:paddingLeft="5dp"
