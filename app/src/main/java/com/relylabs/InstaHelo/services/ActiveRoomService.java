@@ -19,16 +19,12 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.relylabs.InstaHelo.App;
-import com.relylabs.InstaHelo.BottomFragment;
 import com.relylabs.InstaHelo.R;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.relylabs.InstaHelo.MainActivity;
-import com.relylabs.InstaHelo.RoomDisplayFragment;
 import com.relylabs.InstaHelo.ServerCallBack;
 import com.relylabs.InstaHelo.Utils.RoomHelper;
 import com.relylabs.InstaHelo.models.EventElement;
@@ -120,10 +116,10 @@ public class ActiveRoomService extends Service {
     }
 
     void processExit(Boolean should_shut_down_service, Integer room_id) {
+        stopTimer();
         leave_channel_server_update(String.valueOf(room_id));
         process_leave_channel();
         selected_event_id = -1;
-        stopTimer();
         UserSettings us = UserSettings.getSettings();
         us.selected_event_id = -1;
         us.save();

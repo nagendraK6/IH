@@ -16,55 +16,68 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <RelativeLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:id="@+id/speaker_lists"
-            android:layout_marginTop="20dp"
-            android:minHeight="50dp"
-            android:layout_below="@+id/app_bar"
-            android:layout_height="wrap_content">
-            <TextView
+            android:layout_marginBottom="100dp"
+            android:layout_height="match_parent">
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/title_of_room"
-                android:textStyle="bold"
-                android:layout_marginLeft="20dp"
-                android:text="Is India's farmers protest legal?"/>
-            <androidx.recyclerview.widget.RecyclerView
-                android:layout_marginTop="5dp"
-                android:layout_below="@+id/title_of_room"
-                android:id="@+id/speaker_grid_list"
-                android:background="@color/White"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                />
-        </RelativeLayout>
+                android:layout_height="match_parent">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:id="@+id/speaker_lists"
+                    android:layout_marginTop="20dp"
+                    android:minHeight="50dp"
+                    android:layout_below="@+id/app_bar"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/title_of_room"
+                        android:textStyle="bold"
+                        android:layout_marginLeft="20dp"
+                        android:text="Is India's farmers protest legal?"/>
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:layout_marginTop="5dp"
+                        android:layout_below="@+id/title_of_room"
+                        android:id="@+id/speaker_grid_list"
+                        android:background="@color/White"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_below="@+id/speaker_lists"
+                    android:layout_width="match_parent"
+                    android:id="@+id/listener_lists"
+                    android:layout_marginTop="50dp"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/listening_in_room"
+                        android:layout_marginLeft="20dp"
+                        android:textStyle="bold"
+                        android:text="Listening in the room"/>
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/listener_grid_list"
+                        android:layout_marginTop="5dp"
+                        android:layout_below="@+id/listening_in_room"
+                        android:background="@color/White"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        />
+                </RelativeLayout>
+            </RelativeLayout>
+
+
+        </ScrollView>
+
 
         <RelativeLayout
-            android:layout_below="@+id/speaker_lists"
-            android:layout_width="match_parent"
-            android:id="@+id/listener_lists"
-            android:layout_marginTop="50dp"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/listening_in_room"
-                android:layout_marginLeft="20dp"
-                android:textStyle="bold"
-                android:text="Listening in the room"/>
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/listener_grid_list"
-                android:layout_marginTop="5dp"
-                android:layout_below="@+id/listening_in_room"
-                android:background="@color/White"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                />
-        </RelativeLayout>
-
-
-        <RelativeLayout
+            android:background="@color/White"
             android:layout_width="match_parent"
             android:id="@+id/room_action_listener"
             android:orientation="horizontal"
