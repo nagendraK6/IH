@@ -221,6 +221,13 @@ public class RoomsUsersDisplayListAdapter extends RecyclerView.Adapter<RoomsUser
                         String name = response.getString("Name");
                         String image_url = response.getString("ImageProfileURL");
                         Log.d("debug_data", name);
+                        // check if exist in db and then story in data
+                        UsersInRoom fetched_user = UsersInRoom.getRecords(uid);
+                        if (fetched_user != null) {
+                            fetched_user.Name = name;
+                            fetched_user.save();
+                        }
+
                         holder.speaker_listener_moderator_name.setText(name);
                         if (!image_url.equals("")) {
                             Glide.with(holder.itemView.getContext()).load(image_url).into(holder.speaker_listener_moderator_image);

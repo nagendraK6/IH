@@ -326,7 +326,7 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
 
 
     private void removefragment() {
-        hideKeyboard(activity);
+       // hideKeyboard(activity);
         Log.d("debug_f", "Remove s");
         Fragment f = activity.getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
         FragmentManager manager = activity.getSupportFragmentManager();

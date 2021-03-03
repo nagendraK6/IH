@@ -422,12 +422,6 @@ public class ActiveRoomService extends Service {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
-                Log.d("debug_audio", "update to server role. Erroe 2  " + String.valueOf(statusCode));
-                Log.d("debug_audio", "update to server role. Erroe 2  " + t.getMessage());
-                Log.d("debug_audio", "update to server role. Erroe 2  " + obj.toString());
-
-                Log.d("debug_audio", t.getMessage());
-
             }
         };
 

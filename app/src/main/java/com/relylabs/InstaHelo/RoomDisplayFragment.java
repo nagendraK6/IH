@@ -36,6 +36,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.relylabs.InstaHelo.HandRaise.HandRaiseUsersListDialogFragment;
+import com.relylabs.InstaHelo.Utils.RoomHelper;
 import com.relylabs.InstaHelo.models.User;
 import com.relylabs.InstaHelo.models.UserSettings;
 import com.relylabs.InstaHelo.models.UsersInRoom;
@@ -72,6 +73,7 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
 
     TextView hand_raise_admin, hand_raise_audience;
     ImageView mute_unmute_button_bottom;
+    ImageView wa_sharing;
 
     private FragmentActivity activity;
 
@@ -381,6 +383,42 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
         // updatePostingDetails(t);
         fetchListenersData();
         busy = view.findViewById(R.id.loading_channel_token_fetch);
+
+        wa_sharing = view.findViewById(R.id.wa_room_sharing);
+        wa_sharing.setVisibility(View.VISIBLE);
+        wa_sharing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                if (RoomHelper.IsWAInstalled(activity)) {
+                    sharingIntent.setPackage("com.whatsapp");
+                }
+
+                String speakers_text = " with ";
+                Boolean found = false;
+                for (int i = 0; i < Math.min(speakers.size(), 5); i++) {
+                    if (!user.UserID.equals(speakers.get(i).UserId)) {
+                        speakers_text = speakers_text + speakers.get(i).Name + ", ";
+                        found = true;
+                    }
+                }
+
+                if (!found) {
+                    speakers_text = "";
+                } else {
+                    speakers_text = speakers_text.replaceAll(", $", "");
+                }
+
+                    sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Instahelo Room");
+                    String shareBody =
+
+                            "I am in an audio room discussing " + event_title  +  speakers_text +  " on @instahelo app. Join me: \n" +
+                            "https://play.google.com/store/apps/details?id=com.relylabs.InstaHelo";
+                    sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                    startActivity(Intent.createChooser(sharingIntent, "Share via"));
+            }
+        });
     }
 
 

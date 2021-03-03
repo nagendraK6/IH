@@ -62,12 +62,12 @@ public class MainActivity extends AppCompatActivity {
                     .getStringExtra("user_action");
             Integer uid;
             switch (user_action) {
-                case "contact_update":
+               /* case "contact_update":
                     Log.d("debug_data", "Received data from the other fragments to upload contact");
                     readContactsAndStoreLocal();
                     ArrayList<Contact> get_all_pending_contacts = Contact.getAllContactsNotUploaded();
                     upload_to_server_contacts_and_return_invited_users(get_all_pending_contacts);
-                    break;
+                    break;*/
             }
         }
     };

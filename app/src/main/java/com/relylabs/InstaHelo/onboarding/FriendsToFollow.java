@@ -126,7 +126,6 @@ public class FriendsToFollow extends Fragment  implements FriendToFollowListAdap
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
-                Log.d("debug_data", "" + res);
                 loadFragment(new MainScreenFragment());
             }
 
@@ -171,7 +170,6 @@ public class FriendsToFollow extends Fragment  implements FriendToFollowListAdap
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
-                Log.d("debug_data", "" + res);
                 loadFragment(new MainScreenFragment());
             }
 

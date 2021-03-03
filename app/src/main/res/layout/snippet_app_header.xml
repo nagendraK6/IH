@@ -12,11 +12,23 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+
                 <ImageView
                     android:src="@drawable/notification_bell_icon"
                     android:id="@+id/notification"
                     android:layout_width="30dp"
                     android:layout_marginTop="10dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="80dp"
+                    android:layout_height="30dp"/>
+
+                <ImageView
+                    android:src="@drawable/wa"
+                    android:id="@+id/wa_room_sharing"
+                    android:layout_width="30dp"
+                    android:layout_marginTop="10dp"
+                    android:visibility="invisible"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true"
                     android:layout_marginEnd="80dp"
