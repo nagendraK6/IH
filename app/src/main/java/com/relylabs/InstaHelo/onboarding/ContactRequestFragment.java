@@ -133,6 +133,6 @@ public class ContactRequestFragment extends Fragment {
     private void loadFragment(Fragment fragment_to_start) {
         FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_holder, fragment_to_start);
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
 }

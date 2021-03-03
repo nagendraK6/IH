@@ -165,7 +165,6 @@ public class FriendsToFollow extends Fragment  implements FriendToFollowListAdap
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 loadFragment(new MainScreenFragment());
-             //   nextScreen(activity_ref);
             }
 
             @Override
@@ -188,7 +187,7 @@ public class FriendsToFollow extends Fragment  implements FriendToFollowListAdap
     private void loadFragment(Fragment fragment_to_start) {
         FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_holder, fragment_to_start);
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
 
     @Override

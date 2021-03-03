@@ -125,11 +125,6 @@ public class FollowingListAdapter extends RecyclerView.Adapter<FollowingListAdap
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
-                            WeakHashMap<String, String> log_data = new WeakHashMap<>();
-                            log_data.put(Logger.STATUS, Integer.toString(statusCode));
-                            log_data.put(Logger.JSON, obj.toString());
-                            log_data.put(Logger.THROWABLE, t.toString());
-
                         }
                     };
 
@@ -157,11 +152,6 @@ public class FollowingListAdapter extends RecyclerView.Adapter<FollowingListAdap
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
-                            WeakHashMap<String, String> log_data = new WeakHashMap<>();
-                            log_data.put(Logger.STATUS, Integer.toString(statusCode));
-                            log_data.put(Logger.JSON, obj.toString());
-                            log_data.put(Logger.THROWABLE, t.toString());
-
                         }
                     };
 
@@ -244,7 +234,7 @@ public class FollowingListAdapter extends RecyclerView.Adapter<FollowingListAdap
         AppCompatActivity activity = (AppCompatActivity) view.getContext();
         FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
         ft.add(R.id.fragment_holder, fragment_to_start);
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
 
     // parent activity will implement this method to respond to click events

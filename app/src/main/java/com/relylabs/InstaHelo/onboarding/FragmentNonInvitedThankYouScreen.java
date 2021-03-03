@@ -94,30 +94,8 @@ public class FragmentNonInvitedThankYouScreen extends Fragment {
                 }
             }
 
-//            @Override
-//            public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
-//                WeakHashMap<String, String> log_data = new WeakHashMap<>();
-//                log_data.put(Logger.STATUS, Integer.toString(statusCode));
-//                log_data.put(Logger.RES, res);
-//                log_data.put(Logger.THROWABLE, t.toString());
-//                if (!auto) {
-//                    Logger.log(Logger.OTP_VERIFY_REQUEST_FAILED, log_data);
-//                } else {
-//                    Logger.log(Logger.AUTO_OTP_VERIFY_REQUEST_FAILED, log_data);
-//                }
-//            }
-
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
-                WeakHashMap<String, String> log_data = new WeakHashMap<>();
-                log_data.put(Logger.STATUS, Integer.toString(statusCode));
-                log_data.put(Logger.JSON, obj.toString());
-                log_data.put(Logger.THROWABLE, t.toString());
-//                if (!auto) {
-//                    Logger.log(Logger.OTP_VERIFY_REQUEST_FAILED, log_data);
-//                } else {
-//                    Logger.log(Logger.AUTO_OTP_VERIFY_REQUEST_FAILED, log_data);
-//                }
             }
         };
 
@@ -148,6 +126,6 @@ public class FragmentNonInvitedThankYouScreen extends Fragment {
     private void loadFragment(Fragment fragment_to_start) {
         FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_holder, fragment_to_start);
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
 }

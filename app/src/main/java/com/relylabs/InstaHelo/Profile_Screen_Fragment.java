@@ -56,7 +56,7 @@ public class Profile_Screen_Fragment extends Fragment {
         FragmentManager manager = getActivity().getSupportFragmentManager();
         FragmentTransaction trans = manager.beginTransaction();
         trans.remove(f);
-        trans.commit();
+        trans.commitAllowingStateLoss();
         manager.popBackStack();
     }
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -179,11 +179,6 @@ public class Profile_Screen_Fragment extends Fragment {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
-                WeakHashMap<String, String> log_data = new WeakHashMap<>();
-                log_data.put(Logger.STATUS, Integer.toString(statusCode));
-                log_data.put(Logger.JSON, obj.toString());
-                log_data.put(Logger.THROWABLE, t.toString());
-
             }
         };
 
@@ -194,7 +189,7 @@ public class Profile_Screen_Fragment extends Fragment {
     private void loadFragment(Fragment fragment_to_start) {
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft.add(R.id.fragment_holder, fragment_to_start);
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
     void show_busy_indicator() {
         busy.setVisibility(View.VISIBLE);

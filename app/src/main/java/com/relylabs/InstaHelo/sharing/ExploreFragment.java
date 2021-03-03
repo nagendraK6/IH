@@ -251,7 +251,7 @@ public class ExploreFragment  extends Fragment implements ExploreListAdapter.Ite
         FragmentManager manager = activity.getSupportFragmentManager();
         FragmentTransaction trans = manager.beginTransaction();
         trans.remove(f);
-        trans.commit();
+        trans.commitAllowingStateLoss();
         Log.d("debug_f", "Remove e");
         manager.popBackStack();
     }

@@ -180,20 +180,10 @@ public class DisplayUserNameAskFragment extends Fragment {
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
-                        WeakHashMap<String, String> log_data = new WeakHashMap<>();
-                        log_data.put(Logger.STATUS, Integer.toString(statusCode));
-                        log_data.put(Logger.RES, res);
-                        log_data.put(Logger.THROWABLE, t.toString());
-                        Logger.log(Logger.USER_NAME_SEND_REQUEST_FAILED, log_data);
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
-                        WeakHashMap<String, String> log_data = new WeakHashMap<>();
-                        log_data.put(Logger.STATUS, Integer.toString(statusCode));
-                        log_data.put(Logger.JSON, obj.toString());
-                        log_data.put(Logger.THROWABLE, t.toString());
-                        Logger.log(Logger.USER_NAME_SEND_REQUEST_FAILED, log_data);
                     }
                 };
 

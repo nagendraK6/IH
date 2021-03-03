@@ -130,11 +130,6 @@ public class FollowerListAdapter extends RecyclerView.Adapter<FollowerListAdapte
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
-                            WeakHashMap<String, String> log_data = new WeakHashMap<>();
-                            log_data.put(Logger.STATUS, Integer.toString(statusCode));
-                            log_data.put(Logger.JSON, obj.toString());
-                            log_data.put(Logger.THROWABLE, t.toString());
-
                         }
                     };
 
@@ -163,11 +158,6 @@ public class FollowerListAdapter extends RecyclerView.Adapter<FollowerListAdapte
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
-                            WeakHashMap<String, String> log_data = new WeakHashMap<>();
-                            log_data.put(Logger.STATUS, Integer.toString(statusCode));
-                            log_data.put(Logger.JSON, obj.toString());
-                            log_data.put(Logger.THROWABLE, t.toString());
-
                         }
                     };
 
@@ -255,7 +245,7 @@ public class FollowerListAdapter extends RecyclerView.Adapter<FollowerListAdapte
         AppCompatActivity activity = (AppCompatActivity) view.getContext();
         FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
         ft.add(R.id.fragment_holder, fragment_to_start);
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
     @Override
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {

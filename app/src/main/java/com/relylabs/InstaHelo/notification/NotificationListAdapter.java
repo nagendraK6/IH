@@ -135,7 +135,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
 
         FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
         ft.add(R.id.fragment_holder, fragment_to_start);
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
     @Override
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {

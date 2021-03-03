@@ -168,7 +168,7 @@ public class SuggestedProfileToFollowFragment extends Fragment  implements Sugge
     private void loadFragment(Fragment fragment_to_start) {
         FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_holder, fragment_to_start);
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
 
     private void send_follow_to_server() {
@@ -195,7 +195,6 @@ public class SuggestedProfileToFollowFragment extends Fragment  implements Sugge
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
-                Log.d("debug_data", "" + res);
             }
 
             @Override

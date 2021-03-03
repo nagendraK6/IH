@@ -38,7 +38,7 @@ public class RoomHelper {
         FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
         ft.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top);
         ft.add(R.id.fragment_holder, fr);
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
 
 
@@ -128,12 +128,10 @@ public class RoomHelper {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
-                Log.d("debug_data", "server update failed");
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
-                Log.d("debug_data", "server update failed");
             }
         };
 

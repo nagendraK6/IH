@@ -56,7 +56,7 @@ public class OtherProfile extends Fragment {
         FragmentManager manager = getActivity().getSupportFragmentManager();
         FragmentTransaction trans = manager.beginTransaction();
         trans.remove(f);
-        trans.commit();
+        trans.commitAllowingStateLoss();
         manager.popBackStack();
     }
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -242,7 +242,7 @@ public class OtherProfile extends Fragment {
     private void loadFragment(Fragment fragment_to_start) {
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft.add(R.id.fragment_holder, fragment_to_start);
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
     void show_busy_indicator() {
         busy.setVisibility(View.VISIBLE);

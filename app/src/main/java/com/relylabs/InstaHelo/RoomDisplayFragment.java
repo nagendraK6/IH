@@ -477,7 +477,7 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
             FragmentTransaction trans = manager.beginTransaction();
             trans.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top);
             trans.remove(f);
-            trans.commit();
+            trans.commitAllowingStateLoss();
             manager.popBackStack();
         }
     }
@@ -543,12 +543,10 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
-                Log.d("debug_data", "Audience fetch failed");
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
-                Log.d("debug_data", "Audience fetch failed");
             }
         };
 
