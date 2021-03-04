@@ -8,6 +8,14 @@
     android:clickable="true"
     android:orientation="vertical">
 
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_image_view2"
+        android:layout_width="128dp"
+        android:layout_height="128dp"
+        android:layout_below="@+id/textView5"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="36dp" />
+
     <ProgressBar
         android:id="@+id/loading_channel_token_fetch5"
         android:layout_width="wrap_content"
@@ -42,20 +50,20 @@
         android:textColor="@color/main_screen_text_color"
         android:textSize="21sp" />
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/profile_img"
-        android:layout_width="128dp"
-        android:layout_height="128dp"
-        android:layout_below="@+id/textView5"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="36dp"
-        app:srcCompat="@drawable/empty_user_profile_image" />
+<!--    <com.google.android.material.imageview.ShapeableImageView-->
+<!--        android:id="@+id/profile_img"-->
+<!--        android:layout_width="128dp"-->
+<!--        android:layout_height="128dp"-->
+<!--        android:layout_below="@+id/textView5"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:layout_marginTop="36dp"-->
+<!--        app:srcCompat="@drawable/empty_user_profile_image" />-->
 
     <ImageView
         android:id="@+id/done_photo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/profile_img"
+        android:layout_below="@+id/profile_image_view2"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="136dp"
         android:src="@drawable/done" />

@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import static com.relylabs.InstaHelo.Utils.Helper.loadFragmentAdapter;
+
 public class NotificationListAdapter extends RecyclerView.Adapter<NotificationListAdapter.ViewHolder> {
     public static final SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     private ArrayList<String> text_arr, username,img_arr,time_arr,user_ids;
@@ -88,7 +90,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                 Bundle args = new Bundle();
                 args.putString("user_id",user_ids.get(position));
                 otherprof.setArguments(args);
-                loadFragment(otherprof,v);
+                loadFragmentAdapter(otherprof,v);
             }
         });
     }
@@ -131,13 +133,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
     public interface ItemClickListener {
         void onItemClick(int position);
     }
-    private void loadFragment(Fragment fragment_to_start, View view) {
-        AppCompatActivity activity = (AppCompatActivity) view.getContext();
 
-        FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
-        ft.add(R.id.fragment_holder, fragment_to_start);
-        ft.commitAllowingStateLoss();
-    }
     @Override
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
     }

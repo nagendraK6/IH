@@ -44,6 +44,7 @@ import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.Header;
 
+import static com.relylabs.InstaHelo.Utils.Helper.loadFragment;
 import static com.relylabs.InstaHelo.Utils.Helper.nextScreen;
 import static com.relylabs.InstaHelo.Utils.Helper.skipScreen;
 
@@ -70,7 +71,7 @@ public class ContactRequestFragment extends Fragment {
             public void onClick(View v) {
                 if(checkPermission(getContext())) {
                     Helper.sendRequestForContactProcess(activity_ref);
-                    loadFragment(new SuggestedProfileToFollowFragment());
+                    loadFragment(new SuggestedProfileToFollowFragment(),activity_ref);
                 }
             }
         });
@@ -117,22 +118,15 @@ public class ContactRequestFragment extends Fragment {
         Log.d("debug_data", "On permission result");
         if (PResult.length > 0 && PResult[0] == PackageManager.PERMISSION_GRANTED) {
             Helper.sendRequestForContactProcess(activity_ref);
-            loadFragment(new SuggestedProfileToFollowFragment());
+            loadFragment(new SuggestedProfileToFollowFragment(),activity_ref);
         } else {
             Log.d("debug_data", "Permission denied");
-            loadFragment(new SuggestedProfileToFollowFragment());
+            loadFragment(new SuggestedProfileToFollowFragment(),activity_ref);
         }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-    }
-
-
-    private void loadFragment(Fragment fragment_to_start) {
-        FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_holder, fragment_to_start);
-        ft.commitAllowingStateLoss();
     }
 }

@@ -71,14 +71,6 @@ public class InvitedUserNameAskFragment extends Fragment {
         }
     }
 
-    private void loadFragment(Fragment fragment_to_start) {
-        if (running) {
-            FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.fragment_holder, fragment_to_start);
-            ft.commitAllowingStateLoss();
-        }
-    }
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -202,7 +194,6 @@ public class InvitedUserNameAskFragment extends Fragment {
                     user.LastName = last_name_text;
                     user.save();
                     Logger.log(Logger.USER_NAME_SEND_REQUEST_SUCCESS);
-//                    loadFragment(new DisplayUserNameAskFragment());
                     nextScreen(activity_ref);
                 } catch (JSONException e) {
                     e.printStackTrace();

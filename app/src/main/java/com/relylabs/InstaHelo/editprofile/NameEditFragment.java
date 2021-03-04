@@ -1,11 +1,14 @@
 package com.relylabs.InstaHelo.editprofile;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -38,6 +41,7 @@ import java.util.WeakHashMap;
 import cz.msebera.android.httpclient.Header;
 
 import static com.relylabs.InstaHelo.Utils.Helper.nextScreen;
+import static com.relylabs.InstaHelo.Utils.Helper.removefragment;
 
 
 public class NameEditFragment extends Fragment {
@@ -45,6 +49,14 @@ public class NameEditFragment extends Fragment {
     String first_name_text = "";
     String last_name_text = "";
     Boolean isChanged = false;
+    public FragmentActivity activity_ref;
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity){
+            activity_ref=(FragmentActivity) context;
+        }
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,7 +76,7 @@ public class NameEditFragment extends Fragment {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removefragment();
+                removefragment(activity_ref);
             }
         });
         final User user = User.getLoggedInUser();
@@ -82,7 +94,7 @@ public class NameEditFragment extends Fragment {
                     sendNameToServer(view);
                 }
                 else if (first_name_text.length() > 0 && !isChanged){
-                    removefragment();
+                    removefragment(activity_ref);
                 }
             }
         });
@@ -125,14 +137,6 @@ public class NameEditFragment extends Fragment {
             }
         });
     }
-    private void removefragment() {
-        Fragment f = getActivity().getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
-        FragmentManager manager = getActivity().getSupportFragmentManager();
-        FragmentTransaction trans = manager.beginTransaction();
-        trans.remove(f);
-        trans.commit();
-        manager.popBackStack();
-    }
     private void sendNameToServer(View view) {
         User user = User.getLoggedInUser();
         ImageView done = view.findViewById(R.id.done_name);
@@ -161,7 +165,7 @@ public class NameEditFragment extends Fragment {
                     user.save();
                     Logger.log(Logger.USER_NAME_SEND_REQUEST_SUCCESS);
                     Log.d("response",response.toString());
-                    removefragment();
+                    removefragment(activity_ref);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

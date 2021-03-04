@@ -60,6 +60,8 @@ import java.util.stream.IntStream;
 import cz.msebera.android.httpclient.Header;
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.relylabs.InstaHelo.Utils.Helper.removefragment;
+
 public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayListAdapter.ItemClickListener, IOnBackPressed  {
 
     ArrayList<UsersInRoom> speakers;
@@ -136,7 +138,7 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
 
             if (update_type.equals("EXIT_ROOM")) {
                 broadcastLocalUpdate("LEAVE_CHANNEL");
-                removefragment();
+                removefragment(activity);
             }
         }
     };
@@ -193,7 +195,7 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
 
             if (update_type.equals("EXIT_ROOM")) {
                 broadcastLocalUpdate("LEAVE_CHANNEL");
-                removefragment();
+                removefragment(activity);
             }
         }
     };
@@ -286,7 +288,7 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
             @Override
             public void onClick(View v) {
                 broadcastLocalUpdate("MINIMISED");
-                removefragment();
+                removefragment(activity);
             }
         });
 
@@ -298,7 +300,7 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
             public void onClick(View v) {
                 show_busy_indicator();
                 broadcastLocalUpdate("LEAVE_CHANNEL");
-                removefragment();
+                removefragment(activity);
             }
         });
 
@@ -470,17 +472,6 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
         }
     }
 
-    private void removefragment() {
-        if (activity != null) {
-            Fragment f = activity.getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
-            FragmentManager manager = activity.getSupportFragmentManager();
-            FragmentTransaction trans = manager.beginTransaction();
-            trans.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top);
-            trans.remove(f);
-            trans.commitAllowingStateLoss();
-            manager.popBackStack();
-        }
-    }
 
 
     @Override
@@ -666,7 +657,7 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
     @Override
     public boolean onBackPressed() {
         broadcastLocalUpdate("MINIMISED");
-        removefragment();
+        removefragment(activity);
         return true;
     }
 

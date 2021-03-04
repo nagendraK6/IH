@@ -1,9 +1,12 @@
 package com.relylabs.InstaHelo.notification;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -33,6 +36,8 @@ import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.Header;
 
+import static com.relylabs.InstaHelo.Utils.Helper.removefragment;
+
 
 public class NotificationList extends Fragment {
 
@@ -46,7 +51,14 @@ public class NotificationList extends Fragment {
     RecyclerView recyclerView;
     NotificationListAdapter adapter;
     SpinKitView busy;
-
+    public FragmentActivity activity_ref;
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity){
+            activity_ref=(FragmentActivity) context;
+        }
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,7 +78,7 @@ public class NotificationList extends Fragment {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removefragment();
+                removefragment(activity_ref);
             }
         });
         getNotifications();
@@ -122,21 +134,6 @@ public class NotificationList extends Fragment {
         client.addHeader("Accept", "application/json");
         client.addHeader("Authorization", "Token " + user.AccessToken);
         client.post(App.getBaseURL() + "registration/get_notifications", params, jrep);
-    }
-
-
-    private void removefragment() {
-        Fragment f = getActivity().getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
-        FragmentManager manager = getActivity().getSupportFragmentManager();
-        FragmentTransaction trans = manager.beginTransaction();
-        trans.remove(f);
-        trans.commitAllowingStateLoss();
-        manager.popBackStack();
-    }
-    private void loadFragment(Fragment fragment_to_start) {
-        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-        ft.add(R.id.fragment_holder, fragment_to_start);
-        ft.commitAllowingStateLoss();
     }
     void prepareRecyclerView() {
         recyclerView = fragment_view.findViewById(R.id.list_notification);

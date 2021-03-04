@@ -34,6 +34,7 @@ import java.util.WeakHashMap;
 
 import cz.msebera.android.httpclient.Header;
 
+import static com.relylabs.InstaHelo.Utils.Helper.loadFragment;
 import static com.relylabs.InstaHelo.Utils.Helper.nextScreen;
 
 public class FragmentNonInvitedThankYouScreen extends Fragment {
@@ -85,7 +86,7 @@ public class FragmentNonInvitedThankYouScreen extends Fragment {
 
 
                     if (user.CompletedOnboarding) {
-                        loadFragment(new MainScreenFragment());
+                        loadFragment(new MainScreenFragment(),activity_ref);
                         return;
                     }
                     nextScreen(activity_ref);
@@ -120,12 +121,5 @@ public class FragmentNonInvitedThankYouScreen extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-    }
-
-
-    private void loadFragment(Fragment fragment_to_start) {
-        FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_holder, fragment_to_start);
-        ft.commitAllowingStateLoss();
     }
 }

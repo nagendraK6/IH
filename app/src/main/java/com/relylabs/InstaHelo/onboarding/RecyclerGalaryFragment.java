@@ -37,6 +37,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import static com.relylabs.InstaHelo.Utils.Helper.loadFragment;
+
 /**
  * Created by nagendra on 8/21/18.
  */
@@ -92,13 +94,6 @@ public class RecyclerGalaryFragment extends Fragment  implements MyRecyclerViewA
         tvNext = fragment_view.findViewById(R.id.tvNext);
     }
 
-    private void loadFragment(Fragment fragment_to_start) {
-        FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
-        ft.add(R.id.fragment_holder, fragment_to_start);
-        ft.addToBackStack(null);
-        ft.commitAllowingStateLoss();
-    }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -135,7 +130,7 @@ public class RecyclerGalaryFragment extends Fragment  implements MyRecyclerViewA
         data_bundle.putString(getString(R.string.user_selected_image), mSelectedImage);
         Fragment frg = new PhotoAskFragment();
         frg.setArguments(data_bundle);
-        loadFragment(frg);
+        loadFragment(frg,activity_ref);
     }
 
 
@@ -179,7 +174,7 @@ public class RecyclerGalaryFragment extends Fragment  implements MyRecyclerViewA
             setAlbumNames();
 
         } else {
-            loadFragment(new AddBioDetailsFragment());
+            loadFragment(new AddBioDetailsFragment(),activity_ref);
         }
     }
 
@@ -200,7 +195,7 @@ public class RecyclerGalaryFragment extends Fragment  implements MyRecyclerViewA
                 data_bundle.putString(getString(R.string.user_selected_image), mSelectedImage);
                 Fragment frg = new PhotoAskFragment();
                 frg.setArguments(data_bundle);
-                loadFragment(frg);
+                loadFragment(frg,activity_ref);
             }
         });
 

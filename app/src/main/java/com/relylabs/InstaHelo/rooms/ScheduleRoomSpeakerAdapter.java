@@ -34,6 +34,8 @@ import java.util.WeakHashMap;
 
 import cz.msebera.android.httpclient.Header;
 
+import static com.relylabs.InstaHelo.Utils.Helper.loadFragmentAdapter;
+
 
 public class ScheduleRoomSpeakerAdapter extends RecyclerView.Adapter<ScheduleRoomSpeakerAdapter.ViewHolder> {
 
@@ -127,13 +129,7 @@ public class ScheduleRoomSpeakerAdapter extends RecyclerView.Adapter<ScheduleRoo
         Bundle args = new Bundle();
         args.putString("user_id",user_ids.get(position));
         otherprof.setArguments(args);
-        loadFragment(otherprof,v);
-    }
-    private void loadFragment(Fragment fragment_to_start,View view) {
-        AppCompatActivity activity = (AppCompatActivity) view.getContext();
-        FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
-        ft.add(R.id.fragment_holder, fragment_to_start);
-        ft.commitAllowingStateLoss();
+        loadFragmentAdapter(otherprof,v);
     }
     @Override
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {

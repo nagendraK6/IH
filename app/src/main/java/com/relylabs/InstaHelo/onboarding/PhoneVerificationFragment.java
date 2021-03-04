@@ -43,6 +43,7 @@ import java.util.WeakHashMap;
 
 import cz.msebera.android.httpclient.Header;
 
+import static com.relylabs.InstaHelo.Utils.Helper.loadFragment;
 import static com.relylabs.InstaHelo.Utils.Helper.nextScreen;
 import static com.relylabs.InstaHelo.Utils.Helper.prevScreen;
 
@@ -101,7 +102,6 @@ public class PhoneVerificationFragment extends Fragment {
                 User user = User.getLoggedInUser();
                 user.UserSteps = "LOGIN";
                 user.save();
-//                loadFragment(new LoginFragment());
                 prevScreen(activity_ref);
             }
         });
@@ -367,13 +367,6 @@ public class PhoneVerificationFragment extends Fragment {
         client.post(App.getBaseURL() + "registration/otp_resend", params, jrep);
     }
 
-    private void loadFragment(Fragment fragment_to_start) {
-        if (running && activity_ref.getSupportFragmentManager() != null) {
-            FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.fragment_holder, fragment_to_start);
-            ft.commitAllowingStateLoss();
-        }
-    }
 
     @Override
     public void onDestroy() {
@@ -459,7 +452,7 @@ public class PhoneVerificationFragment extends Fragment {
 
 
                     if (user.CompletedOnboarding) {
-                        loadFragment(new MainScreenFragment());
+                        loadFragment(new MainScreenFragment(),activity_ref);
                         return;
                     }
                     nextScreen(activity_ref);

@@ -36,6 +36,8 @@ import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.Header;
 
+import static com.relylabs.InstaHelo.Utils.Helper.removefragment;
+
 
 public class FollowingList extends Fragment {
 
@@ -70,8 +72,7 @@ public class FollowingList extends Fragment {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removefragment();
-//                loadFragment(new Profile_Screen_Fragment());
+                removefragment(activity_ref);
             }
         });
         getFollowers();
@@ -152,21 +153,6 @@ public class FollowingList extends Fragment {
         client.addHeader("Accept", "application/json");
         client.addHeader("Authorization", "Token " + user.AccessToken);
         client.post(App.getBaseURL() + "registration/following_list_common", params, jrep);
-    }
-
-
-    private void removefragment() {
-        Fragment f = activity_ref.getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
-        FragmentManager manager = getActivity().getSupportFragmentManager();
-        FragmentTransaction trans = manager.beginTransaction();
-        trans.remove(f);
-        trans.commitAllowingStateLoss();
-        manager.popBackStack();
-    }
-    private void loadFragment(Fragment fragment_to_start) {
-        FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_holder, fragment_to_start);
-        ft.commitAllowingStateLoss();
     }
     void prepareRecyclerView() {
         recyclerView = fragment_view.findViewById(R.id.list_follower);

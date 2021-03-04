@@ -103,11 +103,6 @@ public class AddBioDetailsFragment extends Fragment {
     }
 
 
-    private void loadFragment(Fragment fragment_to_start) {
-        FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_holder, fragment_to_start);
-        ft.commitAllowingStateLoss();
-    }
 
     private void sendBioToServer() {
         final User user = User.getLoggedInUser();
@@ -122,7 +117,6 @@ public class AddBioDetailsFragment extends Fragment {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
                     String error_message = response.getString("error_message");
-//                    loadFragment(new ContactRequestFragment());
                     nextScreen(activity_ref);
                 } catch (JSONException e) {
                     e.printStackTrace();

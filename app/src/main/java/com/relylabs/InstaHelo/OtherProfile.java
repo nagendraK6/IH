@@ -30,6 +30,9 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.relylabs.InstaHelo.Utils.Logger;
 import com.relylabs.InstaHelo.Utils.RoomHelper;
+import com.relylabs.InstaHelo.editprofile.EditBioFragment;
+import com.relylabs.InstaHelo.editprofile.EditPhotoFragment;
+import com.relylabs.InstaHelo.editprofile.NameEditFragment;
 import com.relylabs.InstaHelo.followerList.FollowerList;
 import com.relylabs.InstaHelo.followerList.FollowingList;
 import com.relylabs.InstaHelo.models.User;
@@ -42,6 +45,9 @@ import org.w3c.dom.Text;
 import java.util.WeakHashMap;
 
 import cz.msebera.android.httpclient.Header;
+
+import static com.relylabs.InstaHelo.Utils.Helper.loadFragment;
+import static com.relylabs.InstaHelo.Utils.Helper.removefragment;
 
 
 public class OtherProfile extends Fragment {
@@ -90,14 +96,7 @@ public class OtherProfile extends Fragment {
         return inflater.inflate(R.layout.fragment_other_profile, container, false);
     }
 
-    private void removefragment() {
-        Fragment f = activity.getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
-        FragmentManager manager = activity.getSupportFragmentManager();
-        FragmentTransaction trans = manager.beginTransaction();
-        trans.remove(f);
-        trans.commitAllowingStateLoss();
-        manager.popBackStack();
-    }
+
 
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -117,7 +116,7 @@ public class OtherProfile extends Fragment {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removefragment();
+                removefragment(activity);
             }
         });
         TextView followerBtn = view.findViewById(R.id.textView12);
@@ -129,7 +128,7 @@ public class OtherProfile extends Fragment {
                 Bundle args = new Bundle();
                 args.putString("user_id",current_user_id);
                 follower_list.setArguments(args);
-                loadFragment(follower_list);
+                loadFragment(follower_list,activity);
             }
         });
 
@@ -141,7 +140,7 @@ public class OtherProfile extends Fragment {
                 Bundle args = new Bundle();
                 args.putString("user_id",current_user_id);
                 following_list.setArguments(args);
-                loadFragment(following_list);
+                loadFragment(following_list,activity);
             }
         });
         ShapeableImageView inviter_img = view.findViewById(R.id.profile_img_noti);
@@ -153,7 +152,7 @@ public class OtherProfile extends Fragment {
                     Bundle args = new Bundle();
                     args.putString("user_id",inviterUserId);
                     otherprof.setArguments(args);
-                    loadFragment(otherprof);
+                    loadFragment(otherprof,activity);
                 }
             }
         });
@@ -214,7 +213,34 @@ public class OtherProfile extends Fragment {
 
             }
         });
-
+        String user_id = getArguments().getString("user_id");
+        ShapeableImageView prof = view.findViewById(R.id.profile_img);
+        TextView name = view.findViewById(R.id.name_user);
+        TextView bio = view.findViewById(R.id.user_bio);
+        prof.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(String.valueOf(user.UserID).equals(user_id)){
+                    loadFragment(new EditPhotoFragment(),activity);
+                }
+            }
+        });
+        name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(String.valueOf(user.UserID).equals(user_id)){
+                    loadFragment(new NameEditFragment(),activity);
+                }
+            }
+        });
+        bio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(String.valueOf(user.UserID).equals(user_id)){
+                    loadFragment(new EditBioFragment(),activity);
+                }
+            }
+        });
         getProfileInfo(view);
 
     }
@@ -311,11 +337,7 @@ public class OtherProfile extends Fragment {
         client.addHeader("Authorization", "Token " + user.AccessToken);
         client.post(App.getBaseURL() + "registration/profile_page_info", params, jrep);
     }
-    private void loadFragment(Fragment fragment_to_start) {
-        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-        ft.add(R.id.fragment_holder, fragment_to_start);
-        ft.commitAllowingStateLoss();
-    }
+
 
     private void broadcastforupdate() {
         Intent intent = new Intent("update_from_follow");

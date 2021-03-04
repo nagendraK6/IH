@@ -43,6 +43,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import com.squareup.picasso.Picasso;
 
+import static com.relylabs.InstaHelo.Utils.Helper.loadFragment;
+
 public class NonInvitedUserFirstNameAskFragment extends Fragment {
     public FragmentActivity activity_ref;
 
@@ -66,14 +68,6 @@ public class NonInvitedUserFirstNameAskFragment extends Fragment {
         super.onAttach(context);
         if (context instanceof Activity){
             activity_ref=(FragmentActivity) context;
-        }
-    }
-
-    private void loadFragment(Fragment fragment_to_start) {
-        if (running) {
-            FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.fragment_holder, fragment_to_start);
-            ft.commitAllowingStateLoss();
         }
     }
 
@@ -186,7 +180,7 @@ public class NonInvitedUserFirstNameAskFragment extends Fragment {
                     user.LastName = last_name_text;
                     user.save();
                     Logger.log(Logger.USER_NAME_SEND_REQUEST_SUCCESS);
-                    loadFragment(new DisplayUserNameAskFragment());
+                    loadFragment(new DisplayUserNameAskFragment(),activity_ref);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

@@ -1,5 +1,6 @@
 package com.relylabs.InstaHelo.Utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -15,10 +16,14 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.CookieSyncManager;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.relylabs.InstaHelo.MainScreenFragment;
@@ -282,6 +287,43 @@ public class Helper {
         intent.putExtras(data_bundle);
         if (activity != null) {
             activity.sendBroadcast(intent);
+        }
+    }
+
+    public static void hideKeyboard(Context mContext) {
+        InputMethodManager imm = (InputMethodManager) mContext
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        View focus_view = ((Activity) mContext).getWindow()
+                .getCurrentFocus();
+
+        if (focus_view != null) {
+            imm.hideSoftInputFromWindow(focus_view.getWindowToken(), 0);
+        }
+    }
+
+    public static void removefragment(FragmentActivity activity) {
+        if(activity!=null) {
+            hideKeyboard(activity);
+            Fragment f = activity.getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
+            FragmentManager manager = activity.getSupportFragmentManager();
+            FragmentTransaction trans = manager.beginTransaction();
+            trans.remove(f);
+            trans.commitAllowingStateLoss();
+            manager.popBackStack();
+        }
+    }
+    public static void loadFragmentAdapter(Fragment fragment_to_start,View view) {
+        AppCompatActivity activity = (AppCompatActivity) view.getContext();
+        FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
+        ft.add(R.id.fragment_holder, fragment_to_start);
+        ft.commitAllowingStateLoss();
+    }
+
+    public static void loadFragment(Fragment fragment_to_start, FragmentActivity activity_ref) {
+        if(activity_ref!=null) {
+            FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
+            ft.add(R.id.fragment_holder, fragment_to_start);
+            ft.commitAllowingStateLoss();
         }
     }
 }

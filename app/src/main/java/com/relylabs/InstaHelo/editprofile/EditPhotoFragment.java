@@ -56,6 +56,7 @@ import cz.msebera.android.httpclient.Header;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.relylabs.InstaHelo.Utils.Helper.nextScreen;
+import static com.relylabs.InstaHelo.Utils.Helper.removefragment;
 
 
 public class EditPhotoFragment extends Fragment {
@@ -77,7 +78,7 @@ public class EditPhotoFragment extends Fragment {
     Boolean image_updated_in_profile = false;
     String userChoosenTask = "";
     String user_profile_image_url = "";
-    ShapeableImageView prof;
+    CircleImageView prof;
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -105,22 +106,14 @@ public class EditPhotoFragment extends Fragment {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removefragment();
+                removefragment(activity_ref);
             }
         });
 
-        prof = view.findViewById(R.id.profile_img);
+        prof = view.findViewById(R.id.profile_image_view2);
         final User user = User.getLoggedInUser();
         String prof_url = user.ProfilePicURL;
         if(!prof_url.equals("")){
-            float radius = getResources().getDimension(R.dimen.default_corner_radius_update_profile_page);
-            prof.setShapeAppearanceModel(prof.getShapeAppearanceModel()
-                    .toBuilder()
-                    .setTopRightCorner(CornerFamily.ROUNDED,radius)
-                    .setTopLeftCorner(CornerFamily.ROUNDED,radius)
-                    .setBottomLeftCorner(CornerFamily.ROUNDED,radius)
-                    .setBottomRightCorner(CornerFamily.ROUNDED,radius)
-                    .build());
             Picasso.get().load(prof_url).into(prof);
         }
 
@@ -137,18 +130,10 @@ public class EditPhotoFragment extends Fragment {
                     sendImageToServer(view);
                 }
                 else{
-                    removefragment();
+                    removefragment(activity_ref);
                 }
             }
         });
-    }
-    private void removefragment() {
-        Fragment f = getActivity().getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
-        FragmentManager manager = getActivity().getSupportFragmentManager();
-        FragmentTransaction trans = manager.beginTransaction();
-        trans.remove(f);
-        trans.commit();
-        manager.popBackStack();
     }
 
     @Override
@@ -291,7 +276,7 @@ public class EditPhotoFragment extends Fragment {
                 try {
                     user.ProfilePicURL = response.getString("profile_image_url");
                     user.save();
-                    removefragment();
+                    removefragment(activity_ref);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -379,13 +364,7 @@ public class EditPhotoFragment extends Fragment {
 
         Log.d("debug_data", data.getData().toString());
         float radius = getResources().getDimension(R.dimen.default_corner_radius_update_profile_page);
-        prof.setShapeAppearanceModel(prof.getShapeAppearanceModel()
-                .toBuilder()
-                .setTopRightCorner(CornerFamily.ROUNDED,radius)
-                .setTopLeftCorner(CornerFamily.ROUNDED,radius)
-                .setBottomLeftCorner(CornerFamily.ROUNDED,radius)
-                .setBottomRightCorner(CornerFamily.ROUNDED,radius)
-                .build());
+
         Picasso.get().load(data.getData())
                 .into(prof);
         imgfile = new File(data.getData().getPath()) ;
@@ -395,13 +374,7 @@ public class EditPhotoFragment extends Fragment {
     private void onCaptureImageResult(Intent data) {
         Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
         float radius = getResources().getDimension(R.dimen.default_corner_radius_update_profile_page);
-        prof.setShapeAppearanceModel(prof.getShapeAppearanceModel()
-                .toBuilder()
-                .setTopRightCorner(CornerFamily.ROUNDED,radius)
-                .setTopLeftCorner(CornerFamily.ROUNDED,radius)
-                .setBottomLeftCorner(CornerFamily.ROUNDED,radius)
-                .setBottomRightCorner(CornerFamily.ROUNDED,radius)
-                .build());
+
         Picasso.get().load(getImageUri(getContext(), thumbnail))
                 .into(prof);
 

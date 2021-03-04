@@ -197,7 +197,6 @@ public class LoginFragment extends Fragment {
                                         user.UserSteps = "LOGIN";
                                         user.save();
                                         Logger.log(Logger.PHONE_ADD_REQUEST_SUCCESS);
-//                                        loadFragment(new PhoneVerificationFragment());
                                         nextScreen(activity_ref);
                                         // move to code verification
                                     } catch (JSONException e) {
@@ -245,9 +244,4 @@ public class LoginFragment extends Fragment {
         }
     }
 
-    private void loadFragment(Fragment fragment_to_start) {
-        FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_holder, fragment_to_start);
-        ft.commitAllowingStateLoss();
-    }
 }

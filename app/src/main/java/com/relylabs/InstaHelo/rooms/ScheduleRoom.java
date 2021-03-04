@@ -39,6 +39,8 @@ import java.util.LinkedHashMap;
 
 import cz.msebera.android.httpclient.Header;
 
+import static com.relylabs.InstaHelo.Utils.Helper.removefragment;
+
 public class ScheduleRoom extends Fragment {
 
     ScheduleRoomSpeakerAdapter adapter;
@@ -69,20 +71,6 @@ public class ScheduleRoom extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_schedule_room, container, false);
     }
-    private void removefragment() {
-        Fragment f = activity_ref.getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
-        FragmentManager manager = activity_ref.getSupportFragmentManager();
-        FragmentTransaction trans = manager.beginTransaction();
-        trans.remove(f);
-        trans.commitAllowingStateLoss();
-        manager.popBackStack();
-    }
-
-    private void loadFragment(Fragment fragment_to_start) {
-        FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
-        ft.add(R.id.fragment_holder, fragment_to_start);
-        ft.commitAllowingStateLoss();
-    }
 
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -96,19 +84,19 @@ public class ScheduleRoom extends Fragment {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removefragment();
+                removefragment(activity_ref);
             }
         });
         all_rooms.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removefragment();
+                removefragment(activity_ref);
             }
         });
         go_to_all_rooms.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removefragment();
+                removefragment(activity_ref);
             }
         });
 
@@ -161,7 +149,7 @@ public class ScheduleRoom extends Fragment {
                 }
                 catch (JSONException e) {
                     e.printStackTrace();
-                    removefragment();
+                    removefragment(activity_ref);
                 }
 
             }

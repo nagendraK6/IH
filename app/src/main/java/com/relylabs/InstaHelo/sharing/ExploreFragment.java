@@ -54,6 +54,8 @@ import java.util.WeakHashMap;
 
 import cz.msebera.android.httpclient.Header;
 
+import static com.relylabs.InstaHelo.Utils.Helper.removefragment;
+
 public class ExploreFragment  extends Fragment implements ExploreListAdapter.ItemClickListener  {
 
     View fragment_view;
@@ -109,7 +111,7 @@ public class ExploreFragment  extends Fragment implements ExploreListAdapter.Ite
             @Override
             public void onClick(View v) {
                 Log.d("debug_f", "Remove started");
-                removefragment();
+                removefragment(activity);
             }
         });
 
@@ -244,17 +246,7 @@ public class ExploreFragment  extends Fragment implements ExploreListAdapter.Ite
     }
 
 
-    private void removefragment() {
-        hideKeyboard(activity);
-        Log.d("debug_f", "Remove s");
-        Fragment f = activity.getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
-        FragmentManager manager = activity.getSupportFragmentManager();
-        FragmentTransaction trans = manager.beginTransaction();
-        trans.remove(f);
-        trans.commitAllowingStateLoss();
-        Log.d("debug_f", "Remove e");
-        manager.popBackStack();
-    }
+
 
     @Override
     public void onItemClick(int position) {
@@ -268,14 +260,5 @@ public class ExploreFragment  extends Fragment implements ExploreListAdapter.Ite
 
     }
 
-    public static void hideKeyboard(Context mContext) {
-        InputMethodManager imm = (InputMethodManager) mContext
-                .getSystemService(Context.INPUT_METHOD_SERVICE);
-        View focus_view = ((Activity) mContext).getWindow()
-                .getCurrentFocus();
 
-        if (focus_view != null) {
-            imm.hideSoftInputFromWindow(focus_view.getWindowToken(), 0);
-        }
-    }
 }

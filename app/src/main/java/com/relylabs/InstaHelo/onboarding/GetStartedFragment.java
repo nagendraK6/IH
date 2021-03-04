@@ -34,7 +34,6 @@ public class GetStartedFragment extends Fragment {
         next_click.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                loadFragment(new LoginFragment());
                 nextScreen(activity_ref);
             }
         });
@@ -52,14 +51,6 @@ public class GetStartedFragment extends Fragment {
         super.onAttach(context);
         if (context instanceof Activity){
             activity_ref=(FragmentActivity) context;
-        }
-    }
-
-    private void loadFragment(Fragment fragment_to_start) {
-        if (activity_ref != null) {
-            FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.fragment_holder, fragment_to_start);
-            ft.commitAllowingStateLoss();
         }
     }
 }

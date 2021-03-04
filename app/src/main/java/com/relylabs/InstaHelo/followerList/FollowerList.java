@@ -36,6 +36,8 @@ import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.Header;
 
+import static com.relylabs.InstaHelo.Utils.Helper.removefragment;
+
 
 public class FollowerList extends Fragment {
 
@@ -70,7 +72,7 @@ public class FollowerList extends Fragment {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removefragment();
+                removefragment(activity_ref);
             }
         });
         getFollowing();
@@ -150,20 +152,6 @@ public class FollowerList extends Fragment {
         if (context instanceof Activity){
             activity_ref=(FragmentActivity) context;
         }
-    }
-
-    private void removefragment() {
-        Fragment f = activity_ref.getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
-        FragmentManager manager = getActivity().getSupportFragmentManager();
-        FragmentTransaction trans = manager.beginTransaction();
-        trans.remove(f);
-        trans.commitAllowingStateLoss();
-        manager.popBackStack();
-    }
-    private void loadFragment(Fragment fragment_to_start) {
-        FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_holder, fragment_to_start);
-        ft.commitAllowingStateLoss();
     }
     void prepareRecyclerView() {
         recyclerView = fragment_view.findViewById(R.id.list_follower);

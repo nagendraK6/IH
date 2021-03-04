@@ -252,12 +252,6 @@ public class PhotoAskFragment extends Fragment {
         }
     }
 
-    private void loadFragment(Fragment fragment_to_start) {
-        FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_holder, fragment_to_start);
-        ft.commitAllowingStateLoss();
-    }
-
     private void sendImageToServer() {
         if (image_storage_path.equals("")) {
             return;
@@ -284,11 +278,9 @@ public class PhotoAskFragment extends Fragment {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 android.util.Log.d("debug_data", "uploaded the image on server...");
 
-                // update user profile and broadcast the update
                 try {
                     user.ProfilePicURL = response.getString("profile_image_url");
                     user.save();
-//                    loadFragment(new AddBioDetailsFragment());
                     nextScreen(activity_ref);
                 } catch (JSONException e) {
                     e.printStackTrace();

@@ -1,10 +1,13 @@
 package com.relylabs.InstaHelo.editprofile;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -33,10 +36,19 @@ import org.json.JSONObject;
 import cz.msebera.android.httpclient.Header;
 
 import static com.relylabs.InstaHelo.Utils.Helper.nextScreen;
+import static com.relylabs.InstaHelo.Utils.Helper.removefragment;
 
 public class EditBioFragment extends Fragment {
     String edit_display_bio_text = "";
     Boolean isChanged = false;
+    public FragmentActivity activity;
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity){
+            activity=(FragmentActivity) context;
+        }
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,11 +64,12 @@ public class EditBioFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        activity = getActivity();
         TextView cancel = view.findViewById(R.id.cancel);
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removefragment();
+                removefragment(activity);
             }
         });
 
@@ -71,7 +84,7 @@ public class EditBioFragment extends Fragment {
                     sendBioToServer(view);
                 }
                 else if (edit_display_bio_text.length() > 0 && !isChanged){
-                    removefragment();
+                    removefragment(activity);
                 }
             }
         });
@@ -121,7 +134,7 @@ public class EditBioFragment extends Fragment {
                     }
                     user.BioDescription = edit_display_bio_text;
                     user.save();
-                    removefragment();;
+                    removefragment(activity);;
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -143,12 +156,4 @@ public class EditBioFragment extends Fragment {
         client.post(App.getBaseURL() + "registration/update_bio", params, jrep);
     }
 
-    private void removefragment() {
-        Fragment f = getActivity().getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
-        FragmentManager manager = getActivity().getSupportFragmentManager();
-        FragmentTransaction trans = manager.beginTransaction();
-        trans.remove(f);
-        trans.commit();
-        manager.popBackStack();
-    }
 }

@@ -167,12 +167,6 @@ public class DisplayUserNameAskFragment extends Fragment {
                             Log.d("Here",user.IsInvited.toString());
                             Logger.log(Logger.USER_NAME_SEND_REQUEST_SUCCESS);
                             nextScreen(activity_ref);
-//                            if (!user.IsInvited) {
-//                                loadFragment(new FragmentNonInvitedThankYouScreen());
-//                            } else {
-//                                Log.d("here","Message");
-//                                loadFragment(new PhotoAskFragment());
-//                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -214,15 +208,6 @@ public class DisplayUserNameAskFragment extends Fragment {
             }
         });
     }
-
-    private void loadFragment(Fragment fragment_to_start) {
-        if (running) {
-            FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.fragment_holder, fragment_to_start);
-            ft.commitAllowingStateLoss();
-        }
-    }
-
     @Override
     public void onResume() {
         super.onResume();
