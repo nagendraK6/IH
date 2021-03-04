@@ -37,14 +37,14 @@ import cz.msebera.android.httpclient.Header;
 
 public class FollowerListAdapter extends RecyclerView.Adapter<FollowerListAdapter.ViewHolder> {
 
-    private ArrayList<String> names, usernames,bio,img;
+    private ArrayList<String> names, usernames,bio,img,user_ids;
     private LayoutInflater mInflater;
     private FollowerListAdapter.ItemClickListener mClickListener;
     private Context context;
     private ArrayList<String> currStatus;
     private static final int MY_PERMISSIONS_REQUEST_SEND_SMS =0 ;
     // data is passed into the constructor
-    FollowerListAdapter(Context context, ArrayList<String> names, ArrayList<String> usernames,ArrayList<String> bio,ArrayList<String> img,ArrayList<String> currentStatus) {
+    FollowerListAdapter(Context context, ArrayList<String> names, ArrayList<String> usernames,ArrayList<String> bio,ArrayList<String> img,ArrayList<String> currentStatus,ArrayList<String> user_ids) {
         this.mInflater = LayoutInflater.from(context);
         this.names = names;
         this.usernames = usernames;
@@ -52,6 +52,7 @@ public class FollowerListAdapter extends RecyclerView.Adapter<FollowerListAdapte
         this.img = img;
         this.context = context;
         this.currStatus = currentStatus;
+        this.user_ids = user_ids;
     }
 
     @Override
@@ -97,7 +98,7 @@ public class FollowerListAdapter extends RecyclerView.Adapter<FollowerListAdapte
             public void onClick(View v) {
                 OtherProfile otherprof = new OtherProfile();
                 Bundle args = new Bundle();
-                args.putString("username", usernames.get(position));
+                args.putString("user_id",user_ids.get(position));
                 otherprof.setArguments(args);
                 loadFragment(otherprof,v);
             }
@@ -110,13 +111,13 @@ public class FollowerListAdapter extends RecyclerView.Adapter<FollowerListAdapte
                 if(curr_status.equals("Following")){
 
                     /// immediate change the state
-                        holder.follow.setBackground(holder.itemView.getContext().getDrawable(R.drawable.follow_cta_action));
+                    holder.follow.setBackground(holder.itemView.getContext().getDrawable(R.drawable.follow_cta_action));
 
                     final User user = User.getLoggedInUser();
                     AsyncHttpClient client = new AsyncHttpClient();
                     boolean running = false;
                     RequestParams params = new RequestParams();
-                    params.add("username",usernames.get(position));
+                    params.add("uid",user_ids.get(position));
                     JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -144,7 +145,7 @@ public class FollowerListAdapter extends RecyclerView.Adapter<FollowerListAdapte
                     AsyncHttpClient client = new AsyncHttpClient();
                     boolean running = false;
                     RequestParams params = new RequestParams();
-                    params.add("username",usernames.get(position));
+                    params.add("uid",user_ids.get(position));
                     JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -185,7 +186,7 @@ public class FollowerListAdapter extends RecyclerView.Adapter<FollowerListAdapte
             public void onClick(View v) {
                 OtherProfile otherprof = new OtherProfile();
                 Bundle args = new Bundle();
-                args.putString("username", usernames.get(position));
+                args.putString("user_id",user_ids.get(position));
                 otherprof.setArguments(args);
                 loadFragment(otherprof,v);
             }

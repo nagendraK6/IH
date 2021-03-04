@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/neartagtheme"
+    android:focusable="true"
+    android:clickable="true"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/speaker_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/time_schedule"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="55dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="55dp"
+        android:textAlignment="center"
+        android:textColor="@color/Black"
+        android:textSize="17sp" />
+
+    <ImageView
+        android:id="@+id/back_button_schedule"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="58dp"
+        android:src="@drawable/left_move_button" />
+
+    <TextView
+        android:id="@+id/all_room"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/back_button_schedule"
+        android:layout_alignBottom="@+id/back_button_schedule"
+        android:layout_marginLeft="15dp"
+        android:layout_toEndOf="@+id/back_button_schedule"
+        android:gravity="center"
+        android:text="@string/all_room" />
+
+    <TextView
+        android:id="@+id/schdeule_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/back_button_schedule"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="83dp"
+        android:layout_marginEnd="50dp"
+        android:textAlignment="center"
+        android:textColor="@color/Black"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/date_schedule"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/schdeule_title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp"
+        android:textColor="@color/Black"
+        android:textSize="17sp" />
+
+    <TextView
+        android:id="@+id/time_schedule"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/date_schedule"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp"
+        android:textColor="@color/Black"
+        android:textSize="17sp" />
+
+    <!--    <com.google.android.material.imageview.ShapeableImageView-->
+    <!--        android:id="@+id/profile_img"-->
+    <!--        android:layout_width="72dp"-->
+    <!--        android:layout_height="72dp"-->
+    <!--        android:layout_below="@+id/textView11"-->
+    <!--        android:layout_alignParentEnd="true"-->
+    <!--        android:layout_marginTop="18dp"-->
+    <!--        android:layout_marginEnd="44dp"-->
+    <!--        app:srcCompat="@drawable/empty_user_profile_image" />-->
+
+    <!--    <com.google.android.material.imageview.ShapeableImageView-->
+    <!--        android:id="@+id/profile_img1"-->
+    <!--        android:layout_width="72dp"-->
+    <!--        android:layout_height="72dp"-->
+    <!--        android:layout_below="@+id/textView11"-->
+    <!--        android:layout_marginStart="53.5dp"-->
+    <!--        android:layout_marginTop="18dp"-->
+    <!--        android:layout_marginEnd="53.5dp"-->
+    <!--        android:layout_toStartOf="@+id/profile_img"-->
+    <!--        android:layout_toEndOf="@+id/profile_img2"-->
+    <!--        app:srcCompat="@drawable/empty_user_profile_image" />-->
+
+    <!--    <com.google.android.material.imageview.ShapeableImageView-->
+    <!--        android:id="@+id/profile_img2"-->
+    <!--        android:layout_width="72dp"-->
+    <!--        android:layout_height="72dp"-->
+    <!--        android:layout_below="@+id/textView11"-->
+    <!--        android:layout_alignParentStart="true"-->
+    <!--        android:layout_marginStart="44dp"-->
+    <!--        android:layout_marginTop="18dp"-->
+    <!--        app:srcCompat="@drawable/empty_user_profile_image" />-->
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:id="@+id/speaker_grid_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/speaker_list"
+        android:layout_alignStart="@+id/back_button_schedule"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="20dp" />
+
+    <TextView
+        android:id="@+id/textView13"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/speaker_grid_list"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="55dp"
+        android:layout_marginTop="69dp"
+        android:layout_marginEnd="55dp"
+        android:text="@string/schedule_text"
+        android:textAlignment="center"
+        android:textColor="@color/Black"
+        android:textSize="17sp" />
+
+    <ImageView
+        android:id="@+id/go_to_all_rooms"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView13"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="17dp"
+        android:src="@drawable/go_to_all_rooms" />
+
+
+</RelativeLayout>

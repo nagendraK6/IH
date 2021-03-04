@@ -38,7 +38,7 @@ public class Profile_Screen_Fragment extends Fragment {
 
 
     public String inviterUsername = "";
-
+    public String inviter_id = "";
     SpinKitView busy;
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -109,10 +109,10 @@ public class Profile_Screen_Fragment extends Fragment {
         inviter_img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!inviterUsername.equals("")) {
+                if(!inviterUsername.equals("") && !inviter_id.equals("")) {
                     OtherProfile otherprof = new OtherProfile();
                     Bundle args = new Bundle();
-                    args.putString("username", inviterUsername);
+                    args.putString("user_id",inviter_id);
                     otherprof.setArguments(args);
                     loadFragment(otherprof);
                 }
@@ -128,6 +128,7 @@ public class Profile_Screen_Fragment extends Fragment {
         AsyncHttpClient client = new AsyncHttpClient();
         boolean running = false;
         RequestParams params = new RequestParams();
+        params.add("user_id",String.valueOf(user.UserID));
         JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -142,6 +143,7 @@ public class Profile_Screen_Fragment extends Fragment {
                         String joined_at = response.getString("joined_at");
                         String bio = response.getString("bio");
                         inviterUsername = response.getString("inviterUsername");
+                        inviter_id = response.getString("inviter_id");
                         ShapeableImageView inviter_img = view.findViewById(R.id.profile_img_noti);
                         if (!inviter_image.equals("")) {
                             float radius = getResources().getDimension(R.dimen.default_corner_radius_profile_inviter);
@@ -184,7 +186,7 @@ public class Profile_Screen_Fragment extends Fragment {
 
         client.addHeader("Accept", "application/json");
         client.addHeader("Authorization", "Token " + user.AccessToken);
-        client.post(App.getBaseURL() + "registration/profile_info", params, jrep);
+        client.post(App.getBaseURL() + "registration/profile_page_info", params, jrep);
     }
     private void loadFragment(Fragment fragment_to_start) {
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();

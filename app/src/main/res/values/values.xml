@@ -8,7 +8,7 @@
     <dimen name="default_corner_radius_profile_follow">26dp</dimen>
     <dimen name="default_corner_radius_profile_notify">14dp</dimen>
     <dimen name="item_corner_radius">10dp</dimen>
-
+    <dimen name="default_corner_radius_profile_schedule">28dp</dimen>
     <string-array name="DialingCountryCode" >
         <item>32,BE</item>
         <item>501,BZ</item>

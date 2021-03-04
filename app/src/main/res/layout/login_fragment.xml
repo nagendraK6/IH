@@ -53,7 +53,7 @@
             android:id="@+id/country_code"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
-
+            app:ccp_autoDetectCountry="true"
             android:textColor="@color/neartagtextcolor"
             android:textSize="15sp"
             app:ccp_showNameCode="false"

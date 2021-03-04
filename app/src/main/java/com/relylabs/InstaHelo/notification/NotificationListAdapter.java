@@ -29,20 +29,21 @@ import java.util.Date;
 
 public class NotificationListAdapter extends RecyclerView.Adapter<NotificationListAdapter.ViewHolder> {
     public static final SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-    private ArrayList<String> text_arr, username,img_arr,time_arr;
+    private ArrayList<String> text_arr, username,img_arr,time_arr,user_ids;
     private LayoutInflater mInflater;
     private NotificationListAdapter.ItemClickListener mClickListener;
     private Context context;
     private ArrayList<String> currStatus;
     private static final int MY_PERMISSIONS_REQUEST_SEND_SMS =0 ;
     // data is passed into the constructor
-    NotificationListAdapter(Context context, ArrayList<String> text_arr, ArrayList<String> username,ArrayList<String> img_arr,ArrayList<String> time_arr) {
+    NotificationListAdapter(Context context, ArrayList<String> text_arr, ArrayList<String> username,ArrayList<String> img_arr,ArrayList<String> time_arr,ArrayList<String> user_ids) {
         this.mInflater = LayoutInflater.from(context);
         this.text_arr = text_arr;
         this.username = username;
         this.img_arr = img_arr;
         this.time_arr = time_arr;
         this.context = context;
+        this.user_ids = user_ids;
     }
 
     @Override
@@ -85,7 +86,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
             public void onClick(View v) {
                 OtherProfile otherprof = new OtherProfile();
                 Bundle args = new Bundle();
-                args.putString("username", username.get(position));
+                args.putString("user_id",user_ids.get(position));
                 otherprof.setArguments(args);
                 loadFragment(otherprof,v);
             }

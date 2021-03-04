@@ -293,7 +293,11 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadFragmentWithoutupdate(new Profile_Screen_Fragment());
+                OtherProfile otherprof = new OtherProfile();
+                Bundle args = new Bundle();
+                args.putString("user_id",String.valueOf(user.UserID));
+                otherprof.setArguments(args);
+                loadFragmentWithoutupdate(otherprof);
             }
         });
 
