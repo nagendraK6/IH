@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,14 +38,14 @@ import cz.msebera.android.httpclient.Header;
 
 public class FollowingListAdapter extends RecyclerView.Adapter<FollowingListAdapter.ViewHolder> {
 
-    private ArrayList<String> names, usernames,bio,img;
+    private ArrayList<String> names, usernames,bio,img,user_ids;
     private LayoutInflater mInflater;
     private FollowingListAdapter.ItemClickListener mClickListener;
     private Context context;
     private ArrayList<String> currStatus;
     private static final int MY_PERMISSIONS_REQUEST_SEND_SMS =0 ;
     // data is passed into the constructor
-    FollowingListAdapter(Context context, ArrayList<String> names, ArrayList<String> usernames,ArrayList<String> bio,ArrayList<String> img,ArrayList<String> currentStatus) {
+    FollowingListAdapter(Context context, ArrayList<String> names, ArrayList<String> usernames,ArrayList<String> bio,ArrayList<String> img,ArrayList<String> currentStatus,ArrayList<String> user_ids) {
         this.mInflater = LayoutInflater.from(context);
         this.names = names;
         this.usernames = usernames;
@@ -52,6 +53,7 @@ public class FollowingListAdapter extends RecyclerView.Adapter<FollowingListAdap
         this.img = img;
         this.context = context;
         this.currStatus = currentStatus;
+        this.user_ids = user_ids;
     }
 
     @Override
@@ -94,7 +96,7 @@ public class FollowingListAdapter extends RecyclerView.Adapter<FollowingListAdap
             public void onClick(View v) {
                 OtherProfile otherprof = new OtherProfile();
                 Bundle args = new Bundle();
-                args.putString("username", usernames.get(position));
+                args.putString("user_id",user_ids.get(position));
                 otherprof.setArguments(args);
                 loadFragment(otherprof,v);
             }
@@ -111,11 +113,12 @@ public class FollowingListAdapter extends RecyclerView.Adapter<FollowingListAdap
                     AsyncHttpClient client = new AsyncHttpClient();
                     boolean running = false;
                     RequestParams params = new RequestParams();
-                    params.add("username",usernames.get(position));
+                    params.add("uid",user_ids.get(position));
                     JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 //                            hide_busy_indicator();
+                            broadcastforupdate(holder.itemView);
                             currStatus.set(position,"Follow");
                             Log.d("response_follow",response.toString());
                             holder.follow.setBackground(holder.itemView.getContext().getDrawable(R.drawable.follow_cta_action));
@@ -125,11 +128,6 @@ public class FollowingListAdapter extends RecyclerView.Adapter<FollowingListAdap
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
-                            WeakHashMap<String, String> log_data = new WeakHashMap<>();
-                            log_data.put(Logger.STATUS, Integer.toString(statusCode));
-                            log_data.put(Logger.JSON, obj.toString());
-                            log_data.put(Logger.THROWABLE, t.toString());
-
                         }
                     };
 
@@ -143,11 +141,12 @@ public class FollowingListAdapter extends RecyclerView.Adapter<FollowingListAdap
                     AsyncHttpClient client = new AsyncHttpClient();
                     boolean running = false;
                     RequestParams params = new RequestParams();
-                    params.add("username",usernames.get(position));
+                    params.add("uid",user_ids.get(position));
                     JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 //                            hide_busy_indicator();
+                            broadcastforupdate(holder.itemView);
                             currStatus.set(position,"Following");
                             Log.d("response_follow",response.toString());
                             holder.follow.setBackground(holder.itemView.getContext().getDrawable(R.drawable.following_state));
@@ -157,11 +156,6 @@ public class FollowingListAdapter extends RecyclerView.Adapter<FollowingListAdap
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
-                            WeakHashMap<String, String> log_data = new WeakHashMap<>();
-                            log_data.put(Logger.STATUS, Integer.toString(statusCode));
-                            log_data.put(Logger.JSON, obj.toString());
-                            log_data.put(Logger.THROWABLE, t.toString());
-
                         }
                     };
 
@@ -189,7 +183,7 @@ public class FollowingListAdapter extends RecyclerView.Adapter<FollowingListAdap
             public void onClick(View v) {
                 OtherProfile otherprof = new OtherProfile();
                 Bundle args = new Bundle();
-                args.putString("username", usernames.get(position));
+                args.putString("user_id",user_ids.get(position));
                 otherprof.setArguments(args);
                 loadFragment(otherprof,v);
             }
@@ -250,6 +244,12 @@ public class FollowingListAdapter extends RecyclerView.Adapter<FollowingListAdap
     // parent activity will implement this method to respond to click events
     public interface ItemClickListener {
         void onItemClick(int position);
+    }
+
+    private void broadcastforupdate(View view) {
+        AppCompatActivity activity = (AppCompatActivity) view.getContext();
+        Intent intent = new Intent("update_from_follow");
+        activity.sendBroadcast(intent);
     }
 
     @Override

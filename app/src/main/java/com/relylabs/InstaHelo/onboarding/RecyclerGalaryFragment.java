@@ -96,7 +96,7 @@ public class RecyclerGalaryFragment extends Fragment  implements MyRecyclerViewA
         FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
         ft.add(R.id.fragment_holder, fragment_to_start);
         ft.addToBackStack(null);
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
 
     @Override

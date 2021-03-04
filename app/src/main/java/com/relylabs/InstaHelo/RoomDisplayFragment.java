@@ -36,6 +36,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.relylabs.InstaHelo.HandRaise.HandRaiseUsersListDialogFragment;
+import com.relylabs.InstaHelo.Utils.RoomHelper;
 import com.relylabs.InstaHelo.models.User;
 import com.relylabs.InstaHelo.models.UserSettings;
 import com.relylabs.InstaHelo.models.UsersInRoom;
@@ -72,6 +73,7 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
 
     TextView hand_raise_admin, hand_raise_audience;
     ImageView mute_unmute_button_bottom;
+    ImageView wa_sharing;
 
     private FragmentActivity activity;
 
@@ -381,6 +383,42 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
         // updatePostingDetails(t);
         fetchListenersData();
         busy = view.findViewById(R.id.loading_channel_token_fetch);
+
+        wa_sharing = view.findViewById(R.id.wa_room_sharing);
+        wa_sharing.setVisibility(View.VISIBLE);
+        wa_sharing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                if (RoomHelper.IsWAInstalled(activity)) {
+                    sharingIntent.setPackage("com.whatsapp");
+                }
+
+                String speakers_text = " with ";
+                Boolean found = false;
+                for (int i = 0; i < Math.min(speakers.size(), 5); i++) {
+                    if (!user.UserID.equals(speakers.get(i).UserId)) {
+                        speakers_text = speakers_text + speakers.get(i).Name + ", ";
+                        found = true;
+                    }
+                }
+
+                if (!found) {
+                    speakers_text = "";
+                } else {
+                    speakers_text = speakers_text.replaceAll(", $", "");
+                }
+
+                    sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Instahelo Room");
+                    String shareBody =
+
+                            "I am in an audio room discussing " + event_title  +  speakers_text +  " on @instahelo app. Join me: \n" +
+                            "https://play.google.com/store/apps/details?id=com.relylabs.InstaHelo";
+                    sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                    startActivity(Intent.createChooser(sharingIntent, "Share via"));
+            }
+        });
     }
 
 
@@ -439,7 +477,7 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
             FragmentTransaction trans = manager.beginTransaction();
             trans.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top);
             trans.remove(f);
-            trans.commit();
+            trans.commitAllowingStateLoss();
             manager.popBackStack();
         }
     }
@@ -455,6 +493,11 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
     @Override
     public void onItemClick(Integer uid, String action) {
         Log.d("debug_audio", action);
+        if (action.equals("SHOW_PROFILE")) {
+            show_profile(uid);
+            return;
+        }
+
         Bundle data_bundle = new Bundle();
         data_bundle.putString("user_action", action);
         data_bundle.putInt("uid", uid);
@@ -505,12 +548,10 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
-                Log.d("debug_data", "Audience fetch failed");
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
-                Log.d("debug_data", "Audience fetch failed");
             }
         };
 
@@ -627,5 +668,15 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
         broadcastLocalUpdate("MINIMISED");
         removefragment();
         return true;
+    }
+
+    public void show_profile(Integer uid) {
+        OtherProfile otherprof = new OtherProfile();
+        Bundle args = new Bundle();
+        args.putString("user_id",String.valueOf(uid));
+        otherprof.setArguments(args);
+        FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
+        ft.add(R.id.fragment_holder, otherprof);
+        ft.commitAllowingStateLoss();
     }
 }

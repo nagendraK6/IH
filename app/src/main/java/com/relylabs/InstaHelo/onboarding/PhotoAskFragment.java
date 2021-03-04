@@ -255,7 +255,7 @@ public class PhotoAskFragment extends Fragment {
     private void loadFragment(Fragment fragment_to_start) {
         FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_holder, fragment_to_start);
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
 
     private void sendImageToServer() {
@@ -297,12 +297,10 @@ public class PhotoAskFragment extends Fragment {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
-                HashMap logData = new HashMap<String, String>();
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
-                HashMap logData = new HashMap<String, String>();
             }
         };
 

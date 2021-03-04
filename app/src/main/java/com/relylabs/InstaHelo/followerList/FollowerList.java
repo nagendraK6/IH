@@ -1,9 +1,12 @@
 package com.relylabs.InstaHelo.followerList;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -20,7 +23,6 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.relylabs.InstaHelo.App;
-import com.relylabs.InstaHelo.Profile_Screen_Fragment;
 import com.relylabs.InstaHelo.R;
 import com.relylabs.InstaHelo.models.Contact;
 import com.relylabs.InstaHelo.models.User;
@@ -43,11 +45,12 @@ public class FollowerList extends Fragment {
     private  ArrayList<String> bio = new ArrayList<String>();
     private  ArrayList<String> img = new ArrayList<String>();
     private  ArrayList<String> currStatus = new ArrayList<>();
+    private  ArrayList<String> user_ids = new ArrayList<>();
     View fragment_view;
     RecyclerView recyclerView;
     FollowerListAdapter adapter;
     SpinKitView busy;
-
+    FragmentActivity activity_ref;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,7 +71,6 @@ public class FollowerList extends Fragment {
             @Override
             public void onClick(View v) {
                 removefragment();
-//                loadFragment(new Profile_Screen_Fragment());
             }
         });
         getFollowing();
@@ -84,23 +86,27 @@ public class FollowerList extends Fragment {
         final User user = User.getLoggedInUser();
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
-
+        String user_id = getArguments().getString("user_id");
+        params.add("user_id",user_id);
         JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
                     hide_busy_indicator();
+
                     String error_message = response.getString("error_message");
                     Log.d("/followers",response.toString());
                     JSONArray name = response.getJSONArray("names");
                     JSONArray username = response.getJSONArray("usernames");
                     JSONArray bio_temp = response.getJSONArray("bio");
                     JSONArray img_temp = response.getJSONArray(("img"));
+                    JSONArray ids = response.getJSONArray("user_ids");
                     JSONArray follower_status = response.getJSONArray("follower_status");
                     if(name!=null){
                         for (int i=0;i<name.length();i++){
                             names.add(name.getString(i));
                             currStatus.add(follower_status.getString(i));
+                            user_ids.add(String.valueOf(ids.getInt(i)));
                         }
                     }
                     if(username!=null){
@@ -126,7 +132,6 @@ public class FollowerList extends Fragment {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
-                Log.d("debug_data", "" + res);
             }
 
             @Override
@@ -136,27 +141,34 @@ public class FollowerList extends Fragment {
 
         client.addHeader("Accept", "application/json");
         client.addHeader("Authorization", "Token " + user.AccessToken);
-        client.post(App.getBaseURL() + "registration/followers_list", params, jrep);
+        client.post(App.getBaseURL() + "registration/followers_list_common", params, jrep);
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity){
+            activity_ref=(FragmentActivity) context;
+        }
+    }
 
     private void removefragment() {
-        Fragment f = getActivity().getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
+        Fragment f = activity_ref.getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
         FragmentManager manager = getActivity().getSupportFragmentManager();
         FragmentTransaction trans = manager.beginTransaction();
         trans.remove(f);
-        trans.commit();
+        trans.commitAllowingStateLoss();
         manager.popBackStack();
     }
     private void loadFragment(Fragment fragment_to_start) {
-        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_holder, fragment_to_start);
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
     void prepareRecyclerView() {
         recyclerView = fragment_view.findViewById(R.id.list_follower);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
-        adapter = new FollowerListAdapter(getContext(), names, usernames,bio, img,currStatus);
+        adapter = new FollowerListAdapter(getContext(), names, usernames,bio, img,currStatus,user_ids);
         recyclerView.setAdapter(adapter);
 
     }

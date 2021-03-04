@@ -200,7 +200,7 @@ public class RoomCreateBottomSheetDialogFragment extends Fragment  {
             FragmentTransaction trans = manager.beginTransaction();
             trans.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top);
             trans.remove(f);
-            trans.commit();
+            trans.commitAllowingStateLoss();
             manager.popBackStack();
         }
     }

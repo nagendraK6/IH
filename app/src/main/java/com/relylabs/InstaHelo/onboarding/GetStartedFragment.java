@@ -59,7 +59,7 @@ public class GetStartedFragment extends Fragment {
         if (activity_ref != null) {
             FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.fragment_holder, fragment_to_start);
-            ft.commit();
+            ft.commitAllowingStateLoss();
         }
     }
 }

@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
@@ -39,6 +40,7 @@ import com.relylabs.InstaHelo.onboarding.NonInvitedUserFirstNameAskFragment;
 import com.relylabs.InstaHelo.onboarding.PhoneVerificationFragment;
 import com.relylabs.InstaHelo.onboarding.PhotoAskFragment;
 import com.relylabs.InstaHelo.onboarding.SuggestedProfileToFollowFragment;
+import com.relylabs.InstaHelo.rooms.ScheduleRoom;
 import com.relylabs.InstaHelo.services.ActiveRoomService;
 
 import org.json.JSONArray;
@@ -46,6 +48,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -54,6 +57,7 @@ import static com.relylabs.InstaHelo.Utils.Helper.cleanPhoneNo;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "debug_data";
+    public static String param = "";
 
     BroadcastReceiver broadcastintent = new BroadcastReceiver() {
         @Override
@@ -62,12 +66,12 @@ public class MainActivity extends AppCompatActivity {
                     .getStringExtra("user_action");
             Integer uid;
             switch (user_action) {
-                case "contact_update":
+               /* case "contact_update":
                     Log.d("debug_data", "Received data from the other fragments to upload contact");
                     readContactsAndStoreLocal();
                     ArrayList<Contact> get_all_pending_contacts = Contact.getAllContactsNotUploaded();
                     upload_to_server_contacts_and_return_invited_users(get_all_pending_contacts);
-                    break;
+                    break;*/
             }
         }
     };
@@ -115,6 +119,36 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Intent intent = getIntent();
+
+
+    }
+
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        String action = intent.getAction();
+        Uri data = intent.getData();
+        if(data !=null){
+            List<String > params = data.getPathSegments();
+            int size = params.size();
+            if(size==1){
+                param = params.get(0);
+            }
+
+
+            ScheduleRoom room = new ScheduleRoom();
+            Bundle args = new Bundle();
+            args.putString("room_slug",param);
+            room.setArguments(args);
+
+
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.add(R.id.fragment_holder, room);
+            ft.commitAllowingStateLoss();
+
+        }
     }
 
     @Override
@@ -253,7 +287,6 @@ public class MainActivity extends AppCompatActivity {
 
     private Fragment findFragment() {
         User user = User.getLoggedInUser();
-        //  return new AddBioDetailsFragment();
 
         if (user == null) {
             return new GetStartedFragment();

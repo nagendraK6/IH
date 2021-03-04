@@ -20,7 +20,6 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.relylabs.InstaHelo.App;
-import com.relylabs.InstaHelo.Profile_Screen_Fragment;
 import com.relylabs.InstaHelo.R;
 import com.relylabs.InstaHelo.models.Contact;
 import com.relylabs.InstaHelo.models.User;
@@ -42,7 +41,7 @@ public class NotificationList extends Fragment {
     private  ArrayList<String> username = new ArrayList<String>();
     private  ArrayList<String> img_arr = new ArrayList<String>();
     private  ArrayList<String> time_arr = new ArrayList<String>();
-    private  ArrayList<String> currStatus = new ArrayList<>();
+    private  ArrayList<String> user_ids = new ArrayList<>();
     View fragment_view;
     RecyclerView recyclerView;
     NotificationListAdapter adapter;
@@ -94,12 +93,14 @@ public class NotificationList extends Fragment {
                     JSONArray user_name = response.getJSONArray("username");
                     JSONArray img_arr_json = response.getJSONArray("img_arr");
                     JSONArray time_arr_json = response.getJSONArray("time_arr");
+                    JSONArray user_ids_json = response.getJSONArray("user_ids");
                     if (text_json != null) {
                         for (int i = 0; i < text_json.length(); i++) {
                             text_arr.add(text_json.getString(i));
                             username.add(user_name.getString(i));
                             img_arr.add(img_arr_json.getString(i));
                             time_arr.add(time_arr_json.getString(i));
+                            user_ids.add(user_ids_json.getString(i));
                         }
                         adapter.notifyDataSetChanged();
                     }
@@ -111,7 +112,6 @@ public class NotificationList extends Fragment {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
-                Log.d("debug_data", "" + res);
             }
 
             @Override
@@ -130,18 +130,18 @@ public class NotificationList extends Fragment {
         FragmentManager manager = getActivity().getSupportFragmentManager();
         FragmentTransaction trans = manager.beginTransaction();
         trans.remove(f);
-        trans.commit();
+        trans.commitAllowingStateLoss();
         manager.popBackStack();
     }
     private void loadFragment(Fragment fragment_to_start) {
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft.add(R.id.fragment_holder, fragment_to_start);
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
     void prepareRecyclerView() {
         recyclerView = fragment_view.findViewById(R.id.list_notification);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
-        adapter = new NotificationListAdapter(getContext(), text_arr, username,img_arr,time_arr);
+        adapter = new NotificationListAdapter(getContext(), text_arr, username,img_arr,time_arr,user_ids);
         recyclerView.setAdapter(adapter);
 
     }

@@ -64,19 +64,18 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
     private static final int REQUEST_FOR_READ_CONTACTS = 10;
     private ArrayList<String> contact_names, contact_numbers;
     private ArrayList<String> contact_names_permanent, contact_numbers_permanent;
-    private ArrayList<String> contact_numbers_exclude;
     View fragment_view;
     RecyclerView recyclerView;
     SharingContactListAdapter adapter;
     ProgressBar show_busy_indicator;
-    ArrayList<Contact> all_contacts;
     private FragmentActivity activity;
-    InifiniteListView scrollListener;
-    boolean read_from_memory = true;
+    EndlessRecyclerViewScrollListener scrollListener;
+    String query_txt = "";
+    int offset  = 0;
+    Boolean has_ended = false;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        all_contacts = new ArrayList<>();
         return inflater.inflate(R.layout.fragment_contact_list_display, container, false);
     }
 
@@ -131,8 +130,8 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
         show_busy_indicator.setVisibility(View.VISIBLE);
         fragment_view = view;
         if (checkPermission(activity)) {
-            processContacts(false);
-            Helper.sendRequestForContactProcess(activity);
+            processContacts(true);
+            //Helper.sendRequestForContactProcess(activity);
         }
 
         SearchView search = (SearchView) view.findViewById(R.id.search_contact);
@@ -145,78 +144,70 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-
-                Log.d("search",query);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                //    adapter.getFilter().filter(newText);
-                Log.d("search",newText);
-                if(newText.length()==0){
-                    contact_names.clear();
-                    contact_numbers.clear();
-                    contact_names.addAll(contact_names_permanent);
-                    contact_numbers.addAll((contact_numbers_permanent));
-                } else {
-                    contact_names.clear();
-                    contact_numbers.clear();
-                    for (int i=0;i<contact_names_permanent.size();i++){
+                Log.d("debug_c", "Query text is " + newText);
+                has_ended = false;
+                query_txt = newText;
+                offset = 0;
+                contact_names.clear();
+                contact_numbers.clear();
+                scrollListener.resetState();
 
-                        if(contact_names_permanent.get(i).toLowerCase().startsWith(newText.toLowerCase())){
-                            contact_names.add(contact_names_permanent.get(i));
-                            contact_numbers.add(contact_numbers_permanent.get(i));
-                        }
+               // if (query_txt.length() == 0) {
+                processContacts(true);
+               /* } else {
+                    ArrayList<Contact> new_contacts = readContacts(10);
+                    for (int i = 0; i < new_contacts.size(); i++) {
+                        contact_names.add(new_contacts.get(i).Name);
+                        contact_numbers.add(new_contacts.get(i).Phone);
                     }
 
+
+
                     adapter.notifyDataSetChanged();
-                }
+                }*/
+
+
 
                 return false;
             }
         });
-
-
     }
 
 
     public void processContacts(boolean read_from_memory) {
-        // read contacts from db
-        Log.d("debug_c", "Processing contacts");
-        if (read_from_memory) {
-            all_contacts = readContacts(25);
-            Log.d("debug_c", "Processing contacts. Read memory done");
-        } else {
-            all_contacts = Contact.getTopContactsNotInvited(1000);
-            Log.d("debug_c", "Processing contacts. Read disk done");
-            if (all_contacts.size() == 0) {
-                all_contacts = readContacts(25);
-            }
-        }
-
-        Log.d("debug_c", "Processing contacts. Rendering");
-
-        prepareRecyclerView(all_contacts);
+        prepareRecyclerView(25);
     }
 
 
 
     public ArrayList<Contact> readContacts(int max_limit){
         ArrayList<Contact> contacts = new ArrayList<>();
-        ContentResolver cr = activity.getContentResolver();
-        Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
-                null, null, null, null);
-
+        Cursor cur = activity.getContentResolver().query(
+                ContactsContract.Contacts.CONTENT_URI,    // Content Uri is specific to individual content providers.
+                null,    // String[] describing which columns to return.
+                null,     // Query arguments.
+                null);
 
         int i = 0;
         if (cur.getCount() > 0) {
+            cur.moveToPosition(offset);
             while (cur.moveToNext()) {
+                offset = offset + 1;
                 String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
                 String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+                if (name != null &&  query_txt.length() > 0 && !name.toLowerCase().startsWith(query_txt.toLowerCase())) {
+                    continue;
+                }
+
+
                 if (Integer.parseInt(cur.getString(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
                     // get the phone number
-                    Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,
+                    Cursor pCur = activity.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,
                             ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = ?",
                             new String[]{id}, null);
 
@@ -228,15 +219,19 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
 
                     pCur.close();
                     String refinedPhone = cleanPhoneNo(phone, activity);
-                    if(!refinedPhone.equals("ERROR")){
-                        contacts.add(new Contact(name, refinedPhone, false, false));
+                    if (name  == null) {
+                        Log.d("debug_c", "name is null. phone is " + phone);
+                    }
+                    contacts.add(new Contact(name, refinedPhone, false, false));
                         i++;
                         if (i >= max_limit) {
                             break;
                         }
-                    }
+
                 }
             }
+        } else {
+            has_ended = true;
         }
 
         return contacts;
@@ -266,25 +261,22 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
         super.onRequestPermissionsResult(RC, per, PResult);
         if (PResult.length > 0 && PResult[0] == PackageManager.PERMISSION_GRANTED) {
             processContacts(true);
-            Helper.sendRequestForContactProcess(activity);
+            //Helper.sendRequestForContactProcess(activity);
         }
     }
 
 
-    void prepareRecyclerView(ArrayList<Contact> all_contacts) {
+    void prepareRecyclerView(int limit) {
+
         contact_names = new ArrayList<>();
         contact_numbers = new ArrayList<>();
-        contact_names_permanent = new ArrayList<>();
-        contact_numbers_permanent = new ArrayList<>();
 
-        for (int i = 0; i < all_contacts.size(); i++) {
-            contact_names_permanent.add(all_contacts.get(i).Name);
-            contact_numbers_permanent.add(all_contacts.get(i).Phone);
+        has_ended = false;
+        ArrayList<Contact> all_data = readContacts(limit);
+        for (int i = 0; i < all_data.size(); i++) {
+            contact_names.add(all_data.get(i).Name);
+            contact_numbers.add(all_data.get(i).Phone);
         }
-
-        contact_names.addAll(contact_names_permanent);
-        contact_numbers.addAll(contact_numbers_permanent);
-
 
         recyclerView = fragment_view.findViewById(R.id.contact_list_display);
         LinearLayoutManager layoutManager = new LinearLayoutManager(activity);
@@ -294,37 +286,35 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
         recyclerView.setAdapter(adapter);
         show_busy_indicator.setVisibility(View.INVISIBLE);
 
-        // fetch_contact_list_from_the_server();
+
+        scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                loadNextDataFromApi(page, limit);
+            }
+        };
+
+
+        recyclerView.addOnScrollListener(scrollListener);
     }
 
+    void loadNextDataFromApi(int page, int limit) {
+        Log.d("debug_c", "Page called " + String.valueOf(page));
+        int old_offset = contact_numbers.size();
+        Log.d("debug_c", "Fetching at " + String.valueOf(offset));
+        ArrayList<Contact> new_list = readContacts(limit);
+        for (int i  = 0; i < new_list.size(); i++) {
+            Log.d("debug_c", new_list.get(i).Name);
+            contact_names.add(new_list.get(i).Name);
+            contact_numbers.add(new_list.get(i).Phone);
+        }
 
-    public class StartAsyncTask extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... voids) {
-            Log.d("debug_c", "Processing contacts");
-            if (read_from_memory) {
-                all_contacts = readContacts(25);
-                Log.d("debug_c", "Processing contacts. Read memory done");
-            } else {
-                all_contacts = Contact.getTopContactsNotInvited(1000);
-                Log.d("debug_c", "Processing contacts. Read disk done");
-                if (all_contacts.size() == 0) {
-                    all_contacts = readContacts(25);
-                }
-            }
-
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    prepareRecyclerView(all_contacts);
-                    Helper.sendRequestForContactProcess(activity);
-                }
-            });
-
-
-
-
-            return null;
+        if (new_list.size() > 0) {
+         //   adapter.notifyDataSetChanged();
+            Log.d("debug_c", "adapter called");
+            adapter.notifyItemRangeInserted(old_offset, new_list.size());
         }
     }
 
@@ -336,12 +326,13 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
 
 
     private void removefragment() {
+        hideKeyboard(activity);
         Log.d("debug_f", "Remove s");
         Fragment f = activity.getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
         FragmentManager manager = activity.getSupportFragmentManager();
         FragmentTransaction trans = manager.beginTransaction();
         trans.remove(f);
-        trans.commit();
+        trans.commitAllowingStateLoss();
         Log.d("debug_f", "Remove e");
         manager.popBackStack();
     }
@@ -351,62 +342,14 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
 
     }
 
-    private void fetch_contact_list_from_the_server() {
-        final User user = User.getLoggedInUser();
-        AsyncHttpClient client = new AsyncHttpClient();
-        RequestParams params = new RequestParams();
+    public static void hideKeyboard(Context mContext) {
+        InputMethodManager imm = (InputMethodManager) mContext
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        View focus_view = ((Activity) mContext).getWindow()
+                .getCurrentFocus();
 
-        JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                try {
-                    String error_message = response.getString("error_message");
-                    JSONArray all_contacts = response.getJSONArray("all_contacts");
-                    Integer contacts_count_on_server = response.getInt("contacts_count_on_server");
-
-                    if (contacts_count_on_server == 0) {
-                        Log.d("debug_data", "No contact uploaded on server");
-                        return;
-                    }
-
-                    contact_names_permanent.clear();
-                    contact_numbers.clear();
-
-                    contact_names.clear();
-                    contact_numbers.clear();
-
-
-                    for (int i = 0; i < all_contacts.length(); i++) {
-                        JSONObject obj = all_contacts.getJSONObject(i);
-                        String name = obj.getString("name");
-                        String phone = obj.getString("number");
-
-
-
-                        contact_names.add(name);
-                        contact_numbers.add(phone);
-                        contact_names_permanent.add(name);
-                        contact_numbers_permanent.add(phone);
-                    }
-
-                    adapter.notifyDataSetChanged();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
-                Log.d("debug_data", "" + res);
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject obj) {
-            }
-        };
-
-        client.addHeader("Accept", "application/json");
-        client.addHeader("Authorization", "Token " + user.AccessToken);
-        client.post(App.getBaseURL() + "registration/get_non_invited_users_from_the_contact", params, jrep);
+        if (focus_view != null) {
+            imm.hideSoftInputFromWindow(focus_view.getWindowToken(), 0);
+        }
     }
 }

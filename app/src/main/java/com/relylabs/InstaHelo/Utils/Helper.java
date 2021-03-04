@@ -150,51 +150,51 @@ public class Helper {
         Log.d("currentStep",currentStep);
         if(currentStep.equals("GET_STARTED")){
             ft.replace(R.id.fragment_holder, new LoginFragment());
-            ft.commit();
+            ft.commitAllowingStateLoss();
         }
         else if(currentStep.equals("LOGIN")){
             ft.replace(R.id.fragment_holder, new PhoneVerificationFragment());
-            ft.commit();
+            ft.commitAllowingStateLoss();
         }
         else if(currentStep.equals("VERIFY_OTP")){
             ft.replace(R.id.fragment_holder, new DisplayUserNameAskFragment());
-            ft.commit();
+            ft.commitAllowingStateLoss();
         }
         else if(currentStep.equals("RESERVE_DISPLAY_USER_NAME") && !isInvited){
             ft.replace(R.id.fragment_holder, new FragmentNonInvitedThankYouScreen());
-            ft.commit();
+            ft.commitAllowingStateLoss();
         }
         else if(currentStep.equals("THANK_YOU_SCREEN") && isInvited){
             ft.replace(R.id.fragment_holder, new InvitedUserNameAskFragment());
-            ft.commit();
+            ft.commitAllowingStateLoss();
         }
         else if(currentStep.equals("RESERVE_DISPLAY_USER_NAME") && isInvited){
             ft.replace(R.id.fragment_holder, new InvitedUserNameAskFragment());
-            ft.commit();
+            ft.commitAllowingStateLoss();
         }
         else if(currentStep.equals("INVITED_NAME_ASK")){
             ft.replace(R.id.fragment_holder, new PhotoAskFragment());
-            ft.commit();
+            ft.commitAllowingStateLoss();
         }
         else if(currentStep.equals("PHOTO_ASK")){
             ft.replace(R.id.fragment_holder, new AddBioDetailsFragment());
-            ft.commit();
+            ft.commitAllowingStateLoss();
         }
         else if(currentStep.equals("ADD_BIO")){
             ft.replace(R.id.fragment_holder, new ContactRequestFragment());
-            ft.commit();
+            ft.commitAllowingStateLoss();
         }
         else if(currentStep.equals("CONTACT_REQUEST")){
             ft.replace(R.id.fragment_holder, new SuggestedProfileToFollowFragment());
-            ft.commit();
+            ft.commitAllowingStateLoss();
         }
         else if(currentStep.equals("FRIENDS_TO_FOLLOW")){
             ft.replace(R.id.fragment_holder, new FriendsToFollow());
-            ft.commit();
+            ft.commitAllowingStateLoss();
         }
         else if(currentStep.equals("MAIN_SCREEN")){
             ft.replace(R.id.fragment_holder, new MainScreenFragment());
-            ft.commit();
+            ft.commitAllowingStateLoss();
         }
     }
     public static void prevScreen(FragmentActivity activity_ref){
@@ -226,11 +226,11 @@ public class Helper {
         }
         if(currentStep.equals("PHOTO_ASK")){
             ft.replace(R.id.fragment_holder, new AddBioDetailsFragment());
-            ft.commit();
+            ft.commitAllowingStateLoss();
         }
         else if(currentStep.equals("CONTACT_REQUEST")){
             ft.replace(R.id.fragment_holder, new SuggestedProfileToFollowFragment());
-            ft.commit();
+            ft.commitAllowingStateLoss();
         }
     }
 

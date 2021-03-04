@@ -163,11 +163,6 @@ public class SharingContactListAdapter extends RecyclerView.Adapter<SharingConta
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
-                WeakHashMap<String, String> log_data = new WeakHashMap<>();
-                log_data.put(Logger.STATUS, Integer.toString(statusCode));
-                log_data.put(Logger.JSON, obj.toString());
-                log_data.put(Logger.THROWABLE, t.toString());
-
             }
         };
 

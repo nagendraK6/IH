@@ -49,6 +49,7 @@ import com.relylabs.InstaHelo.models.UsersInRoom;
 import com.relylabs.InstaHelo.notification.NotificationList;
 import com.relylabs.InstaHelo.rooms.RoomCreateBottomSheetDialogFragment;
 import com.relylabs.InstaHelo.services.ActiveRoomService;
+import com.relylabs.InstaHelo.sharing.ExploreFragment;
 import com.relylabs.InstaHelo.sharing.SendInviteFragment;
 import com.squareup.picasso.Picasso;
 
@@ -293,7 +294,20 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadFragmentWithoutupdate(new Profile_Screen_Fragment());
+                OtherProfile otherprof = new OtherProfile();
+                Bundle args = new Bundle();
+                args.putString("user_id",String.valueOf(user.UserID));
+                otherprof.setArguments(args);
+                loadFragmentWithoutupdate(otherprof);
+            }
+        });
+
+        ImageView search_icon = view.findViewById(R.id.search_icon);
+        search_icon.setVisibility(View.VISIBLE);
+        search_icon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadFragmentWithoutupdate(new ExploreFragment());
             }
         });
 
@@ -783,7 +797,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
     private void loadFragmentWithoutupdate(Fragment fragment_to_start) {
         FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
         ft.add(R.id.fragment_holder, fragment_to_start);
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
 
     private void loadFragmentInBottom() {
@@ -795,14 +809,14 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
         frg.setArguments(args);
         ft.replace(R.id.fragment_bottom, frg, "bottom_sheet");
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
 
     private void unloadFragmentBottom() {
         if (activity != null) {
             Fragment fragment = activity.getSupportFragmentManager().findFragmentByTag("bottom_sheet");
             if(fragment != null) {
-                activity.getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+                activity.getSupportFragmentManager().beginTransaction().remove(fragment).commitAllowingStateLoss();
             }
         }
     }
@@ -821,7 +835,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
             fr.setArguments(args);
             ft.add(R.id.fragment_holder, fr);
             is_room_fragment_loaded = true;
-            ft.commit();
+            ft.commitAllowingStateLoss();
         }
     }
 

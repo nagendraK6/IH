@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -37,7 +38,21 @@ public class RoomHelper {
         FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
         ft.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top);
         ft.add(R.id.fragment_holder, fr);
-        ft.commit();
+        ft.commitAllowingStateLoss();
+    }
+
+
+    public static boolean IsWAInstalled(FragmentActivity activity) {
+        PackageManager pm = activity.getPackageManager();
+        boolean app_installed;
+        try {
+            pm.getPackageInfo("com.whatsapp", PackageManager.GET_ACTIVITIES);
+            app_installed = true;
+        }
+        catch (PackageManager.NameNotFoundException e) {
+            app_installed = false;
+        }
+        return app_installed;
     }
 
     public static  boolean IsInternetConnect(FragmentActivity activity) {
@@ -113,12 +128,10 @@ public class RoomHelper {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
-                Log.d("debug_data", "server update failed");
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
-                Log.d("debug_data", "server update failed");
             }
         };
 

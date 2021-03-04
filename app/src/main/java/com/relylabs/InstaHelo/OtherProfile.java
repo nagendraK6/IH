@@ -1,11 +1,18 @@
 package com.relylabs.InstaHelo;
 
+import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Lifecycle;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +29,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.relylabs.InstaHelo.Utils.Logger;
+import com.relylabs.InstaHelo.Utils.RoomHelper;
 import com.relylabs.InstaHelo.followerList.FollowerList;
 import com.relylabs.InstaHelo.followerList.FollowingList;
 import com.relylabs.InstaHelo.models.User;
@@ -37,13 +45,43 @@ import cz.msebera.android.httpclient.Header;
 
 
 public class OtherProfile extends Fragment {
-    public String inviterUsername = "";
+
+
+    // room fragment and bottom fragment sends to main fragment to change ui if needed
+    BroadcastReceiver broadCastNewMessage = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (current_user_id.equals(String.valueOf(User.getLoggedInUserID()))) {
+                getProfileInfo(fragment_view);
+            }
+        }
+    };
+
+    public String inviterUserId = "";
     public String follow_text = "";
     ProgressBar busy;
+    String current_user_id = "";
+    View fragment_view;
+    FragmentActivity activity;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity){
+            activity=(FragmentActivity) context;
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        activity.unregisterReceiver(broadCastNewMessage);
+        super.onDestroy();
+    }
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -51,18 +89,30 @@ public class OtherProfile extends Fragment {
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_other_profile, container, false);
     }
+
     private void removefragment() {
-        Fragment f = getActivity().getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
-        FragmentManager manager = getActivity().getSupportFragmentManager();
+        Fragment f = activity.getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
+        FragmentManager manager = activity.getSupportFragmentManager();
         FragmentTransaction trans = manager.beginTransaction();
         trans.remove(f);
-        trans.commit();
+        trans.commitAllowingStateLoss();
         manager.popBackStack();
     }
+
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        fragment_view = view;
+        IntentFilter new_post = new IntentFilter("update_from_follow");
+        activity.registerReceiver(broadCastNewMessage, new_post);
+
         busy = view.findViewById(R.id.loading_channel_token_fetch);
         final User user = User.getLoggedInUser();
+        current_user_id = getArguments().getString("user_id");
+
+        if(!current_user_id.equals(String.valueOf(user.UserID))){
+            TextView follow_btn = view.findViewById(R.id.follow_btn);
+            follow_btn.setVisibility(View.VISIBLE);
+        }
         ImageView back = view.findViewById(R.id.prev_button2);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,22 +120,44 @@ public class OtherProfile extends Fragment {
                 removefragment();
             }
         });
+        TextView followerBtn = view.findViewById(R.id.textView12);
+        followerBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                FollowerList follower_list = new FollowerList();
+                Bundle args = new Bundle();
+                args.putString("user_id",current_user_id);
+                follower_list.setArguments(args);
+                loadFragment(follower_list);
+            }
+        });
+
+        TextView followingBtn = view.findViewById(R.id.textView15);
+        followingBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FollowingList following_list = new FollowingList();
+                Bundle args = new Bundle();
+                args.putString("user_id",current_user_id);
+                following_list.setArguments(args);
+                loadFragment(following_list);
+            }
+        });
         ShapeableImageView inviter_img = view.findViewById(R.id.profile_img_noti);
         inviter_img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!inviterUsername.equals("")) {
+                if(!inviterUserId.equals("")) {
                     OtherProfile otherprof = new OtherProfile();
                     Bundle args = new Bundle();
-                    args.putString("username", inviterUsername);
+                    args.putString("user_id",inviterUserId);
                     otherprof.setArguments(args);
                     loadFragment(otherprof);
                 }
             }
         });
         TextView follow_btn = view.findViewById(R.id.follow_btn);
-        String username_display = getArguments().getString("username");
         follow_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,10 +167,11 @@ public class OtherProfile extends Fragment {
                     AsyncHttpClient client = new AsyncHttpClient();
                     boolean running = false;
                     RequestParams params = new RequestParams();
-                    params.add("username",username_display);
+                    params.add("uid",current_user_id);
                     JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            broadcastforupdate();
                             follow_text = "Follow";
                             Log.d("response_follow",response.toString());
                         }
@@ -118,10 +191,11 @@ public class OtherProfile extends Fragment {
                     AsyncHttpClient client = new AsyncHttpClient();
                     boolean running = false;
                     RequestParams params = new RequestParams();
-                    params.add("username",username_display);
+                    params.add("uid",current_user_id);
                     JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            broadcastforupdate();
                             follow_text = "Following";
                             Log.d("response_follow",response.toString());
                         }
@@ -147,12 +221,13 @@ public class OtherProfile extends Fragment {
 
     public void getProfileInfo(View view){
         show_busy_indicator();
-        String username_display = getArguments().getString("username");
+        String user_id = getArguments().getString("user_id");
+        Log.d("user_id",user_id);
         final User user = User.getLoggedInUser();
         AsyncHttpClient client = new AsyncHttpClient();
         boolean running = false;
         RequestParams params = new RequestParams();
-        params.add("username",username_display);
+        params.add("user_id",user_id);
         JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -166,7 +241,9 @@ public class OtherProfile extends Fragment {
                         String inviter_image = response.getString("inviter_img");
                         String joined_at = response.getString("joined_at");
                         String bio = response.getString("bio");
+                        String username_display = response.getString("username");
                         follow_text = response.getString("follow_text");
+                        inviterUserId = response.getString("inviter_id");
                         TextView follow_btn = view.findViewById(R.id.follow_btn);
 
 
@@ -176,7 +253,6 @@ public class OtherProfile extends Fragment {
                             follow_btn.setBackground(view.getContext().getDrawable(R.drawable.follow_cta_action));
                         }
 
-                        inviterUsername = response.getString("inviterUsername");
                         String user_name = response.getString("name");
 //                        String user_username = response.getString("username");
                         String prof_url = response.getString("prof_url");
@@ -218,8 +294,6 @@ public class OtherProfile extends Fragment {
                         nominated.setText(inviter_name);
                         TextView user_bio = view.findViewById(R.id.user_bio);
                         user_bio.setText(bio);
-                        user.BioDescription = bio;
-                        user.save();
                     }
 
                     Log.d("profile_res",response.toString());
@@ -228,8 +302,6 @@ public class OtherProfile extends Fragment {
                 }
             }
 
-
-
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
             }
@@ -237,12 +309,17 @@ public class OtherProfile extends Fragment {
 
         client.addHeader("Accept", "application/json");
         client.addHeader("Authorization", "Token " + user.AccessToken);
-        client.post(App.getBaseURL() + "registration/other_profile_info", params, jrep);
+        client.post(App.getBaseURL() + "registration/profile_page_info", params, jrep);
     }
     private void loadFragment(Fragment fragment_to_start) {
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft.add(R.id.fragment_holder, fragment_to_start);
-        ft.commit();
+        ft.commitAllowingStateLoss();
+    }
+
+    private void broadcastforupdate() {
+        Intent intent = new Intent("update_from_follow");
+        activity.sendBroadcast(intent);
     }
     void show_busy_indicator() {
         busy.setVisibility(View.VISIBLE);

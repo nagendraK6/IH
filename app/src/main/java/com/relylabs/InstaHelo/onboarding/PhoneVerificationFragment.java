@@ -356,7 +356,6 @@ public class PhoneVerificationFragment extends Fragment {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
-                Log.d("debug_data", "" + res);
             }
 
             @Override
