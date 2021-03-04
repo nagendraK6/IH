@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -122,6 +123,7 @@ public class FollowerListAdapter extends RecyclerView.Adapter<FollowerListAdapte
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 //                            hide_busy_indicator();
+                            broadcastforupdate(holder.itemView);
                             currStatus.set(position,"Follow");
                             Log.d("response_follow",response.toString());
                             holder.follow.setBackground(holder.itemView.getContext().getDrawable(R.drawable.follow_cta_action));
@@ -150,6 +152,7 @@ public class FollowerListAdapter extends RecyclerView.Adapter<FollowerListAdapte
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 //                            hide_busy_indicator();
+                            broadcastforupdate(holder.itemView);
                             currStatus.set(position,"Following");
                             Log.d("response_follow",response.toString());
                             holder.follow.setBackground(holder.itemView.getContext().getDrawable(R.drawable.following_state));
@@ -247,6 +250,12 @@ public class FollowerListAdapter extends RecyclerView.Adapter<FollowerListAdapte
         FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
         ft.add(R.id.fragment_holder, fragment_to_start);
         ft.commitAllowingStateLoss();
+    }
+
+    private void broadcastforupdate(View view) {
+        AppCompatActivity activity = (AppCompatActivity) view.getContext();
+        Intent intent = new Intent("update_from_follow");
+        activity.sendBroadcast(intent);
     }
     @Override
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {

@@ -21,6 +21,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -36,6 +37,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.relylabs.InstaHelo.App;
+import com.relylabs.InstaHelo.OtherProfile;
 import com.relylabs.InstaHelo.R;
 import com.relylabs.InstaHelo.Utils.Logger;
 import com.relylabs.InstaHelo.models.Contact;
@@ -126,11 +128,14 @@ public class ExploreFragment  extends Fragment implements ExploreListAdapter.Ite
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                query_txt = newText;
+                offset = 0;
+                loadNextDataFromApi(10, false);
                 return false;
             }
         });
 
-        prepareRecyclerView(100);
+        prepareRecyclerView(10);
     }
 
 
@@ -150,32 +155,14 @@ public class ExploreFragment  extends Fragment implements ExploreListAdapter.Ite
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Triggered only when new data needs to be appended to the list
                 // Add whatever code is needed to append new items to the bottom of the list
-                loadNextDataFromApi(page, limit);
+                loadNextDataFromApi(limit, false);
             }
         };
 
         recyclerView.addOnScrollListener(scrollListener);
-        loadNextDataFromApi(0, 25);
+        loadNextDataFromApi(limit, true);
     }
 
-    void loadNextDataFromApi(int page, int limit) {
-        Log.d("debug_c", "Page called " + String.valueOf(page));
-        /*int old_offset = contact_numbers.size();
-        Log.d("debug_c", "Fetching at " + String.valueOf(offset));
-        ArrayList<Contact> new_list = readContacts(limit);
-        for (int i  = 0; i < new_list.size(); i++) {
-            Log.d("debug_c", new_list.get(i).Name);
-            contact_names.add(new_list.get(i).Name);
-            contact_numbers.add(new_list.get(i).Phone);
-        }
-
-        if (new_list.size() > 0) {
-            //   adapter.notifyDataSetChanged();
-            Log.d("debug_c", "adapter called");
-            adapter.notifyItemRangeInserted(old_offset, new_list.size());
-        }*/
-        server_fetch_profiles(page, limit);
-    }
 
     void show_busy_indicator() {
         show_busy_indicator.setVisibility(View.VISIBLE);
@@ -186,12 +173,15 @@ public class ExploreFragment  extends Fragment implements ExploreListAdapter.Ite
     }
 
 
-    public void server_fetch_profiles(int page, int limit) {
+    public void loadNextDataFromApi(int limit, Boolean reset) {
         show_busy_indicator();
         final User user = User.getLoggedInUser();
         AsyncHttpClient client = new AsyncHttpClient();
         boolean running = false;
         RequestParams params = new RequestParams();
+        params.add("txt_pattern", query_txt);
+        params.add("offset", String.valueOf(offset));
+        params.add("limit", String.valueOf(offset+limit));
         JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -205,6 +195,7 @@ public class ExploreFragment  extends Fragment implements ExploreListAdapter.Ite
                         String image_url = all_data.getJSONObject(i).getString("image_url");
                         String bio = all_data.getJSONObject(i).getString("bio");
                         String display_user_name = all_data.getJSONObject(i).getString("display_user_name");
+                        Boolean has_followed = all_data.getJSONObject(i).getBoolean("has_followed");
 
                         UserWithImage u = new UserWithImage();
                         u.UserId = uid;
@@ -212,15 +203,24 @@ public class ExploreFragment  extends Fragment implements ExploreListAdapter.Ite
                         u.FirstName = name;
                         u.display_user_name = display_user_name;
                         u.bio = bio;
+                        u.hasFollowed = has_followed;
                         display_users.add(u);
                     }
 
-                    if (display_users.size() > 0) {
+                    if (reset) {
+                        Log.d("debug_c", "clear");
                         all_user_profiles.clear();
                         all_user_profiles.addAll(display_users);
                         adapter.notifyDataSetChanged();
+                       // scrollListener.resetState();
+                    } else {
+                        // append at the bottom
+                        Log.d("debug_c", "append");
+                        all_user_profiles.addAll(display_users);
+                        adapter.notifyItemRangeInserted(offset, display_users.size());
                     }
-                    Log.d("profile_res",response.toString());
+
+                    offset = offset + display_users.size();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -258,13 +258,24 @@ public class ExploreFragment  extends Fragment implements ExploreListAdapter.Ite
 
     @Override
     public void onItemClick(int position) {
+        OtherProfile otherprof = new OtherProfile();
+        Bundle args = new Bundle();
+        args.putString("user_id",String.valueOf(all_user_profiles.get(position).UserId));
+        otherprof.setArguments(args);
+        FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
+        ft.add(R.id.fragment_holder, otherprof);
+        ft.commitAllowingStateLoss();
 
     }
 
     public static void hideKeyboard(Context mContext) {
         InputMethodManager imm = (InputMethodManager) mContext
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(((Activity) mContext).getWindow()
-                .getCurrentFocus().getWindowToken(), 0);
+        View focus_view = ((Activity) mContext).getWindow()
+                .getCurrentFocus();
+
+        if (focus_view != null) {
+            imm.hideSoftInputFromWindow(focus_view.getWindowToken(), 0);
+        }
     }
 }

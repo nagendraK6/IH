@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -117,6 +118,7 @@ public class FollowingListAdapter extends RecyclerView.Adapter<FollowingListAdap
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 //                            hide_busy_indicator();
+                            broadcastforupdate(holder.itemView);
                             currStatus.set(position,"Follow");
                             Log.d("response_follow",response.toString());
                             holder.follow.setBackground(holder.itemView.getContext().getDrawable(R.drawable.follow_cta_action));
@@ -126,11 +128,6 @@ public class FollowingListAdapter extends RecyclerView.Adapter<FollowingListAdap
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
-                            WeakHashMap<String, String> log_data = new WeakHashMap<>();
-                            log_data.put(Logger.STATUS, Integer.toString(statusCode));
-                            log_data.put(Logger.JSON, obj.toString());
-                            log_data.put(Logger.THROWABLE, t.toString());
-
                         }
                     };
 
@@ -149,6 +146,7 @@ public class FollowingListAdapter extends RecyclerView.Adapter<FollowingListAdap
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 //                            hide_busy_indicator();
+                            broadcastforupdate(holder.itemView);
                             currStatus.set(position,"Following");
                             Log.d("response_follow",response.toString());
                             holder.follow.setBackground(holder.itemView.getContext().getDrawable(R.drawable.following_state));
@@ -158,11 +156,6 @@ public class FollowingListAdapter extends RecyclerView.Adapter<FollowingListAdap
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
-                            WeakHashMap<String, String> log_data = new WeakHashMap<>();
-                            log_data.put(Logger.STATUS, Integer.toString(statusCode));
-                            log_data.put(Logger.JSON, obj.toString());
-                            log_data.put(Logger.THROWABLE, t.toString());
-
                         }
                     };
 
@@ -251,6 +244,12 @@ public class FollowingListAdapter extends RecyclerView.Adapter<FollowingListAdap
     // parent activity will implement this method to respond to click events
     public interface ItemClickListener {
         void onItemClick(int position);
+    }
+
+    private void broadcastforupdate(View view) {
+        AppCompatActivity activity = (AppCompatActivity) view.getContext();
+        Intent intent = new Intent("update_from_follow");
+        activity.sendBroadcast(intent);
     }
 
     @Override

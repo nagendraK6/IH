@@ -49,6 +49,7 @@ import com.relylabs.InstaHelo.models.UsersInRoom;
 import com.relylabs.InstaHelo.notification.NotificationList;
 import com.relylabs.InstaHelo.rooms.RoomCreateBottomSheetDialogFragment;
 import com.relylabs.InstaHelo.services.ActiveRoomService;
+import com.relylabs.InstaHelo.sharing.ExploreFragment;
 import com.relylabs.InstaHelo.sharing.SendInviteFragment;
 import com.squareup.picasso.Picasso;
 
@@ -298,6 +299,15 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                 args.putString("user_id",String.valueOf(user.UserID));
                 otherprof.setArguments(args);
                 loadFragmentWithoutupdate(otherprof);
+            }
+        });
+
+        ImageView search_icon = view.findViewById(R.id.search_icon);
+        search_icon.setVisibility(View.VISIBLE);
+        search_icon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadFragmentWithoutupdate(new ExploreFragment());
             }
         });
 

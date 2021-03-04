@@ -8,6 +8,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,6 +16,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -33,6 +35,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.relylabs.InstaHelo.App;
 import com.relylabs.InstaHelo.MainScreenFragment;
+import com.relylabs.InstaHelo.OtherProfile;
 import com.relylabs.InstaHelo.R;
 import com.relylabs.InstaHelo.Utils.Logger;
 import com.relylabs.InstaHelo.models.Contact;
@@ -79,6 +82,11 @@ public class ExploreListAdapter extends RecyclerView.Adapter<ExploreListAdapter.
         holder.name.setText(this.users_to_show.get(position).FirstName);
         holder.bio.setText(this.users_to_show.get(position).bio);
         holder.display_user_name.setText(this.users_to_show.get(position).display_user_name);
+        if (this.users_to_show.get(position).hasFollowed) {
+            holder.user_action.setBackground(holder.itemView.getContext().getDrawable(R.drawable.following_state));
+        } else {
+            holder.user_action.setBackground(holder.itemView.getContext().getDrawable(R.drawable.follow_cta_action));
+        }
         String image_url = this.users_to_show.get(position).profileImageURL;
         if (image_url!= null &&  !image_url.equals("")) {
             Glide.with(holder.itemView.getContext()).load(image_url).diskCacheStrategy(DiskCacheStrategy.ALL).into(holder.contact_image);
@@ -103,7 +111,7 @@ public class ExploreListAdapter extends RecyclerView.Adapter<ExploreListAdapter.
 
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView name, bio, display_user_name;
+        TextView name, bio, display_user_name, user_action;
         ShapeableImageView contact_image;
         View v;
 
@@ -112,7 +120,25 @@ public class ExploreListAdapter extends RecyclerView.Adapter<ExploreListAdapter.
             contact_image = itemView.findViewById(R.id.profile_img_noti);
             bio = itemView.findViewById(R.id.description);
             display_user_name = itemView.findViewById(R.id.username_follow);
+            user_action = itemView.findViewById(R.id.user_action);
+            user_action.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (users_to_show.get(getAdapterPosition()).hasFollowed) {
+                        users_to_show.get(getAdapterPosition()).hasFollowed = Boolean.FALSE;
+                    } else {
+                        users_to_show.get(getAdapterPosition()).hasFollowed = Boolean.TRUE;
+                    }
 
+                    if (users_to_show.get(getAdapterPosition()).hasFollowed) {
+                        user_action.setBackground(itemView.getContext().getDrawable(R.drawable.following_state));
+                    } else {
+                        user_action.setBackground(itemView.getContext().getDrawable(R.drawable.follow_cta_action));
+                    }
+
+                    send_server_request_follow_un_follow(users_to_show.get(getAdapterPosition()).UserId, users_to_show.get(getAdapterPosition()).hasFollowed);
+                }
+            });
             float radius = itemView.getResources().getDimension(R.dimen.default_corner_radius_profile_follow);
             contact_image.setShapeAppearanceModel(contact_image.getShapeAppearanceModel()
                     .toBuilder()
@@ -130,6 +156,30 @@ public class ExploreListAdapter extends RecyclerView.Adapter<ExploreListAdapter.
         @Override
         public void onClick(View view) {
             if (mClickListener != null) mClickListener.onItemClick(getAdapterPosition());
+        }
+
+        private void send_server_request_follow_un_follow(Integer uid, Boolean has_followed) {
+            final User user = User.getLoggedInUser();
+            AsyncHttpClient client = new AsyncHttpClient();
+            boolean running = false;
+            String path = has_followed ? "registration/follow_user" : "registration/unfollow_user";
+            RequestParams params = new RequestParams();
+            params.add("uid", String.valueOf(uid));
+            JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                }
+
+
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
+                }
+            };
+
+            client.addHeader("Accept", "application/json");
+            client.addHeader("Authorization", "Token " + user.AccessToken);
+            client.post(App.getBaseURL() + path, params, jrep);
         }
     }
 

@@ -17,10 +17,11 @@
         android:src="@drawable/left_move_button" />
     <SearchView
 
+        android:queryHint="Search people"
         android:id="@+id/search_people"
         android:layout_marginTop="100dp"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"

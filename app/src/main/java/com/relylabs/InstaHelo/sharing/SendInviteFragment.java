@@ -326,7 +326,7 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
 
 
     private void removefragment() {
-       // hideKeyboard(activity);
+        hideKeyboard(activity);
         Log.d("debug_f", "Remove s");
         Fragment f = activity.getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
         FragmentManager manager = activity.getSupportFragmentManager();
@@ -345,7 +345,11 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
     public static void hideKeyboard(Context mContext) {
         InputMethodManager imm = (InputMethodManager) mContext
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(((Activity) mContext).getWindow()
-                .getCurrentFocus().getWindowToken(), 0);
+        View focus_view = ((Activity) mContext).getWindow()
+                .getCurrentFocus();
+
+        if (focus_view != null) {
+            imm.hideSoftInputFromWindow(focus_view.getWindowToken(), 0);
+        }
     }
 }

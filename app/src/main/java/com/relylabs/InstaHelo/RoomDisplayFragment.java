@@ -493,6 +493,11 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
     @Override
     public void onItemClick(Integer uid, String action) {
         Log.d("debug_audio", action);
+        if (action.equals("SHOW_PROFILE")) {
+            show_profile(uid);
+            return;
+        }
+
         Bundle data_bundle = new Bundle();
         data_bundle.putString("user_action", action);
         data_bundle.putInt("uid", uid);
@@ -663,5 +668,15 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
         broadcastLocalUpdate("MINIMISED");
         removefragment();
         return true;
+    }
+
+    public void show_profile(Integer uid) {
+        OtherProfile otherprof = new OtherProfile();
+        Bundle args = new Bundle();
+        args.putString("user_id",String.valueOf(uid));
+        otherprof.setArguments(args);
+        FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
+        ft.add(R.id.fragment_holder, otherprof);
+        ft.commitAllowingStateLoss();
     }
 }

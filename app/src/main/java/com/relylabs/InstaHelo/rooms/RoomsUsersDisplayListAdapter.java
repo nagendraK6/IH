@@ -297,6 +297,8 @@ public class RoomsUsersDisplayListAdapter extends RecyclerView.Adapter<RoomsUser
             User user = User.getLoggedInUser();
             if (is_admin_current_user && !user.UserID.equals(mData.get(getAdapterPosition()).UserId)) {
                 actions_for_speakers(itemView.getContext(), mData.get(getAdapterPosition()).UserId, mData.get(getAdapterPosition()).IsSpeaker);
+            } else {
+                mClickListener.onItemClick(mData.get(getAdapterPosition()).UserId, "SHOW_PROFILE");
             }
         }
     }
