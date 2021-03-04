@@ -130,7 +130,7 @@ public class ExploreFragment  extends Fragment implements ExploreListAdapter.Ite
             public boolean onQueryTextChange(String newText) {
                 query_txt = newText;
                 offset = 0;
-                loadNextDataFromApi(10, false);
+                loadNextDataFromApi(10, true);
                 return false;
             }
         });
