@@ -42,7 +42,7 @@ import java.util.WeakHashMap;
 
 import cz.msebera.android.httpclient.Header;
 
-import static com.relylabs.InstaHelo.Utils.Helper.nextScreen;
+import com.relylabs.InstaHelo.Utils.Helper;
 
 
 public class LoginFragment extends Fragment {
@@ -197,32 +197,20 @@ public class LoginFragment extends Fragment {
                                         user.UserSteps = "LOGIN";
                                         user.save();
                                         Logger.log(Logger.PHONE_ADD_REQUEST_SUCCESS);
-                                        nextScreen(activity_ref);
+                                        Helper.nextScreen(activity_ref);
                                         // move to code verification
                                     } catch (JSONException e) {
+                                        busy.setVisibility(View.INVISIBLE);
                                         e.printStackTrace();
                                     }
                                 }
 
                                 @Override
                                 public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
-                                    WeakHashMap<String, String> log_data = new WeakHashMap<>();
-                                    log_data.put(Logger.STATUS, Integer.toString(statusCode));
-                                    log_data.put(Logger.RES, res);
-                                    log_data.put(Logger.THROWABLE, t.toString());
-                                    Logger.log(Logger.PHONE_ADD_REQUEST_FAILED, log_data);
                                 }
 
                                 @Override
                                 public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
-                                    WeakHashMap<String, String> log_data = new WeakHashMap<>();
-                                    log_data.put(Logger.STATUS, Integer.toString(statusCode));
-                                    if (obj != null) {
-                                        log_data.put(Logger.JSON, obj.toString());
-                                    }
-
-                                    log_data.put(Logger.THROWABLE, t.toString());
-                                    Logger.log(Logger.PHONE_ADD_REQUEST_FAILED, log_data);
                                 }
                             };
 

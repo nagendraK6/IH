@@ -60,7 +60,8 @@ import java.util.stream.IntStream;
 import cz.msebera.android.httpclient.Header;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.relylabs.InstaHelo.Utils.Helper.removefragment;
+import com.relylabs.InstaHelo.Utils.Helper;
+
 
 public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayListAdapter.ItemClickListener, IOnBackPressed  {
 
@@ -138,7 +139,7 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
 
             if (update_type.equals("EXIT_ROOM")) {
                 broadcastLocalUpdate("LEAVE_CHANNEL");
-                removefragment(activity);
+                Helper.removefragment(activity);
             }
         }
     };
@@ -195,7 +196,7 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
 
             if (update_type.equals("EXIT_ROOM")) {
                 broadcastLocalUpdate("LEAVE_CHANNEL");
-                removefragment(activity);
+                Helper.removefragment(activity);
             }
         }
     };
@@ -288,7 +289,7 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
             @Override
             public void onClick(View v) {
                 broadcastLocalUpdate("MINIMISED");
-                removefragment(activity);
+                Helper.removefragment(activity);
             }
         });
 
@@ -300,7 +301,7 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
             public void onClick(View v) {
                 show_busy_indicator();
                 broadcastLocalUpdate("LEAVE_CHANNEL");
-                removefragment(activity);
+                Helper.removefragment(activity);
             }
         });
 
@@ -657,7 +658,7 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
     @Override
     public boolean onBackPressed() {
         broadcastLocalUpdate("MINIMISED");
-        removefragment(activity);
+        Helper.removefragment(activity);
         return true;
     }
 

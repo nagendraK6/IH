@@ -14,10 +14,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.icu.lang.UScript;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
@@ -55,8 +57,7 @@ import java.util.HashMap;
 import cz.msebera.android.httpclient.Header;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.relylabs.InstaHelo.Utils.Helper.nextScreen;
-import static com.relylabs.InstaHelo.Utils.Helper.skipScreen;
+import com.relylabs.InstaHelo.Utils.Helper;
 
 public class PhotoAskFragment extends Fragment {
     public FragmentActivity activity_ref;
@@ -281,7 +282,7 @@ public class PhotoAskFragment extends Fragment {
                 try {
                     user.ProfilePicURL = response.getString("profile_image_url");
                     user.save();
-                    nextScreen(activity_ref);
+                    Helper.nextScreen(activity_ref);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -333,6 +334,11 @@ public class PhotoAskFragment extends Fragment {
     private void onSelectFromGalleryResult(Intent data) throws IOException {
 
         Bitmap bm = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), data.getData());
+
+        String abs_path = getImageFilePath(data.getData());
+        bm = modifyOrientation(bm, abs_path);
+        image_storage_path = new File(getContext().getExternalCacheDir(), System.currentTimeMillis() + ".jpeg").getAbsolutePath();
+
         int width = bm.getWidth();
         int height = bm.getHeight();
         int newWidth = 80;
@@ -353,9 +359,8 @@ public class PhotoAskFragment extends Fragment {
         Bitmap resizedBitmap = Bitmap.createBitmap(bm, 0, 0,
                 width, height, matrix, true);
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         //upload
-        image_storage_path = new File(getContext().getExternalCacheDir(), System.currentTimeMillis() + ".jpeg").getAbsolutePath();
         user_profile_image_url= image_storage_path;
         File destination = new File(image_storage_path);
         FileOutputStream fo;
@@ -372,6 +377,7 @@ public class PhotoAskFragment extends Fragment {
                 .into(crl_image_view);
         imgfile = new File(data.getData().getPath()) ;
         image_storage_path = data.getData().toString();
+        Log.d("debug_image_2", image_storage_path);
         crl_image_view.setVisibility(View.VISIBLE);
         empty.setVisibility(View.INVISIBLE);
         next_photo.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.next_enabled));
@@ -389,5 +395,60 @@ public class PhotoAskFragment extends Fragment {
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
         return Uri.parse(path);
+    }
+
+
+    public String getImageFilePath(Uri uri) {
+
+        File file = new File(uri.getPath());
+        String[] filePath = file.getPath().split(":");
+        String image_id = filePath[filePath.length - 1];
+
+        Cursor cursor = activity_ref.getContentResolver().query(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, MediaStore.Images.Media._ID + " = ? ", new String[]{image_id}, null);
+        if (cursor != null) {
+            cursor.moveToFirst();
+            String imagePath = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+
+            cursor.close();
+            return imagePath;
+        }
+        return null;
+    }
+
+    public static Bitmap modifyOrientation(Bitmap bitmap, String image_absolute_path) throws IOException {
+        ExifInterface ei = new ExifInterface(image_absolute_path);
+        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+
+        switch (orientation) {
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                return rotate(bitmap, 90);
+
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                return rotate(bitmap, 180);
+
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                return rotate(bitmap, 270);
+
+            case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
+                return flip(bitmap, true, false);
+
+            case ExifInterface.ORIENTATION_FLIP_VERTICAL:
+                return flip(bitmap, false, true);
+
+            default:
+                return bitmap;
+        }
+    }
+
+    public static Bitmap rotate(Bitmap bitmap, float degrees) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degrees);
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+    }
+
+    public static Bitmap flip(Bitmap bitmap, boolean horizontal, boolean vertical) {
+        Matrix matrix = new Matrix();
+        matrix.preScale(horizontal ? -1 : 1, vertical ? -1 : 1);
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
     }
 }

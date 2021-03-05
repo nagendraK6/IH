@@ -35,8 +35,7 @@ import org.json.JSONObject;
 
 import cz.msebera.android.httpclient.Header;
 
-import static com.relylabs.InstaHelo.Utils.Helper.nextScreen;
-import static com.relylabs.InstaHelo.Utils.Helper.removefragment;
+import com.relylabs.InstaHelo.Utils.Helper;
 
 public class EditBioFragment extends Fragment {
     String edit_display_bio_text = "";
@@ -69,7 +68,7 @@ public class EditBioFragment extends Fragment {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removefragment(activity);
+                Helper.removefragment(activity);
             }
         });
 
@@ -84,7 +83,7 @@ public class EditBioFragment extends Fragment {
                     sendBioToServer(view);
                 }
                 else if (edit_display_bio_text.length() > 0 && !isChanged){
-                    removefragment(activity);
+                    Helper.removefragment(activity);
                 }
             }
         });
@@ -134,7 +133,7 @@ public class EditBioFragment extends Fragment {
                     }
                     user.BioDescription = edit_display_bio_text;
                     user.save();
-                    removefragment(activity);;
+                    Helper.removefragment(activity);;
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -143,7 +142,6 @@ public class EditBioFragment extends Fragment {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
-                Log.d("debug_data", "" + res);
             }
 
             @Override
@@ -155,5 +153,4 @@ public class EditBioFragment extends Fragment {
         client.addHeader("Authorization", "Token " + user.AccessToken);
         client.post(App.getBaseURL() + "registration/update_bio", params, jrep);
     }
-
 }

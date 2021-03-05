@@ -40,8 +40,7 @@ import java.util.WeakHashMap;
 
 import cz.msebera.android.httpclient.Header;
 
-import static com.relylabs.InstaHelo.Utils.Helper.nextScreen;
-import static com.relylabs.InstaHelo.Utils.Helper.removefragment;
+import com.relylabs.InstaHelo.Utils.Helper;
 
 
 public class NameEditFragment extends Fragment {
@@ -76,7 +75,7 @@ public class NameEditFragment extends Fragment {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removefragment(activity_ref);
+                Helper.removefragment(activity_ref);
             }
         });
         final User user = User.getLoggedInUser();
@@ -94,7 +93,7 @@ public class NameEditFragment extends Fragment {
                     sendNameToServer(view);
                 }
                 else if (first_name_text.length() > 0 && !isChanged){
-                    removefragment(activity_ref);
+                    Helper.removefragment(activity_ref);
                 }
             }
         });
@@ -165,7 +164,7 @@ public class NameEditFragment extends Fragment {
                     user.save();
                     Logger.log(Logger.USER_NAME_SEND_REQUEST_SUCCESS);
                     Log.d("response",response.toString());
-                    removefragment(activity_ref);
+                    Helper.removefragment(activity_ref);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

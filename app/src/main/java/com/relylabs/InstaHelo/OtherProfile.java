@@ -28,6 +28,7 @@ import com.google.android.material.shape.CornerFamily;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.relylabs.InstaHelo.Utils.Helper;
 import com.relylabs.InstaHelo.Utils.Logger;
 import com.relylabs.InstaHelo.Utils.RoomHelper;
 import com.relylabs.InstaHelo.editprofile.EditBioFragment;
@@ -46,8 +47,6 @@ import java.util.WeakHashMap;
 
 import cz.msebera.android.httpclient.Header;
 
-import static com.relylabs.InstaHelo.Utils.Helper.loadFragment;
-import static com.relylabs.InstaHelo.Utils.Helper.removefragment;
 
 
 public class OtherProfile extends Fragment {
@@ -116,7 +115,7 @@ public class OtherProfile extends Fragment {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removefragment(activity);
+                Helper.removefragment(activity);
             }
         });
         TextView followerBtn = view.findViewById(R.id.textView12);
@@ -128,7 +127,7 @@ public class OtherProfile extends Fragment {
                 Bundle args = new Bundle();
                 args.putString("user_id",current_user_id);
                 follower_list.setArguments(args);
-                loadFragment(follower_list,activity);
+                Helper.loadFragment(follower_list,activity);
             }
         });
 
@@ -140,7 +139,7 @@ public class OtherProfile extends Fragment {
                 Bundle args = new Bundle();
                 args.putString("user_id",current_user_id);
                 following_list.setArguments(args);
-                loadFragment(following_list,activity);
+                Helper.loadFragment(following_list,activity);
             }
         });
         ShapeableImageView inviter_img = view.findViewById(R.id.profile_img_noti);
@@ -152,7 +151,7 @@ public class OtherProfile extends Fragment {
                     Bundle args = new Bundle();
                     args.putString("user_id",inviterUserId);
                     otherprof.setArguments(args);
-                    loadFragment(otherprof,activity);
+                    Helper.loadFragment(otherprof,activity);
                 }
             }
         });
@@ -221,7 +220,7 @@ public class OtherProfile extends Fragment {
             @Override
             public void onClick(View v) {
                 if(String.valueOf(user.UserID).equals(user_id)){
-                    loadFragment(new EditPhotoFragment(),activity);
+                    Helper.loadFragment(new EditPhotoFragment(),activity);
                 }
             }
         });
@@ -229,7 +228,7 @@ public class OtherProfile extends Fragment {
             @Override
             public void onClick(View v) {
                 if(String.valueOf(user.UserID).equals(user_id)){
-                    loadFragment(new NameEditFragment(),activity);
+                    Helper.loadFragment(new NameEditFragment(),activity);
                 }
             }
         });
@@ -237,7 +236,7 @@ public class OtherProfile extends Fragment {
             @Override
             public void onClick(View v) {
                 if(String.valueOf(user.UserID).equals(user_id)){
-                    loadFragment(new EditBioFragment(),activity);
+                    Helper.loadFragment(new EditBioFragment(),activity);
                 }
             }
         });

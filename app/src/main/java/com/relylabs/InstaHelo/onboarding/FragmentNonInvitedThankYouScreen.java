@@ -34,8 +34,7 @@ import java.util.WeakHashMap;
 
 import cz.msebera.android.httpclient.Header;
 
-import static com.relylabs.InstaHelo.Utils.Helper.loadFragment;
-import static com.relylabs.InstaHelo.Utils.Helper.nextScreen;
+import com.relylabs.InstaHelo.Utils.Helper;
 
 public class FragmentNonInvitedThankYouScreen extends Fragment {
     public FragmentActivity activity_ref;
@@ -70,11 +69,6 @@ public class FragmentNonInvitedThankYouScreen extends Fragment {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
                     busy.setVisibility(View.INVISIBLE);
-                    String error_message = response.getString("error_message");
-
-
-                    Log.d("IsInvited",response.toString());
-//                    user.AccessToken = response.getString("user_token");
                     user.IsOTPVerified = true;
                     user.InviterImageURL = response.getString("inviter_image_url");
                     user.IsInvited = response.getBoolean("is_invited");
@@ -86,10 +80,11 @@ public class FragmentNonInvitedThankYouScreen extends Fragment {
 
 
                     if (user.CompletedOnboarding) {
-                        loadFragment(new MainScreenFragment(),activity_ref);
+                        Helper.replaceFragment(new MainScreenFragment(),activity_ref);
                         return;
+                    } else {
+                        Helper.nextScreen(activity_ref);
                     }
-                    nextScreen(activity_ref);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

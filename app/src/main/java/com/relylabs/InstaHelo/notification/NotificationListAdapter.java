@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import static com.relylabs.InstaHelo.Utils.Helper.loadFragmentAdapter;
+import com.relylabs.InstaHelo.Utils.Helper;
 
 public class NotificationListAdapter extends RecyclerView.Adapter<NotificationListAdapter.ViewHolder> {
     public static final SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -71,7 +71,10 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
         holder.notification_text.setText(this.text_arr.get(position));
         PrettyTime p = new PrettyTime();
         Date time_date = null;
-        Integer offset = ZonedDateTime.now().getOffset().getTotalSeconds();
+        Integer offset = 0;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            offset = ZonedDateTime.now().getOffset().getTotalSeconds();
+        }
         try {
             time_date = inputFormat.parse(this.time_arr.get(position));
             Calendar calendar = Calendar.getInstance();
@@ -90,7 +93,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                 Bundle args = new Bundle();
                 args.putString("user_id",user_ids.get(position));
                 otherprof.setArguments(args);
-                loadFragmentAdapter(otherprof,v);
+                Helper.loadFragmentAdapter(otherprof,v);
             }
         });
     }

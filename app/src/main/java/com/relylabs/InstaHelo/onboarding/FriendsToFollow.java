@@ -32,12 +32,11 @@ import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.Header;
 
-import static com.relylabs.InstaHelo.Utils.Helper.loadFragment;
+import com.relylabs.InstaHelo.Utils.Helper;
 
 
 public class FriendsToFollow extends Fragment  implements FriendToFollowListAdapter.ItemClickListener  {
     public FragmentActivity activity_ref;
-    ArrayList<String> contact_names, contact_numbers;
     ArrayList<String> suggested_names, suggested_profile_image_urls;
     View fragment_view;
 
@@ -105,7 +104,7 @@ public class FriendsToFollow extends Fragment  implements FriendToFollowListAdap
                     String error_message = response.getString("error_message");
                     JSONArray all_contacts_to_follow = response.getJSONArray("all_contacts");
                     if (all_contacts_to_follow.length() == 0) {
-                        loadFragment(new MainScreenFragment(),activity_ref);
+                        Helper.replaceFragment(new MainScreenFragment(),activity_ref);
                         return;
                        // nextScreen(activity_ref);
                     }
@@ -127,12 +126,12 @@ public class FriendsToFollow extends Fragment  implements FriendToFollowListAdap
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
-                loadFragment(new MainScreenFragment(),activity_ref);
+                Helper.replaceFragment(new MainScreenFragment(),activity_ref);
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject obj) {
-                loadFragment(new MainScreenFragment(),activity_ref);
+                Helper.replaceFragment(new MainScreenFragment(),activity_ref);
             }
         };
 
@@ -165,17 +164,17 @@ public class FriendsToFollow extends Fragment  implements FriendToFollowListAdap
         JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                loadFragment(new MainScreenFragment(),activity_ref);
+                Helper.replaceFragment(new MainScreenFragment(),activity_ref);
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
-                loadFragment(new MainScreenFragment(),activity_ref);
+                Helper.replaceFragment(new MainScreenFragment(),activity_ref);
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject obj) {
-                loadFragment(new MainScreenFragment(),activity_ref);
+                Helper.replaceFragment(new MainScreenFragment(),activity_ref);
             }
         };
 
@@ -183,9 +182,6 @@ public class FriendsToFollow extends Fragment  implements FriendToFollowListAdap
         client.addHeader("Authorization", "Token " + user.AccessToken);
         client.post(App.getBaseURL() + "registration/add_users_to_follow", params, jrep);
     }
-
-
-
 
     @Override
     public void onItemClick(View view, int position, Boolean selected) {

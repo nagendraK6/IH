@@ -43,14 +43,7 @@ import java.util.WeakHashMap;
 
 import cz.msebera.android.httpclient.Header;
 
-import static com.relylabs.InstaHelo.Utils.Helper.loadFragment;
-import static com.relylabs.InstaHelo.Utils.Helper.nextScreen;
-import static com.relylabs.InstaHelo.Utils.Helper.prevScreen;
-
-/**
- * Created by nagendra on 7/10/18.
- *
- */
+import com.relylabs.InstaHelo.Utils.Helper;
 
 public class PhoneVerificationFragment extends Fragment {
     public FragmentActivity activity_ref;
@@ -102,7 +95,7 @@ public class PhoneVerificationFragment extends Fragment {
                 User user = User.getLoggedInUser();
                 user.UserSteps = "LOGIN";
                 user.save();
-                prevScreen(activity_ref);
+                Helper.prevScreen(activity_ref);
             }
         });
 
@@ -452,10 +445,10 @@ public class PhoneVerificationFragment extends Fragment {
 
 
                     if (user.CompletedOnboarding) {
-                        loadFragment(new MainScreenFragment(),activity_ref);
+                        Helper.replaceFragment(new MainScreenFragment(),activity_ref);
                         return;
                     }
-                    nextScreen(activity_ref);
+                    Helper.nextScreen(activity_ref);
                     if (!auto) {
                         Logger.log(Logger.OTP_VERIFY_REQUEST_SUCCESS);
                     } else {
@@ -468,28 +461,10 @@ public class PhoneVerificationFragment extends Fragment {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
-                WeakHashMap<String, String> log_data = new WeakHashMap<>();
-                log_data.put(Logger.STATUS, Integer.toString(statusCode));
-                log_data.put(Logger.RES, res);
-                log_data.put(Logger.THROWABLE, t.toString());
-                if (!auto) {
-                    Logger.log(Logger.OTP_VERIFY_REQUEST_FAILED, log_data);
-                } else {
-                    Logger.log(Logger.AUTO_OTP_VERIFY_REQUEST_FAILED, log_data);
-                }
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
-                WeakHashMap<String, String> log_data = new WeakHashMap<>();
-                log_data.put(Logger.STATUS, Integer.toString(statusCode));
-                log_data.put(Logger.JSON, obj.toString());
-                log_data.put(Logger.THROWABLE, t.toString());
-                if (!auto) {
-                    Logger.log(Logger.OTP_VERIFY_REQUEST_FAILED, log_data);
-                } else {
-                    Logger.log(Logger.AUTO_OTP_VERIFY_REQUEST_FAILED, log_data);
-                }
             }
         };
 

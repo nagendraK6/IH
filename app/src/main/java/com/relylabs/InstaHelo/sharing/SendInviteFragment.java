@@ -57,8 +57,7 @@ import java.util.ArrayList;
 import cz.msebera.android.httpclient.Header;
 
 import static androidx.core.content.ContextCompat.getSystemService;
-import static com.relylabs.InstaHelo.Utils.Helper.cleanPhoneNo;
-import static com.relylabs.InstaHelo.Utils.Helper.removefragment;
+import com.relylabs.InstaHelo.Utils.Helper;
 
 public class SendInviteFragment extends Fragment implements SharingContactListAdapter.ItemClickListener  {
 
@@ -124,7 +123,8 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
             @Override
             public void onClick(View v) {
                 Log.d("debug_f", "Remove started");
-                removefragment(activity);
+                Helper.hideKeyboard(activity);
+                Helper.removefragment(activity);
             }
         });
 
@@ -158,22 +158,7 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
                 contact_numbers.clear();
                 scrollListener.resetState();
 
-               // if (query_txt.length() == 0) {
                 processContacts(true);
-               /* } else {
-                    ArrayList<Contact> new_contacts = readContacts(10);
-                    for (int i = 0; i < new_contacts.size(); i++) {
-                        contact_names.add(new_contacts.get(i).Name);
-                        contact_numbers.add(new_contacts.get(i).Phone);
-                    }
-
-
-
-                    adapter.notifyDataSetChanged();
-                }*/
-
-
-
                 return false;
             }
         });
@@ -188,11 +173,18 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
 
     public ArrayList<Contact> readContacts(int max_limit){
         ArrayList<Contact> contacts = new ArrayList<>();
-        Cursor cur = activity.getContentResolver().query(
-                ContactsContract.Contacts.CONTENT_URI,    // Content Uri is specific to individual content providers.
-                null,    // String[] describing which columns to return.
-                null,     // Query arguments.
-                null);
+        Cursor cur = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            cur = activity.getContentResolver().query(
+                    ContactsContract.Contacts.CONTENT_URI,    // Content Uri is specific to individual content providers.
+                    null,    // String[] describing which columns to return.
+                    null,     // Query arguments.
+                    null);
+        }
+
+        if (cur == null) {
+            return contacts;
+        }
 
         int i = 0;
         if (cur.getCount() > 0) {
@@ -219,7 +211,7 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
                     }
 
                     pCur.close();
-                    String refinedPhone = cleanPhoneNo(phone, activity);
+                    String refinedPhone = Helper.cleanPhoneNo(phone, activity);
                     if (name  == null) {
                         Log.d("debug_c", "name is null. phone is " + phone);
                     }
@@ -332,5 +324,4 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
     public void onItemClick(int position) {
 
     }
-
 }

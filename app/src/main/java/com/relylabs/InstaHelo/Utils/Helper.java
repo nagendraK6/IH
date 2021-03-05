@@ -303,7 +303,6 @@ public class Helper {
 
     public static void removefragment(FragmentActivity activity) {
         if(activity!=null) {
-            hideKeyboard(activity);
             Fragment f = activity.getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
             FragmentManager manager = activity.getSupportFragmentManager();
             FragmentTransaction trans = manager.beginTransaction();
@@ -323,6 +322,14 @@ public class Helper {
         if(activity_ref!=null) {
             FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
             ft.add(R.id.fragment_holder, fragment_to_start);
+            ft.commitAllowingStateLoss();
+        }
+    }
+
+    public static void replaceFragment(Fragment fragment_to_start, FragmentActivity activity_ref) {
+        if(activity_ref!=null) {
+            FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.fragment_holder, fragment_to_start);
             ft.commitAllowingStateLoss();
         }
     }

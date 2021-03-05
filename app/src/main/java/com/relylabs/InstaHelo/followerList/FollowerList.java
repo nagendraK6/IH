@@ -36,7 +36,7 @@ import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.Header;
 
-import static com.relylabs.InstaHelo.Utils.Helper.removefragment;
+import com.relylabs.InstaHelo.Utils.Helper;
 
 
 public class FollowerList extends Fragment {
@@ -72,7 +72,7 @@ public class FollowerList extends Fragment {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removefragment(activity_ref);
+                Helper.removefragment(activity_ref);
             }
         });
         getFollowing();

@@ -50,8 +50,7 @@ import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.Header;
 
-import static com.relylabs.InstaHelo.Utils.Helper.loadFragment;
-import static com.relylabs.InstaHelo.Utils.Helper.nextScreen;
+import com.relylabs.InstaHelo.Utils.Helper;
 
 public class SuggestedProfileToFollowFragment extends Fragment  implements SuggestedProfileToFollowAdapter.ItemClickListener  {
     public FragmentActivity activity_ref;
@@ -133,7 +132,7 @@ public class SuggestedProfileToFollowFragment extends Fragment  implements Sugge
                     }
 
                     if (all_contacts_to_follow.length() == 0) {
-                        loadFragment(new FriendsToFollow(),activity_ref);
+                        Helper.replaceFragment(new FriendsToFollow(),activity_ref);
                     } else {
                         setupFriendSuggestion();
                     }
@@ -145,12 +144,12 @@ public class SuggestedProfileToFollowFragment extends Fragment  implements Sugge
             @Override
             public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
                 Log.d("debug_data", "" + res);
-                loadFragment(new FriendsToFollow(),activity_ref);
+                Helper.replaceFragment(new FriendsToFollow(),activity_ref);
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject obj) {
-                loadFragment(new FriendsToFollow(),activity_ref);
+                Helper.replaceFragment(new FriendsToFollow(),activity_ref);
             }
         };
 
@@ -185,7 +184,7 @@ public class SuggestedProfileToFollowFragment extends Fragment  implements Sugge
         JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                loadFragment(new FriendsToFollow(),activity_ref);
+                Helper.replaceFragment(new FriendsToFollow(),activity_ref);
             }
 
             @Override

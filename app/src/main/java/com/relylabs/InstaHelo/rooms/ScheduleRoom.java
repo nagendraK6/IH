@@ -39,7 +39,7 @@ import java.util.LinkedHashMap;
 
 import cz.msebera.android.httpclient.Header;
 
-import static com.relylabs.InstaHelo.Utils.Helper.removefragment;
+import com.relylabs.InstaHelo.Utils.Helper;
 
 public class ScheduleRoom extends Fragment {
 
@@ -84,19 +84,19 @@ public class ScheduleRoom extends Fragment {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removefragment(activity_ref);
+                Helper.removefragment(activity_ref);
             }
         });
         all_rooms.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removefragment(activity_ref);
+                Helper.removefragment(activity_ref);
             }
         });
         go_to_all_rooms.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removefragment(activity_ref);
+                Helper.removefragment(activity_ref);
             }
         });
 
@@ -149,7 +149,7 @@ public class ScheduleRoom extends Fragment {
                 }
                 catch (JSONException e) {
                     e.printStackTrace();
-                    removefragment(activity_ref);
+                    Helper.removefragment(activity_ref);
                 }
 
             }

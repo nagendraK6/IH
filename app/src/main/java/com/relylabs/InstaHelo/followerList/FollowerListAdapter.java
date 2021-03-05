@@ -35,7 +35,7 @@ import java.util.WeakHashMap;
 
 import cz.msebera.android.httpclient.Header;
 
-import static com.relylabs.InstaHelo.Utils.Helper.loadFragmentAdapter;
+import com.relylabs.InstaHelo.Utils.Helper;
 
 
 public class FollowerListAdapter extends RecyclerView.Adapter<FollowerListAdapter.ViewHolder> {
@@ -45,8 +45,6 @@ public class FollowerListAdapter extends RecyclerView.Adapter<FollowerListAdapte
     private FollowerListAdapter.ItemClickListener mClickListener;
     private Context context;
     private ArrayList<String> currStatus;
-    private static final int MY_PERMISSIONS_REQUEST_SEND_SMS =0 ;
-    // data is passed into the constructor
     FollowerListAdapter(Context context, ArrayList<String> names, ArrayList<String> usernames,ArrayList<String> bio,ArrayList<String> img,ArrayList<String> currentStatus,ArrayList<String> user_ids) {
         this.mInflater = LayoutInflater.from(context);
         this.names = names;
@@ -103,7 +101,7 @@ public class FollowerListAdapter extends RecyclerView.Adapter<FollowerListAdapte
                 Bundle args = new Bundle();
                 args.putString("user_id",user_ids.get(position));
                 otherprof.setArguments(args);
-                loadFragmentAdapter(otherprof,v);
+                Helper.loadFragmentAdapter(otherprof,v);
             }
         });
 
@@ -186,18 +184,6 @@ public class FollowerListAdapter extends RecyclerView.Adapter<FollowerListAdapte
                     .build());
             Picasso.get().load(this.img.get(position)).into(holder.prof);
         }
-        holder.prof.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                OtherProfile otherprof = new OtherProfile();
-                Bundle args = new Bundle();
-                args.putString("user_id",user_ids.get(position));
-                otherprof.setArguments(args);
-                loadFragmentAdapter(otherprof,v);
-            }
-        });
-
-
     }
 
 

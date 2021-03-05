@@ -55,13 +55,11 @@ import java.util.HashMap;
 import cz.msebera.android.httpclient.Header;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.relylabs.InstaHelo.Utils.Helper.nextScreen;
-import static com.relylabs.InstaHelo.Utils.Helper.removefragment;
+import com.relylabs.InstaHelo.Utils.Helper;
 
 
 public class EditPhotoFragment extends Fragment {
     Boolean isChanged = false;
-    String image_file_name = "";
     public FragmentActivity activity_ref;
     int REQUEST_CAMERA = 1;
     int SELECT_FILE = 0;
@@ -106,7 +104,7 @@ public class EditPhotoFragment extends Fragment {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removefragment(activity_ref);
+                Helper.removefragment(activity_ref);
             }
         });
 
@@ -130,7 +128,7 @@ public class EditPhotoFragment extends Fragment {
                     sendImageToServer(view);
                 }
                 else{
-                    removefragment(activity_ref);
+                    Helper.removefragment(activity_ref);
                 }
             }
         });
@@ -276,7 +274,7 @@ public class EditPhotoFragment extends Fragment {
                 try {
                     user.ProfilePicURL = response.getString("profile_image_url");
                     user.save();
-                    removefragment(activity_ref);
+                    Helper.removefragment(activity_ref);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -284,12 +282,10 @@ public class EditPhotoFragment extends Fragment {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
-                HashMap logData = new HashMap<String, String>();
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
-                HashMap logData = new HashMap<String, String>();
             }
         };
 

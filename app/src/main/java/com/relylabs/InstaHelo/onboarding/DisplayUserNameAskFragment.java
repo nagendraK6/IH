@@ -47,7 +47,7 @@ import java.util.WeakHashMap;
 
 import cz.msebera.android.httpclient.Header;
 
-import static com.relylabs.InstaHelo.Utils.Helper.nextScreen;
+import com.relylabs.InstaHelo.Utils.Helper;
 
 
 public class DisplayUserNameAskFragment extends Fragment {
@@ -82,11 +82,6 @@ public class DisplayUserNameAskFragment extends Fragment {
         user.save();
 
         user_name.setText("@");
-        if (!user.Username.equals("")) {
-            user_name.setText(user.Username, TextView.BufferType.EDITABLE);
-        }
-
-
 
         Selection.setSelection(user_name.getText(), user_name.getText().length());
 
@@ -166,7 +161,7 @@ public class DisplayUserNameAskFragment extends Fragment {
                             user.save();
                             Log.d("Here",user.IsInvited.toString());
                             Logger.log(Logger.USER_NAME_SEND_REQUEST_SUCCESS);
-                            nextScreen(activity_ref);
+                            Helper.nextScreen(activity_ref);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -236,10 +231,5 @@ public class DisplayUserNameAskFragment extends Fragment {
     public void onPause() {
         running = false;
         super.onPause();
-    }
-
-
-    private void update_bio_to_server() {
-
     }
 }

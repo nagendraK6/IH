@@ -43,7 +43,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import com.squareup.picasso.Picasso;
 
-import static com.relylabs.InstaHelo.Utils.Helper.loadFragment;
+import com.relylabs.InstaHelo.Utils.Helper;
 
 public class NonInvitedUserFirstNameAskFragment extends Fragment {
     public FragmentActivity activity_ref;
@@ -180,7 +180,7 @@ public class NonInvitedUserFirstNameAskFragment extends Fragment {
                     user.LastName = last_name_text;
                     user.save();
                     Logger.log(Logger.USER_NAME_SEND_REQUEST_SUCCESS);
-                    loadFragment(new DisplayUserNameAskFragment(),activity_ref);
+                    Helper.replaceFragment(new DisplayUserNameAskFragment(),activity_ref);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

@@ -35,7 +35,7 @@ import java.util.WeakHashMap;
 
 import cz.msebera.android.httpclient.Header;
 
-import static com.relylabs.InstaHelo.Utils.Helper.loadFragmentAdapter;
+import com.relylabs.InstaHelo.Utils.Helper;
 
 
 public class FollowingListAdapter extends RecyclerView.Adapter<FollowingListAdapter.ViewHolder> {
@@ -100,7 +100,7 @@ public class FollowingListAdapter extends RecyclerView.Adapter<FollowingListAdap
                 Bundle args = new Bundle();
                 args.putString("user_id",user_ids.get(position));
                 otherprof.setArguments(args);
-                loadFragmentAdapter(otherprof,v);
+                Helper.loadFragmentAdapter(otherprof,v);
             }
         });
 
@@ -180,18 +180,6 @@ public class FollowingListAdapter extends RecyclerView.Adapter<FollowingListAdap
                     .build());
             Picasso.get().load(this.img.get(position)).into(holder.prof);
         }
-        holder.prof.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                OtherProfile otherprof = new OtherProfile();
-                Bundle args = new Bundle();
-                args.putString("user_id",user_ids.get(position));
-                otherprof.setArguments(args);
-                loadFragmentAdapter(otherprof,v);
-            }
-        });
-
-
     }
 
 

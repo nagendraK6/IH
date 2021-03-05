@@ -15,7 +15,7 @@ import android.os.Bundle;
 
 import com.relylabs.InstaHelo.R;
 
-import static com.relylabs.InstaHelo.Utils.Helper.nextScreen;
+import com.relylabs.InstaHelo.Utils.Helper;
 
 public class GetStartedFragment extends Fragment {
 
@@ -34,7 +34,7 @@ public class GetStartedFragment extends Fragment {
         next_click.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                nextScreen(activity_ref);
+                Helper.nextScreen(activity_ref);
             }
         });
     }

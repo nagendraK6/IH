@@ -54,7 +54,7 @@ import java.util.WeakHashMap;
 
 import cz.msebera.android.httpclient.Header;
 
-import static com.relylabs.InstaHelo.Utils.Helper.removefragment;
+import com.relylabs.InstaHelo.Utils.Helper;
 
 public class ExploreFragment  extends Fragment implements ExploreListAdapter.ItemClickListener  {
 
@@ -111,7 +111,8 @@ public class ExploreFragment  extends Fragment implements ExploreListAdapter.Ite
             @Override
             public void onClick(View v) {
                 Log.d("debug_f", "Remove started");
-                removefragment(activity);
+                Helper.hideKeyboard(activity);
+                Helper.removefragment(activity);
             }
         });
 
@@ -257,8 +258,5 @@ public class ExploreFragment  extends Fragment implements ExploreListAdapter.Ite
         FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
         ft.add(R.id.fragment_holder, otherprof);
         ft.commitAllowingStateLoss();
-
     }
-
-
 }

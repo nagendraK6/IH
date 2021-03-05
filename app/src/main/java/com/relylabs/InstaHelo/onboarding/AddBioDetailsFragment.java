@@ -33,7 +33,7 @@ import org.json.JSONObject;
 
 import cz.msebera.android.httpclient.Header;
 
-import static com.relylabs.InstaHelo.Utils.Helper.nextScreen;
+import com.relylabs.InstaHelo.Utils.Helper;
 
 public class AddBioDetailsFragment extends Fragment {
     public FragmentActivity activity_ref;
@@ -117,7 +117,7 @@ public class AddBioDetailsFragment extends Fragment {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
                     String error_message = response.getString("error_message");
-                    nextScreen(activity_ref);
+                    Helper.nextScreen(activity_ref);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
