@@ -42,47 +42,50 @@
         android:textColor="@color/main_screen_text_color"
         android:textSize="21sp" />
 
-
-    <EditText
-        android:id="@+id/name_last"
-        android:layout_width="wrap_content"
-        android:layout_height="44dp"
+    <LinearLayout
         android:layout_below="@+id/textView5"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="64dp"
-        android:layout_marginEnd="72dp"
-        android:background="@drawable/text_box_name_bg"
-        android:backgroundTint="@color/White"
-        android:hint="Last Name"
-        android:textAlignment="center"
-        android:textColor="@color/neartagtextcolor"
-        android:textSize="15sp" />
-
-    <EditText
-        android:id="@+id/name_first"
+        android:id="@+id/name_boxes"
         android:layout_width="wrap_content"
-        android:layout_height="44dp"
-        android:layout_below="@+id/textView5"
-        android:layout_alignParentStart="true"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginStart="72dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="64dp"
-        android:layout_marginEnd="6dp"
-        android:background="@drawable/text_box_name_bg"
-        android:backgroundTint="@color/White"
-        android:hint="First Name"
-        android:textAlignment="center"
-        android:textColor="@color/neartagtextcolor"
-        android:textSize="15sp" />
+        android:layout_centerHorizontal="true"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/name_first"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="64dp"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/text_box_name_bg"
+            android:backgroundTint="@color/White"
+            android:hint="First Name"
+            android:textColor="@color/neartagtextcolor"
+            android:layout_weight=".50"
+            android:textSize="15sp" />
+
+        <EditText
+            android:id="@+id/name_last"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:layout_marginTop="64dp"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/text_box_name_bg"
+            android:backgroundTint="@color/White"
+            android:hint="Last Name"
+            android:layout_weight=".50"
+            android:textAlignment="center"
+            android:textSize="15sp" />
+
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/done_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/name_first"
+        android:layout_below="@+id/name_boxes"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="201dp"
+        android:layout_marginTop="140dp"
         android:src="@drawable/done" />
 
 </RelativeLayout>

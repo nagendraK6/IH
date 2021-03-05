@@ -280,6 +280,11 @@ public class Helper {
         }
     }
 
+    public static void askForProfileRefresh(FragmentActivity activity) {
+        Intent intent = new Intent("update_from_follow");
+        activity.sendBroadcast(intent);
+    }
+
     public static void sendRequestForContactProcess(FragmentActivity activity) {
         Bundle data_bundle = new Bundle();
         data_bundle.putString("user_action", "contact_update");

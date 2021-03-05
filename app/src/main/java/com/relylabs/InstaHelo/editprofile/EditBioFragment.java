@@ -68,6 +68,7 @@ public class EditBioFragment extends Fragment {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Helper.hideKeyboard(activity);
                 Helper.removefragment(activity);
             }
         });
@@ -75,6 +76,7 @@ public class EditBioFragment extends Fragment {
         final User user = User.getLoggedInUser();
         edit_display_bio_text = user.BioDescription;
         EditText bio = view.findViewById(R.id.edit_display_bio_update);
+
         ImageView done = view.findViewById(R.id.done_bio);
         done.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,6 +85,7 @@ public class EditBioFragment extends Fragment {
                     sendBioToServer(view);
                 }
                 else if (edit_display_bio_text.length() > 0 && !isChanged){
+                    Helper.hideKeyboard(activity);
                     Helper.removefragment(activity);
                 }
             }
@@ -133,6 +136,8 @@ public class EditBioFragment extends Fragment {
                     }
                     user.BioDescription = edit_display_bio_text;
                     user.save();
+                    Helper.askForProfileRefresh(activity);
+                    Helper.hideKeyboard(activity);
                     Helper.removefragment(activity);;
 
                 } catch (JSONException e) {

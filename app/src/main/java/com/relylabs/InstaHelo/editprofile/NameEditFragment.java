@@ -75,6 +75,7 @@ public class NameEditFragment extends Fragment {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Helper.hideKeyboard(activity_ref);
                 Helper.removefragment(activity_ref);
             }
         });
@@ -93,6 +94,7 @@ public class NameEditFragment extends Fragment {
                     sendNameToServer(view);
                 }
                 else if (first_name_text.length() > 0 && !isChanged){
+                    Helper.hideKeyboard(activity_ref);
                     Helper.removefragment(activity_ref);
                 }
             }
@@ -164,6 +166,8 @@ public class NameEditFragment extends Fragment {
                     user.save();
                     Logger.log(Logger.USER_NAME_SEND_REQUEST_SUCCESS);
                     Log.d("response",response.toString());
+                    Helper.askForProfileRefresh(activity_ref);
+                    Helper.hideKeyboard(activity_ref);
                     Helper.removefragment(activity_ref);
                 } catch (JSONException e) {
                     e.printStackTrace();

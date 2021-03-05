@@ -68,7 +68,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/edit_display_bio_update"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="164dp"
+        android:layout_marginTop="110dp"
         android:src="@drawable/done" />
 
 </RelativeLayout>
