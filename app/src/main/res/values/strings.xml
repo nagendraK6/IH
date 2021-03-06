@@ -88,4 +88,5 @@ We are thrilled to have you onboard ! \n\nWe are adding people gradually to Inst
     <string name="change_photo">Change Photo</string>
     <string name="update_bio">Update your bio</string>
     <string name="update_name">Update your name</string>
+    <string name="add_host">+ Add a co-host</string>
 </resources>

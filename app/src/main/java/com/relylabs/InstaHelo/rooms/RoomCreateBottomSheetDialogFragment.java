@@ -60,6 +60,8 @@ import java.util.stream.IntStream;
 import cz.msebera.android.httpclient.Header;
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.relylabs.InstaHelo.Utils.Helper.loadFragment;
+
 public class RoomCreateBottomSheetDialogFragment extends Fragment  {
 
     private FragmentActivity activity;
@@ -84,10 +86,17 @@ public class RoomCreateBottomSheetDialogFragment extends Fragment  {
         this.activity = null;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        activity.unregisterReceiver(broadCastNewMessage);
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        IntentFilter new_post = new IntentFilter("update_from_schedule");
+        activity.registerReceiver(broadCastNewMessage, new_post);
         return inflater.inflate(R.layout.fragment_room_create_view, container, false);
     }
 
@@ -145,7 +154,21 @@ public class RoomCreateBottomSheetDialogFragment extends Fragment  {
 
         });
 
-
+        ImageView imageView = view.findViewById(R.id.imageView);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!room_title.equals("")) {
+                    hideKeyboard(getContext());
+                    ScheduleForLater sch = new ScheduleForLater();
+                    Bundle args = new Bundle();
+                    args.putString("title", room_title);
+                    args.putString("type",room_type);
+                    sch.setArguments(args);
+                    loadFragment(sch, activity);
+                }
+            }
+        });
         next_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -202,6 +225,32 @@ public class RoomCreateBottomSheetDialogFragment extends Fragment  {
             trans.remove(f);
             trans.commitAllowingStateLoss();
             manager.popBackStack();
+        }
+    }
+
+
+    BroadcastReceiver broadCastNewMessage = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String user_action = intent
+                    .getStringExtra("user_action");
+            Integer uid;
+            switch (user_action) {
+                case "REMOVE_FRAGMENT":
+                    removefragment();
+                    break;
+            }
+        }
+    };
+
+    public static void hideKeyboard(Context mContext) {
+        InputMethodManager imm = (InputMethodManager) mContext
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        View focus_view = ((Activity) mContext).getWindow()
+                .getCurrentFocus();
+
+        if (focus_view != null) {
+            imm.hideSoftInputFromWindow(focus_view.getWindowToken(), 0);
         }
     }
 }

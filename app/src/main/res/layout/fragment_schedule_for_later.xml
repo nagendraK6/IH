@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/profile_img_noti2"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_alignTop="@+id/textView8"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="86dp"
+        android:layout_marginTop="0dp"
+        app:srcCompat="@drawable/empty_user_profile_image" />
+
+    <EditText
+        android:id="@+id/time_pick"
+        android:layout_width="200dp"
+        android:layout_height="42dp"
+        android:layout_alignTop="@+id/textView11"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="86dp"
+        android:layout_marginTop="0dp"
+        android:background="@drawable/main_screen_no_ask"
+        android:clickable="true"
+        android:focusable="false"
+        android:hint=""
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/textView11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/date_pick"
+        android:layout_alignStart="@+id/back_room"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="12dp"
+        android:text="Time:" />
+
+    <TextView
+        android:id="@+id/helperText2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/room_choice"
+        android:layout_alignStart="@+id/room_choice"
+        android:layout_marginStart="9dp"
+        android:layout_marginTop="5dp"
+        android:text="Only the followers of the speakers can join" />
+
+    <RadioGroup
+        android:id="@+id/room_choice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/textView6"
+        android:layout_alignBottom="@+id/textView6"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="80dp"
+        android:layout_marginLeft="50dp"
+        android:checkedButton="@+id/social_room"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/public_room"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Public"></RadioButton>
+
+        <RadioButton
+            android:id="@+id/social_room"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="80dp"
+            android:layout_marginTop="0dp"
+            android:layout_weight="1"
+            android:text="Social" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/topic"
+        android:layout_alignStart="@+id/back_room"
+        android:layout_marginTop="27dp"
+        android:text="Visibility:"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/helperText2"
+        android:layout_alignStart="@+id/back_room"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="24dp"
+        android:text="Host:" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/add_a_host"
+        android:layout_alignStart="@+id/back_room"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="31dp"
+        android:text="Date:" />
+
+    <TextView
+        android:id="@+id/back_room"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="50dp"
+        android:text="back"
+        android:textAppearance="@style/OnboardingTop"
+        android:textColor="@color/main_screen_text_color"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/cancel2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="20dp"
+        android:text="cancel"
+        android:textAppearance="@style/OnboardingTop"
+        android:textColor="#2879C2"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/intro_line2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="50dp"
+        android:text="Start a Room"
+        android:textAppearance="@style/OnboardingTop"
+        android:textSize="16sp"
+
+        />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/back_room"
+        android:layout_alignStart="@+id/back_room"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="27dp"
+        android:text="Topic:" />
+
+    <TextView
+        android:id="@+id/topic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/intro_line2"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="86dp"
+        android:layout_marginTop="27dp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/schedule_event"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/time_pick"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:src="@drawable/schedule_event" />
+
+    <EditText
+        android:id="@+id/date_pick"
+        android:layout_width="200dp"
+        android:layout_height="42dp"
+        android:layout_alignTop="@+id/textView7"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="86dp"
+        android:layout_marginTop="0dp"
+        android:background="@drawable/main_screen_no_ask"
+        android:clickable="true"
+        android:focusable="false"
+        android:hint=""
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/name_user_curr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/profile_img_noti2"
+        android:layout_alignBottom="@+id/profile_img_noti2"
+        android:layout_marginStart="12dp"
+        android:layout_toEndOf="@+id/profile_img_noti2"
+        android:gravity="center_vertical"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/add_a_host"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/profile_img_noti2"
+        android:layout_alignStart="@+id/profile_img_noti2"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="13dp"
+        android:text="@string/add_host"
+        android:textColor="@color/follower_blue"
+        android:textStyle="bold" />
+</RelativeLayout>

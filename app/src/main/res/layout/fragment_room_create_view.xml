@@ -130,5 +130,15 @@
         android:layout_marginStart="9dp"
         android:layout_marginTop="5dp"
         android:text="Only the followers of the speakers can join" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/submit_room_create"
+        android:layout_alignStart="@+id/submit_room_create"
+        android:layout_alignEnd="@+id/submit_room_create"
+        android:layout_marginTop="-45dp"
+        app:srcCompat="@drawable/setup_for_later" />
 </RelativeLayout>
 </RelativeLayout>
