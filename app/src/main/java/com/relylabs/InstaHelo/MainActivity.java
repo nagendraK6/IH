@@ -101,6 +101,34 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter update_from_fragment = new IntentFilter("update_to_main_activity");
         Log.d("debug_data", "Activity registered to receive update");
         registerReceiver(broadcastintent, update_from_fragment);
+        try {
+            processIntents();
+        } catch (Exception ex) {
+            Log.d("intent", "Info in event link");
+        }
+    }
+
+    private void processIntents() {
+        String action = getIntent().getAction();
+        Uri data =  getIntent().getData();
+        if(data !=null) {
+            List<String> params = data.getPathSegments();
+            int size = params.size();
+            if (size == 1) {
+                param = params.get(0);
+            }
+
+
+            ScheduleRoom room = new ScheduleRoom();
+            Bundle args = new Bundle();
+            args.putString("room_slug", param);
+            room.setArguments(args);
+
+
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.add(R.id.fragment_holder, room);
+            ft.commitAllowingStateLoss();
+        }
     }
 
     private void setUpFragment() {

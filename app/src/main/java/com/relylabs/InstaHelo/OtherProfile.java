@@ -68,6 +68,7 @@ public class OtherProfile extends Fragment {
     String current_user_id = "";
     View fragment_view;
     FragmentActivity activity;
+    ImageView edit_btn_bio, edit_btn_name, edit_btn_photo;
 
     @Override
     public void onAttach(Context context) {
@@ -106,11 +107,15 @@ public class OtherProfile extends Fragment {
         busy = view.findViewById(R.id.loading_channel_token_fetch);
         final User user = User.getLoggedInUser();
         current_user_id = getArguments().getString("user_id");
+        edit_btn_bio = view.findViewById(R.id.edit_btn_bio);
+        edit_btn_name = view.findViewById(R.id.edit_btn_name);
+        edit_btn_photo = view.findViewById(R.id.edit_btn_photo);
 
         if(!current_user_id.equals(String.valueOf(user.UserID))){
             TextView follow_btn = view.findViewById(R.id.follow_btn);
             follow_btn.setVisibility(View.VISIBLE);
         }
+
         ImageView back = view.findViewById(R.id.prev_button2);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -216,32 +221,70 @@ public class OtherProfile extends Fragment {
         ShapeableImageView prof = view.findViewById(R.id.profile_img);
         TextView name = view.findViewById(R.id.name_user);
         TextView bio = view.findViewById(R.id.user_bio);
-        prof.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(String.valueOf(user.UserID).equals(user_id)){
-                    Helper.loadFragment(new EditPhotoFragment(),activity);
-                }
-            }
-        });
-        name.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(String.valueOf(user.UserID).equals(user_id)){
-                    Helper.loadFragment(new NameEditFragment(),activity);
-                }
-            }
-        });
-        bio.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(String.valueOf(user.UserID).equals(user_id)){
-                    Helper.loadFragment(new EditBioFragment(),activity);
-                }
-            }
-        });
-        getProfileInfo(view);
 
+        if (String.valueOf(user.UserID).equals(user_id)) {
+            edit_btn_bio.setVisibility(View.VISIBLE);
+            edit_btn_photo.setVisibility(View.VISIBLE);
+            edit_btn_name.setVisibility(View.VISIBLE);
+
+
+            prof.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(String.valueOf(user.UserID).equals(user_id)){
+                        Helper.loadFragment(new EditPhotoFragment(),activity);
+                    }
+                }
+            });
+            edit_btn_photo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(String.valueOf(user.UserID).equals(user_id)){
+                        Helper.loadFragment(new EditPhotoFragment(),activity);
+                    }
+                }
+            });
+
+
+            name.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(String.valueOf(user.UserID).equals(user_id)){
+                        Helper.loadFragment(new NameEditFragment(),activity);
+                    }
+                }
+            });
+
+            edit_btn_name.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(String.valueOf(user.UserID).equals(user_id)){
+                        Helper.loadFragment(new NameEditFragment(),activity);
+                    }
+                }
+            });
+
+
+            bio.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(String.valueOf(user.UserID).equals(user_id)){
+                        Helper.loadFragment(new EditBioFragment(),activity);
+                    }
+                }
+            });
+
+            edit_btn_bio.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(String.valueOf(user.UserID).equals(user_id)){
+                        Helper.loadFragment(new EditBioFragment(),activity);
+                    }
+                }
+            });
+        }
+
+        getProfileInfo(view);
     }
 
     public void getProfileInfo(View view){
@@ -283,7 +326,7 @@ public class OtherProfile extends Fragment {
                         String prof_url = response.getString("prof_url");
                         ShapeableImageView prof = view.findViewById(R.id.profile_img);
                         if(!prof_url.equals("")){
-                            float radius = getResources().getDimension(R.dimen.default_corner_radius_profile_page);
+                            float radius = activity.getResources().getDimension(R.dimen.default_corner_radius_profile_page);
                             prof.setShapeAppearanceModel(prof.getShapeAppearanceModel()
                                     .toBuilder()
                                     .setTopRightCorner(CornerFamily.ROUNDED,radius)
@@ -295,7 +338,7 @@ public class OtherProfile extends Fragment {
                         }
                         ShapeableImageView inviter_img = view.findViewById(R.id.profile_img_noti);
                         if (!inviter_image.equals("")) {
-                            float radius = getResources().getDimension(R.dimen.default_corner_radius_profile_inviter);
+                            float radius = activity.getResources().getDimension(R.dimen.default_corner_radius_profile_inviter);
                             inviter_img.setShapeAppearanceModel(inviter_img.getShapeAppearanceModel()
                                     .toBuilder()
                                     .setTopRightCorner(CornerFamily.ROUNDED, radius)

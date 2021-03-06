@@ -68,24 +68,51 @@
         android:layout_marginTop="26dp"
         app:srcCompat="@drawable/empty_user_profile_image" />
 
-    <TextView
-        android:id="@+id/name_user"
+    <ImageView
+        android:layout_below="@+id/prev_button2"
+        android:layout_alignStart="@+id/prev_button2"
+        android:layout_marginStart="62dp"
+        android:layout_marginTop="50dp"
+        android:id="@+id/edit_btn_photo"
+        android:visibility="invisible"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:src="@drawable/pencil_white"
+        android:layout_height="wrap_content">
+
+    </ImageView>
+    <RelativeLayout
+        android:layout_width="wrap_content"
         android:layout_below="@+id/profile_img"
         android:layout_alignStart="@+id/profile_img"
+        android:layout_height="wrap_content"
         android:layout_marginStart="0dp"
         android:layout_marginTop="20sp"
-        android:textColor="@color/Black"
-        android:textSize="21sp"
-        android:textStyle="bold" />
+        android:id="@+id/name_user_section">
+        <TextView
+            android:id="@+id/name_user"
+            android:layout_width="match_parent"
+            android:layout_marginRight="30dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/Black"
+            android:textSize="21sp"
+            android:textStyle="bold" />
+        <ImageView
+            android:visibility="invisible"
+            android:id="@+id/edit_btn_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="35dp"
+            android:src="@drawable/pencil_edit"/>
+    </RelativeLayout>
+
 
     <TextView
         android:id="@+id/username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/name_user"
-        android:layout_alignStart="@+id/name_user"
+        android:layout_below="@+id/name_user_section"
+        android:layout_alignStart="@+id/name_user_section"
         android:layout_marginStart="0dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="0dp"
@@ -116,25 +143,45 @@
         android:textColor="@color/Black"
         android:textSize="18sp" />
 
-    <TextView
-        android:id="@+id/user_bio"
+    <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/user_bio_section"
+
+
         android:layout_below="@+id/follower"
         android:layout_alignStart="@+id/follower"
+
+
         android:layout_alignParentEnd="true"
         android:layout_marginStart="0dp"
         android:layout_marginTop="27dp"
         android:layout_marginEnd="36dp"
-        android:textColor="@color/Black"
-        android:textSize="16sp" />
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/user_bio"
+            android:layout_width="match_parent"
+            android:layout_marginRight="30dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/Black"
+            android:textSize="16sp" />
+        <ImageView
+            android:visibility="invisible"
+            android:id="@+id/edit_btn_bio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/pencil_edit"/>
+    </RelativeLayout>
+
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/profile_img_noti"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_below="@+id/user_bio"
-        android:layout_alignStart="@+id/user_bio"
+        android:layout_below="@+id/user_bio_section"
+        android:layout_alignStart="@+id/user_bio_section"
         android:layout_marginStart="0dp"
         android:layout_marginTop="45dp"
         app:srcCompat="@drawable/empty_user_profile_image" />
