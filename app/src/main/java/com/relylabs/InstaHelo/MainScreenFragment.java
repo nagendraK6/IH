@@ -691,6 +691,8 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                     } else {
                         UserSettings us = UserSettings.getSettings();
                         us.selected_event_id = event_id;
+                        us.selected_channel_display_name = title;
+                        us.selected_channel_name = event_channel_name;
                         us.save();
                         RoomHelper.sendRoomServieStartRequest(activity, event_channel_name, title,  event_id);
                     }
