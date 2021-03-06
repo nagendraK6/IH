@@ -60,6 +60,7 @@ import java.util.stream.IntStream;
 import cz.msebera.android.httpclient.Header;
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.relylabs.InstaHelo.Utils.Helper.hideKeyboard;
 import static com.relylabs.InstaHelo.Utils.Helper.loadFragment;
 
 public class RoomCreateBottomSheetDialogFragment extends Fragment  {
@@ -237,20 +238,12 @@ public class RoomCreateBottomSheetDialogFragment extends Fragment  {
             Integer uid;
             switch (user_action) {
                 case "REMOVE_FRAGMENT":
+                    hideKeyboard(getContext());
                     removefragment();
                     break;
             }
         }
     };
 
-    public static void hideKeyboard(Context mContext) {
-        InputMethodManager imm = (InputMethodManager) mContext
-                .getSystemService(Context.INPUT_METHOD_SERVICE);
-        View focus_view = ((Activity) mContext).getWindow()
-                .getCurrentFocus();
 
-        if (focus_view != null) {
-            imm.hideSoftInputFromWindow(focus_view.getWindowToken(), 0);
-        }
-    }
 }

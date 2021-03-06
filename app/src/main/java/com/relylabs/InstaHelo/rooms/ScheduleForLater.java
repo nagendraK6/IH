@@ -118,7 +118,7 @@ public class ScheduleForLater extends Fragment {
             @Override
             public void onClick(View v) {
                 removefragment(activity_ref);
-                broadcastLocalUpdate("ROOM_CREATE_SCHEDULE",room_type,myCalendar.getTimeInMillis());
+                broadcastLocalUpdate("ROOM_CREATE",room_type,myCalendar.getTimeInMillis());
                 Bundle data_bundle = new Bundle();
                 data_bundle.putString("user_action", "REMOVE_FRAGMENT");
                 Intent intent = new Intent("update_from_schedule");

@@ -157,8 +157,9 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                             .getStringExtra("room_title");
                     String room_type =  intent
                             .getStringExtra("room_type");
-
-                    send_create_room_request(room_title, room_type);
+                    long schedule_timestamp =  intent
+                            .getLongExtra("timestamp",0);
+                    send_create_room_request(room_title, room_type,schedule_timestamp);
                     break;
 
 
@@ -665,13 +666,15 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         return true;
     }
 
-    private void send_create_room_request(String title, String room_type) {
+    private void send_create_room_request(String title, String room_type,long timestamp) {
         final User user = User.getLoggedInUser();
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
         params.add("event_title", title);
         params.add("room_type", room_type);
-
+        if(timestamp!=0) {
+            params.add("schedule_timestamp", String.valueOf(timestamp));
+        }
         show_busy_indicator();
 
         JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
@@ -680,6 +683,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                 /* processExit(); */
                 Integer event_id = null;
                 try {
+                    Log.d("response",response.toString());
                     fetch_all_events(false);
                     event_id = response.getInt("event_id");
                     String event_channel_name = response.getString("event_channel_name");
