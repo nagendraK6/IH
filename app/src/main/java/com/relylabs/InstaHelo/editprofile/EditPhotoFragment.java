@@ -366,11 +366,8 @@ public class EditPhotoFragment extends Fragment {
         Log.d("debug_data", data.getData().toString());
         float radius = getResources().getDimension(R.dimen.default_corner_radius_update_profile_page);
 
-        Picasso.get().load(data.getData())
+        Picasso.get().load(imgFile)
                 .into(prof);
-        imgfile = new File(data.getData().getPath()) ;
-        image_storage_path = data.getData().toString();
-
     }
     private void onCaptureImageResult(Intent data) {
         Bitmap thumbnail = (Bitmap) data.getExtras().get("data");

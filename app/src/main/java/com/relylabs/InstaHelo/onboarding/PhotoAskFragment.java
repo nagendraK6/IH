@@ -372,12 +372,9 @@ public class PhotoAskFragment extends Fragment {
         File imgFile = new  File(destination.getAbsolutePath());
         image_updated_in_profile = true;
 
-        Log.d("debug_data", data.getData().toString());
-        Picasso.get().load(data.getData())
+        Picasso.get().load(imgFile)
                 .into(crl_image_view);
-        imgfile = new File(data.getData().getPath()) ;
-        image_storage_path = data.getData().toString();
-        Log.d("debug_image_2", image_storage_path);
+
         crl_image_view.setVisibility(View.VISIBLE);
         empty.setVisibility(View.INVISIBLE);
         next_photo.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.next_enabled));
