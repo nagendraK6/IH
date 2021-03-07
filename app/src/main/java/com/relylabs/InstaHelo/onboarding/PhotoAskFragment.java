@@ -39,6 +39,7 @@ import com.loopj.android.http.RequestParams;
 import com.relylabs.InstaHelo.App;
 import com.relylabs.InstaHelo.MainScreenFragment;
 import com.relylabs.InstaHelo.R;
+import com.relylabs.InstaHelo.Utils.Logger;
 import com.relylabs.InstaHelo.models.User;
 import com.squareup.picasso.Picasso;
 
@@ -52,6 +53,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.HashMap;
 
 import cz.msebera.android.httpclient.Header;
@@ -161,6 +164,14 @@ public class PhotoAskFragment extends Fragment {
                         onSelectFromGalleryResult(data);
                     } catch (IOException e) {
                         e.printStackTrace();
+                        StringWriter sw = new StringWriter();
+                        e.printStackTrace(new PrintWriter(sw));
+                        String exceptionAsString = sw.toString();
+                        Logger.sendServerException(exceptionAsString);
+                        User user = User.getLoggedInUser();
+                        user.ProfilePicURL = "";
+                        user.save();
+                        Helper.nextScreen(activity_ref);
                     }
                 }
                 else if (requestCode == REQUEST_CAMERA)
@@ -336,7 +347,15 @@ public class PhotoAskFragment extends Fragment {
         Bitmap bm = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), data.getData());
         String abs_path = Helper.getImageFilePath(activity_ref, data.getData());
         if (abs_path != null) {
-            bm = modifyOrientation(bm, abs_path);
+            try {
+                bm = modifyOrientation(bm, abs_path);
+            } catch (Exception e) {
+                e.printStackTrace();
+                StringWriter sw = new StringWriter();
+                e.printStackTrace(new PrintWriter(sw));
+                String exceptionAsString = sw.toString();
+                Logger.sendServerException(exceptionAsString);
+            }
         }
 
         image_storage_path = new File(getContext().getExternalCacheDir(), System.currentTimeMillis() + ".jpeg").getAbsolutePath();
@@ -381,6 +400,7 @@ public class PhotoAskFragment extends Fragment {
         empty.setVisibility(View.INVISIBLE);
         next_photo.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.next_enabled));
     }
+
     private void onCaptureImageResult(Intent data) {
         Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
         Picasso.get().load(getImageUri(getContext(), thumbnail))

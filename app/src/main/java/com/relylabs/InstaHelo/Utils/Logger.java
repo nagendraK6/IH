@@ -1,12 +1,23 @@
 package com.relylabs.InstaHelo.Utils;
 
+import android.view.View;
+
 import com.amplitude.api.Amplitude;
 import com.amplitude.api.AmplitudeClient;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+import com.relylabs.InstaHelo.App;
 import com.relylabs.InstaHelo.models.User;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.WeakHashMap;
 
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import cz.msebera.android.httpclient.Header;
 
 
 /**
@@ -91,5 +102,31 @@ public class Logger {
         }
 
         return client;
+    }
+
+    public static void sendServerException(String stack_trac_string) {
+        AsyncHttpClient client = new AsyncHttpClient();
+        RequestParams params = new RequestParams();
+        params.add("stack_trace", stack_trac_string);
+        User user = User.getLoggedInUser();
+
+        JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
+            }
+        };
+
+        client.addHeader("Accept", "application/json");
+        client.addHeader("Authorization", "Token " + user.AccessToken);
+        client.post(App.getBaseURL() + "registration/send_stack_trace", params, jrep);
     }
 }

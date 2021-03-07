@@ -290,6 +290,8 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                     .setBottomRightCorner(CornerFamily.ROUNDED,radius)
                     .build());
             Picasso.get().load(user.ProfilePicURL).into(img);
+        } else {
+            img.setBackground(activity.getDrawable(R.drawable.empty_user_profile_image));
         }
 
         img.setOnClickListener(new View.OnClickListener() {

@@ -41,6 +41,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.relylabs.InstaHelo.App;
 import com.relylabs.InstaHelo.R;
+import com.relylabs.InstaHelo.Utils.Logger;
 import com.relylabs.InstaHelo.models.User;
 import com.squareup.picasso.Picasso;
 
@@ -52,6 +53,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.HashMap;
 
 import cz.msebera.android.httpclient.Header;
@@ -116,6 +119,8 @@ public class EditPhotoFragment extends Fragment {
         String prof_url = user.ProfilePicURL;
         if(!prof_url.equals("")){
             Picasso.get().load(prof_url).into(prof);
+        } else {
+            prof.setImageDrawable(activity_ref.getDrawable(R.drawable.empty_user_profile_image));
         }
 
         prof.setOnClickListener(new View.OnClickListener() {
@@ -153,6 +158,11 @@ public class EditPhotoFragment extends Fragment {
                         onSelectFromGalleryResult(data);
                     } catch (IOException e) {
                         e.printStackTrace();
+                        StringWriter sw = new StringWriter();
+                        e.printStackTrace(new PrintWriter(sw));
+                        String exceptionAsString = sw.toString();
+                        Logger.sendServerException(exceptionAsString);
+
                     }
                 }
                 else if (requestCode == REQUEST_CAMERA)
@@ -335,7 +345,15 @@ public class EditPhotoFragment extends Fragment {
         Bitmap bm = MediaStore.Images.Media.getBitmap(activity_ref.getContentResolver(), data.getData());
         String abs_path = Helper.getImageFilePath(activity_ref, data.getData());
         if (abs_path != null) {
-            bm = modifyOrientation(bm, abs_path);
+            try {
+                bm = modifyOrientation(bm, abs_path);
+            } catch (Exception e) {
+                e.printStackTrace();
+                StringWriter sw = new StringWriter();
+                e.printStackTrace(new PrintWriter(sw));
+                String exceptionAsString = sw.toString();
+                Logger.sendServerException(exceptionAsString);
+            }
         }
         int width = bm.getWidth();
         int height = bm.getHeight();
