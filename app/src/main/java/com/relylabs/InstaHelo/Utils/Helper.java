@@ -338,4 +338,24 @@ public class Helper {
             ft.commitAllowingStateLoss();
         }
     }
+
+    public static String getImageFilePath(FragmentActivity activity_ref, Uri uri) {
+        try {
+            File file = new File(uri.getPath());
+            String[] filePath = file.getPath().split(":");
+            String image_id = filePath[filePath.length - 1];
+            Cursor cursor = activity_ref.getContentResolver().query(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, MediaStore.Images.Media._ID + " = ? ", new String[]{image_id}, null);
+            if (cursor != null) {
+                cursor.moveToFirst();
+                String imagePath = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+
+                cursor.close();
+                return imagePath;
+            }
+        } catch (Exception ex) {
+            Log.d("debug_data", "Exception in file path");
+        }
+
+        return null;
+    }
 }

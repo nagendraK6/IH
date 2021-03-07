@@ -136,9 +136,9 @@ public class LoginFragment extends Fragment {
             public void afterTextChanged(Editable editable) {
                 phone_number_txt = editable.toString();
                 if (phone_number_txt.length() == 10) {
-                    next_phone.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.next_enabled));
+                    next_phone.setBackground(activity_ref.getDrawable(R.drawable.next_enabled));
                 } else {
-                    next_phone.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.next_disabled));
+                    next_phone.setBackground(activity_ref.getDrawable(R.drawable.next_disabled));
                 }
             }
         });
@@ -148,9 +148,9 @@ public class LoginFragment extends Fragment {
         if (phone_number.length() == 10) {
             AlertDialog.Builder builder;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                builder = new AlertDialog.Builder(getContext(), android.R.style.Theme_DeviceDefault_Light_Dialog_Alert);
+                builder = new AlertDialog.Builder(activity_ref, android.R.style.Theme_DeviceDefault_Light_Dialog_Alert);
             } else {
-                builder = new AlertDialog.Builder(getContext());
+                builder = new AlertDialog.Builder(activity_ref);
             }
 
 

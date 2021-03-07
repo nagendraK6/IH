@@ -334,9 +334,11 @@ public class PhotoAskFragment extends Fragment {
     private void onSelectFromGalleryResult(Intent data) throws IOException {
 
         Bitmap bm = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), data.getData());
+        String abs_path = Helper.getImageFilePath(activity_ref, data.getData());
+        if (abs_path != null) {
+            bm = modifyOrientation(bm, abs_path);
+        }
 
-        String abs_path = getImageFilePath(data.getData());
-        bm = modifyOrientation(bm, abs_path);
         image_storage_path = new File(getContext().getExternalCacheDir(), System.currentTimeMillis() + ".jpeg").getAbsolutePath();
 
         int width = bm.getWidth();
@@ -392,24 +394,6 @@ public class PhotoAskFragment extends Fragment {
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
         return Uri.parse(path);
-    }
-
-
-    public String getImageFilePath(Uri uri) {
-
-        File file = new File(uri.getPath());
-        String[] filePath = file.getPath().split(":");
-        String image_id = filePath[filePath.length - 1];
-
-        Cursor cursor = activity_ref.getContentResolver().query(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, MediaStore.Images.Media._ID + " = ? ", new String[]{image_id}, null);
-        if (cursor != null) {
-            cursor.moveToFirst();
-            String imagePath = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
-
-            cursor.close();
-            return imagePath;
-        }
-        return null;
     }
 
     public static Bitmap modifyOrientation(Bitmap bitmap, String image_absolute_path) throws IOException {

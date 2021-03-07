@@ -66,6 +66,7 @@ public class EditPhotoFragment extends Fragment {
     int REQUEST_CAMERA = 1;
     int SELECT_FILE = 0;
     public static final int REQUEST_FOR_TAKE_PHOTO = 9;
+    public static final int REQUEST_FOR_TAKE_CAMERA_PHOTO = 10;
     File imgfile;
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
@@ -155,7 +156,12 @@ public class EditPhotoFragment extends Fragment {
                     }
                 }
                 else if (requestCode == REQUEST_CAMERA)
-                    onCaptureImageResult(data);
+                    try {
+                        onCaptureImageResult(data);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                  //  onCaptureImageResult(data);
             }
         }
     }
@@ -229,11 +235,11 @@ public class EditPhotoFragment extends Fragment {
         int currentAPIVersion = Build.VERSION.SDK_INT;
         if(currentAPIVersion>=android.os.Build.VERSION_CODES.M)
         {
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                    requestPermissions(new String[]{android.Manifest.permission.CAMERA},  REQUEST_FOR_TAKE_PHOTO);
+            if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, android.Manifest.permission.CAMERA)) {
+                    requestPermissions(new String[]{Manifest.permission.CAMERA},  REQUEST_FOR_TAKE_CAMERA_PHOTO);
                 } else {
-                    requestPermissions(new String[]{android.Manifest.permission.CAMERA},  REQUEST_FOR_TAKE_PHOTO);
+                    requestPermissions(new String[]{android.Manifest.permission.CAMERA},  REQUEST_FOR_TAKE_CAMERA_PHOTO);
                 }
                 return false;
             } else {
@@ -243,6 +249,7 @@ public class EditPhotoFragment extends Fragment {
             return true;
         }
     }
+
     private void sendImageToServer(View view) {
         if (image_storage_path.equals("")) {
             return;
@@ -325,9 +332,11 @@ public class EditPhotoFragment extends Fragment {
     }
     private void onSelectFromGalleryResult(Intent data) throws IOException {
 
-        Bitmap bm = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), data.getData());
-        String abs_path = getImageFilePath(data.getData());
-        bm = modifyOrientation(bm, abs_path);
+        Bitmap bm = MediaStore.Images.Media.getBitmap(activity_ref.getContentResolver(), data.getData());
+        String abs_path = Helper.getImageFilePath(activity_ref, data.getData());
+        if (abs_path != null) {
+            bm = modifyOrientation(bm, abs_path);
+        }
         int width = bm.getWidth();
         int height = bm.getHeight();
         int newWidth = 80;
@@ -369,13 +378,12 @@ public class EditPhotoFragment extends Fragment {
         Picasso.get().load(imgFile)
                 .into(prof);
     }
-    private void onCaptureImageResult(Intent data) {
+    private void onCaptureImageResult(Intent data) throws IOException {
         Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
         float radius = getResources().getDimension(R.dimen.default_corner_radius_update_profile_page);
 
         Picasso.get().load(getImageUri(getContext(), thumbnail))
                 .into(prof);
-
 
     }
 
@@ -384,23 +392,6 @@ public class EditPhotoFragment extends Fragment {
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
         return Uri.parse(path);
-    }
-
-    public String getImageFilePath(Uri uri) {
-
-        File file = new File(uri.getPath());
-        String[] filePath = file.getPath().split(":");
-        String image_id = filePath[filePath.length - 1];
-
-        Cursor cursor = activity_ref.getContentResolver().query(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, MediaStore.Images.Media._ID + " = ? ", new String[]{image_id}, null);
-        if (cursor != null) {
-            cursor.moveToFirst();
-            String imagePath = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
-
-            cursor.close();
-            return imagePath;
-        }
-        return null;
     }
 
     public static Bitmap modifyOrientation(Bitmap bitmap, String image_absolute_path) throws IOException {
