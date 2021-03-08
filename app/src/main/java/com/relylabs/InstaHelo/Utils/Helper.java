@@ -39,6 +39,7 @@ import com.relylabs.InstaHelo.onboarding.LoginFragment;
 import com.relylabs.InstaHelo.onboarding.PhoneVerificationFragment;
 import com.relylabs.InstaHelo.onboarding.PhotoAskFragment;
 import com.relylabs.InstaHelo.onboarding.SuggestedProfileToFollowFragment;
+import com.relylabs.InstaHelo.services.ContactUploadBackgroundService;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -357,5 +358,11 @@ public class Helper {
         }
 
         return null;
+    }
+
+    public  static void enqueu_upload(FragmentActivity activity) {
+        // uncomment the code after testing
+       // Intent i= new Intent(activity, ContactUploadBackgroundService.class);
+       // activity.startService(i);
     }
 }

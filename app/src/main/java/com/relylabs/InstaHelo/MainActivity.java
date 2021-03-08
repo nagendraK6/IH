@@ -25,6 +25,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.relylabs.InstaHelo.Utils.Helper;
 import com.relylabs.InstaHelo.Utils.RoomHelper;
 import com.relylabs.InstaHelo.models.Contact;
 import com.relylabs.InstaHelo.models.User;
@@ -148,7 +149,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Intent intent = getIntent();
-
 
     }
 

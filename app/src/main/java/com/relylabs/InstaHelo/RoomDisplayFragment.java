@@ -10,8 +10,10 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -422,6 +424,8 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
                     startActivity(Intent.createChooser(sharingIntent, "Share via"));
             }
         });
+
+        super_user_controls(view);
     }
 
 
@@ -569,6 +573,37 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
         }
     }
 
+    private void super_user_controls(View v) {
+        ShapeableImageView user_profile_image = v.findViewById(R.id.user_profile_image);
+        User user =User.getLoggedInUser();
+        if (user.IsSuperUser) {
+            user_profile_image.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final CharSequence[] items = { "+Add", "-Remove", "Cancel" };
+                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                    builder.setItems(items, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int item) {
+                            if (activity == null) {
+                                return;
+                            }
+
+                            if (items[item].equals("+Add")) {
+                                process_additional_users(true);
+                            } else if (items[item].equals("Cancel")) {
+                                dialog.dismiss();
+                            } else if (items[item].equals("-Remove")) {
+                                process_additional_users(false);
+                            }
+                        }
+                    });
+                    builder.show();
+                }
+            });
+        }
+    }
+
 
     void show_busy_indicator() {
         busy.setVisibility(View.VISIBLE);
@@ -670,5 +705,34 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
         FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
         ft.add(R.id.fragment_holder, otherprof);
         ft.commitAllowingStateLoss();
+    }
+
+    public void process_additional_users(Boolean should_add) {
+        checkConnection();
+        User user = User.getLoggedInUser();
+        AsyncHttpClient client = new AsyncHttpClient();
+        RequestParams params = new RequestParams();
+        UserSettings us = UserSettings.getSettings();
+        params.add("event_id", String.valueOf(us.selected_event_id));
+        String url_str = should_add ? "page/room_add_optional_user" : "page/room_remove_optional_user";
+
+        JsonHttpResponseHandler jrep= new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                fetchListenersData();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
+            }
+        };
+
+        client.addHeader("Accept", "application/json");
+        client.addHeader("Authorization", "Token " + user.AccessToken);
+        client.post( App.getBaseURL() + url_str, params, jrep);
     }
 }

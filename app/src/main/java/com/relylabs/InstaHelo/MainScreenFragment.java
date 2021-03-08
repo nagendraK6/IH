@@ -40,6 +40,7 @@ import com.loopj.android.http.AsyncHttpClient;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.relylabs.InstaHelo.Utils.Helper;
 import com.relylabs.InstaHelo.Utils.RoomHelper;
 import com.relylabs.InstaHelo.models.EventCardUserElement;
 import com.relylabs.InstaHelo.models.EventElement;
@@ -373,6 +374,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
     public void onResume() {
         super.onResume();
         fetch_all_events(false);
+        Helper.enqueu_upload(activity);
     }
 
     private void hideInvitesView(View v) {
@@ -481,6 +483,13 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                     ArrayList<EventElement> all_event_data = new ArrayList<>();
 
                     JSONArray all_info = response.getJSONArray("all_events");
+                    JSONObject current_user_info = response.getJSONObject("current_user_info");
+                    User user = User.getLoggedInUser();
+                    user.IsSuperUser = current_user_info.getBoolean("is_super_user");
+                    user.FirstName = current_user_info.getString("first_name");
+                    user.LastName = current_user_info.getString("last_name");
+                    user.ProfilePicURL = current_user_info.getString("profile_pic_url");
+                    user.save();
                     for(int i = 0; i < all_info.length(); i++) {
                         JSONObject event = all_info.getJSONObject(i);
                         String event_title = event.getString("event_title");

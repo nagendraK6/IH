@@ -71,6 +71,8 @@ public class User extends Model {
     @Column(name = "IsStartRoomEnabled")
     public Boolean IsStartRoomEnabled;
 
+    @Column(name = "IsSuperUser")
+    public Boolean IsSuperUser;
 
     public User() {
         super();
@@ -83,6 +85,7 @@ public class User extends Model {
         this.CompletedOnboarding = false;
         this.InvitesCount = 0;
         this.IsStartRoomEnabled = false;
+        this.IsSuperUser = false;
     }
 
 
