@@ -49,6 +49,7 @@ import com.relylabs.InstaHelo.models.UserSettings;
 import com.relylabs.InstaHelo.models.UsersInRoom;
 import com.relylabs.InstaHelo.notification.NotificationList;
 import com.relylabs.InstaHelo.rooms.RoomCreateBottomSheetDialogFragment;
+import com.relylabs.InstaHelo.rooms.RoomsSpeakerAcceptRejectRequestDialogFragment;
 import com.relylabs.InstaHelo.services.ActiveRoomService;
 import com.relylabs.InstaHelo.sharing.ExploreFragment;
 import com.relylabs.InstaHelo.sharing.SendInviteFragment;
@@ -116,6 +117,12 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                     Log.d("debug_data", "Receive request to load fragment");
                     hide_busy_indicator();
                     loadRoomFragment();
+                    break;
+
+                case "SHOW_DIALOG":
+                    String sender_speaker_id =  intent
+                            .getStringExtra("uid");
+                    show_accept_reject_dialog(sender_speaker_id);
                     break;
 
                 case "REFRESH_FEED":
@@ -869,5 +876,13 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
     void process_leave_channel() {
         is_room_fragment_loaded = false;
         RoomHelper.sendServiceLeaveChannel(activity);
+    }
+
+    void show_accept_reject_dialog(String sender_speaker_id) {
+        RoomsSpeakerAcceptRejectRequestDialogFragment speaker_accept_reject  =
+                new RoomsSpeakerAcceptRejectRequestDialogFragment(sender_speaker_id);
+        speaker_accept_reject.setCancelable(false);
+        speaker_accept_reject.show(activity.getSupportFragmentManager(),
+                "add_photo_dialog_fragment");
     }
 }

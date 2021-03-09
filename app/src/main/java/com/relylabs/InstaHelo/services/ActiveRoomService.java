@@ -190,6 +190,21 @@ public class ActiveRoomService extends Service {
                     switch_roles_on_server(2, uid);
                     break;
 
+                case "ACCEPTED_SPEAKER":
+                    uid =  intent
+                            .getIntExtra("uid", -1);
+                    //send_message("REJECT_SPEAKER", uid);
+                    switch_roles_on_server(1, uid);
+                    move_to_speaker(uid);
+                    break;
+
+                case "DENIED_SPEAKER":
+                    uid =  intent
+                            .getIntExtra("uid", -1);
+                    //send_message("REJECT_SPEAKER", uid);
+                    switch_roles_on_server(2, uid);
+                    break;
+
                 // from the explicit admin action
                 case "MAKE_AUDIENCE":
                     uid =  intent
@@ -204,7 +219,7 @@ public class ActiveRoomService extends Service {
                     uid =  intent
                             .getIntExtra("uid", -1);
                     send_message("MAKE_SPEAKER", uid);
-                    switch_roles_on_server(1, uid);
+                   // switch_roles_on_server(1, uid);
                     break;
 
 
@@ -224,6 +239,29 @@ public class ActiveRoomService extends Service {
         }
     };
 
+    private void move_to_speaker(Integer user_id) {
+        switch_roles_on_server(1, user_id);
+        mRtcEngine.setClientRole(Constants.CLIENT_ROLE_BROADCASTER);
+        mRtcEngine.muteLocalAudioStream(true);
+        UserSettings us = UserSettings.getSettings();
+        us.is_current_role_speaker = true;
+        us.is_muted = true;
+        us.is_self_hand_raised = false;
+        us.save();
+
+        // remove from audience queue and move to speaker queue and broadcast for the update
+        UsersInRoom u = UsersInRoom.getRecords(user_id);
+        if (u == null) {
+            new UsersInRoom(Boolean.TRUE, Boolean.TRUE, user_id).save();
+        }
+
+
+        Bundle data_bundle = new Bundle();
+        data_bundle.putString("update_type", "LIST_CHANGE");
+        Intent intent = new Intent("update_from_service");
+        intent.putExtras(data_bundle);
+        getApplicationContext().sendBroadcast(intent);
+    }
 
     private void initAgoraEngineAndJoinChannel(String channel_name, String agora_rtc_token, String agora_rtm_token, Boolean muted, Boolean load_room) {
         initializeAgoraEngine(muted);
@@ -741,6 +779,7 @@ public class ActiveRoomService extends Service {
 
             if (User.getLoggedInUser().UserID.equals(user_id)) {
 
+                /*
                 if (user_action.equals("MAKE_SPEAKER")) {
                     mRtcEngine.setClientRole(Constants.CLIENT_ROLE_BROADCASTER);
                     mRtcEngine.muteLocalAudioStream(true);
@@ -758,6 +797,36 @@ public class ActiveRoomService extends Service {
 
 
                     broadcastfrommain("onMessageReceived");
+                }*/
+
+                if (user_action.equals("MAKE_SPEAKER")) {
+                    us = UserSettings.getSettings();
+                    if (us.is_self_hand_raised) {
+                        mRtcEngine.setClientRole(Constants.CLIENT_ROLE_BROADCASTER);
+                        mRtcEngine.muteLocalAudioStream(true);
+                        us = UserSettings.getSettings();
+                        us.is_current_role_speaker = true;
+                        us.is_muted = true;
+                        us.is_self_hand_raised = false;
+                        us.save();
+
+                        // remove from audience queue and move to speaker queue and broadcast for the update
+                        UsersInRoom u = UsersInRoom.getRecords(user_id);
+                        if (u == null) {
+                            new UsersInRoom(Boolean.TRUE, Boolean.TRUE, user_id).save();
+                        }
+
+
+                        broadcastfrommain("onMessageReceived");
+                    } else {
+                        // broadcast to show the dialog
+                        Bundle data_bundle = new Bundle();
+                        data_bundle.putString("uid", fromMember.getUserId());
+                        data_bundle.putString("update_type", "SHOW_DIALOG");
+                        Intent intent = new Intent("update_from_service");
+                        intent.putExtras(data_bundle);
+                        getApplicationContext().sendBroadcast(intent);
+                    }
                 }
 
                 if (user_action.equals("MAKE_AUDIENCE")) {

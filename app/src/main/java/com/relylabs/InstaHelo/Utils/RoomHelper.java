@@ -270,6 +270,29 @@ public class RoomHelper {
         }
     }
 
+    public static void  send_accepted_speaker_request(FragmentActivity activity, Integer uid) {
+        Bundle data_bundle = new Bundle();
+        data_bundle.putInt("uid", uid);
+        data_bundle.putString("user_action", "ACCEPTED_SPEAKER");
+        Intent intent = new Intent("data_from_fragment");
+        intent.putExtras(data_bundle);
+        if (activity != null) {
+            activity.sendBroadcast(intent);
+        }
+    }
+
+    // audience denied
+    public static void  send_denied_speaker_request(FragmentActivity activity, Integer uid) {
+        Bundle data_bundle = new Bundle();
+        data_bundle.putInt("uid", uid);
+        data_bundle.putString("user_action", "DENIED_SPEAKER");
+        Intent intent = new Intent("data_from_fragment");
+        intent.putExtras(data_bundle);
+        if (activity != null) {
+            activity.sendBroadcast(intent);
+        }
+    }
+
     public static boolean isServiceRunningInForeground(Context context, Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {

@@ -1,0 +1,36 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/dialog_green"
+    android:orientation="vertical">
+    <TextView
+        android:layout_marginTop="40dp"
+        android:id="@+id/accept_reject"
+        android:layout_width="match_parent"
+        android:text="You have been invited you to speak"
+        android:layout_marginLeft="30dp"
+        android:textColor="@color/White"
+        android:layout_height="wrap_content">
+    </TextView>
+    <ImageView
+        android:id="@+id/accept_speaker_request"
+        android:layout_marginRight="30dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/accept_reject"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="50dp"
+        android:background="@drawable/accept_speaker_request"/>
+    <ImageView
+        android:layout_marginBottom="50dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="20dp"
+        android:id="@+id/deny_speaker_request"
+        android:layout_below="@+id/accept_reject"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/deny_speaker_request"/>
+
+</RelativeLayout>

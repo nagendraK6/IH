@@ -135,7 +135,7 @@ public class LoginFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable editable) {
                 phone_number_txt = editable.toString();
-                if (phone_number_txt.length() == 10) {
+                if (phone_number_txt.length() > 0) {
                     next_phone.setBackground(activity_ref.getDrawable(R.drawable.next_enabled));
                 } else {
                     next_phone.setBackground(activity_ref.getDrawable(R.drawable.next_disabled));
@@ -145,7 +145,7 @@ public class LoginFragment extends Fragment {
     }
 
     private void  process(String phone_number) {
-        if (phone_number.length() == 10) {
+        if (phone_number.length() > 1) {
             AlertDialog.Builder builder;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 builder = new AlertDialog.Builder(activity_ref, android.R.style.Theme_DeviceDefault_Light_Dialog_Alert);
@@ -170,7 +170,8 @@ public class LoginFragment extends Fragment {
                                     try {
                                         String error_message = response.getString("error_message");
                                         if (!error_message.equals("SUCCESS")) {
-                                            // Toast.makeText(getContext(), error_message, Toast.LENGTH_LONG).show();
+                                            busy.setVisibility(View.INVISIBLE);
+                                            Toast.makeText(getContext(), error_message, Toast.LENGTH_LONG).show();
                                             phone_no.setText("");
                                             return;
                                         }
