@@ -362,6 +362,14 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                 );
             }
         });
+
+        ImageView sch_rooms = view.findViewById(R.id.schedule_rooms);
+        sch_rooms.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadFragmentWithoutupdate(new ScheduleRoomList());
+            }
+        });
     }
 
 
@@ -524,6 +532,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                         e.eventID = event_id;
                         e.eventPhotoUrls = photo_urls;
                         e.userElements = all_users_in_card;
+                        e.isScheduled = Boolean.FALSE;
                         all_event_data.add(e);
                     }
 

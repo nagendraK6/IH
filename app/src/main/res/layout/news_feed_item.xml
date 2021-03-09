@@ -1,61 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
-    android:background="@drawable/bg_corner"
-    android:visibility="visible"
-    android:gravity="center_horizontal"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_marginLeft="10dp"
-    android:layout_marginRight="10dp"
     android:layout_height="wrap_content"
+    android:layout_marginLeft="10dp"
+    android:layout_marginTop="20dp"
+    android:layout_marginRight="10dp"
+    android:background="@drawable/bg_corner"
+    android:gravity="center_horizontal"
+    android:orientation="horizontal"
     android:paddingBottom="20dp"
-    android:layout_marginTop="20dp">
-            <TextView
-                android:layout_marginTop="5dp"
-                android:id="@+id/event_title"
-                android:layout_marginLeft="15dp"
-                android:textSize="18dp"
-
-                android:text="Is farmers protest illegal?"
-                android:textColor="@color/main_screen_text_color"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                 />
+    android:visibility="visible">
+    <TextView
+        android:id="@+id/event_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="5dp"
+        android:text="Is farmers protest illegal?"
+        android:textColor="@color/main_screen_text_color"
+        android:textSize="18dp" />
     <com.google.android.material.imageview.ShapeableImageView
-        android:layout_alignParentStart="true"
+        android:id="@+id/image_1"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_below="@+id/event_title"
+        android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp" />
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/image_2"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginTop="15dp"
-        android:id="@+id/image_1"
-        />
-
-    <com.google.android.material.imageview.ShapeableImageView
+        android:layout_below="@+id/event_title"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/event_title"
         android:layout_marginLeft="45dp"
         android:layout_marginTop="25dp"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:id="@+id/image_2"
-        android:visibility="visible"
-        />
+        android:visibility="visible" />
     <RelativeLayout
-        android:layout_width="match_parent"
         android:id="@+id/speaker_audience_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/event_title"
         android:layout_marginLeft="105dp"
         android:layout_marginTop="15dp"
-        android:layout_height="wrap_content">
+        android:minHeight="36dp">
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/users_in_the_event_for_display"
-            android:background="@color/colorWhite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            />
+            android:background="@color/colorWhite" />
     </RelativeLayout>
+    <TextView
+        android:id="@+id/schedule_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/speaker_audience_list"
+        android:layout_alignStart="@+id/image_1"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="11dp"
+        android:visibility="invisible" />
 </RelativeLayout>

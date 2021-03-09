@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -102,6 +103,9 @@ public class ScheduleRoom extends Fragment {
 
     }
     void getData(String room_slug){
+        ProgressBar busy = fragment_view.findViewById(R.id.loading_channel_token_fetch8);
+        busy.setVisibility(View.VISIBLE);
+
         final User user = User.getLoggedInUser();
         AsyncHttpClient client = new AsyncHttpClient();
         boolean running = false;
@@ -110,6 +114,7 @@ public class ScheduleRoom extends Fragment {
         JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                busy.setVisibility(View.INVISIBLE);
                 try {
                     Log.d("response_follow", response.toString());
                     TextView title = fragment_view.findViewById(R.id.schdeule_title);
@@ -134,18 +139,9 @@ public class ScheduleRoom extends Fragment {
                     Date d = new Date((long)timestamp);
                     String dateToStr = DateFormat.getDateInstance().format(d);
                     String timeToStr = DateFormat.getTimeInstance(DateFormat.SHORT).format(d);
-                   // Log.d("date",dateToStr);
-                  //  Log.d("time",timeToStr);
-                  //  String[] arr = dateToStr.split("-");
-                  //  dateToStr = arr[0]+ " "+ arr[1] + ", " + arr[2];
-                   // String[] arr2 = DateFormat.getTimeInstance(DateFormat.LONG).format(d).split(" ");
-                   // timeToStr += " (" + arr2[2] + ")";
                     date_schedule.setText(dateToStr);
                     time_schedule.setText(timeToStr);
                     prepareRecyclerView();
-
-//                    adapter.notifyDataSetChanged();
-
                 }
                 catch (JSONException e) {
                     e.printStackTrace();

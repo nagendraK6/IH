@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,20 +19,23 @@ import android.widget.TextView;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.shape.CornerFamily;
 import com.relylabs.InstaHelo.R;
+import com.relylabs.InstaHelo.bottomsheet.BottomScheduleRoom;
 import com.relylabs.InstaHelo.models.EventElement;
 import com.relylabs.InstaHelo.models.User;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.ViewHolder> {
+public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.ViewHolder> implements BottomScheduleRoom.ItemClickListener {
 
     private ArrayList<EventElement> mData;
     private LayoutInflater mInflater;
     private NewsFeedAdapter.ItemClickListener mClickListener;
-
+    final Calendar myCalendar = Calendar.getInstance();
     // data is passed into the constructor
     public NewsFeedAdapter(Context context, ArrayList<EventElement> data) {
         this.mInflater = LayoutInflater.from(context);
@@ -53,7 +58,13 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.ViewHo
         if (e.eventPhotoUrls.size() < 2) {
             holder.c2.setVisibility(View.INVISIBLE);
         }
-
+        if(e.isScheduled){
+            holder.time.setVisibility(View.VISIBLE);
+            myCalendar.setTimeInMillis(e.scheduleTimestamp);
+            String myFormat = "E, dd MMM yyyy hh:mm a z"; //In which you need put here
+            SimpleDateFormat sdf = new SimpleDateFormat(myFormat);
+            holder.time.setText(sdf.format(myCalendar.getTime()).toUpperCase());
+        }
         String p1 = "";
         String p2 = "";
 
@@ -100,18 +111,24 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.ViewHo
         return mData.size();
     }
 
+    @Override
+    public void onItemClick(String item) {
+        Log.d("here","bottom");
+    }
+
 
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView tagDisplayView;
         ShapeableImageView c1, c2;
         RecyclerView speaker_audience_list;
-
+        TextView time;
         ViewHolder(View itemView) {
             super(itemView);
             tagDisplayView = itemView.findViewById(R.id.event_title);
             c1 = itemView.findViewById(R.id.image_1);
             c2 = itemView.findViewById(R.id.image_2);
+            time = itemView.findViewById(R.id.schedule_time);
             speaker_audience_list = itemView.findViewById(R.id.users_in_the_event_for_display);
 
             float radius = itemView.getResources().getDimension(R.dimen.default_corner_news_feed_image_profile);
@@ -156,6 +173,3 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.ViewHo
         void onTagClick(int index);
     }
 }
-
-
-

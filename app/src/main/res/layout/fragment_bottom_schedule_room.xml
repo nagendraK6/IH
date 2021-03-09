@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/White"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical"
+    android:paddingBottom="21dp">
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/speaker_grid_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/shcedule_topic"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="18dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="0dp" />
+    <TextView
+        android:id="@+id/hosts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/speaker_grid_list"
+        android:layout_alignStart="@+id/shcedule_time"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="15dp"
+        android:textColor="@color/main_screen_text_color" />
+    <ProgressBar
+        android:id="@+id/loading_channel_token_fetch9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center"
+        android:indeterminateTint="@color/instahelo_blue"
+        android:indeterminateTintMode="src_atop"
+        android:visibility="invisible" />
+    <TextView
+        android:id="@+id/shcedule_topic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/shcedule_time"
+        android:layout_alignStart="@+id/shcedule_time"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="3dp"
+        android:textColor="@color/main_screen_text_color"
+        android:textStyle="bold" />
+    <TextView
+        android:id="@+id/shcedule_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="27dp"
+        android:textColor="@color/main_screen_text_color" />
+    <LinearLayout
+        android:id="@+id/sharing"
+        android:layout_width="132dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/hosts"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="32dp"
+        android:orientation="horizontal"
+        android:visibility="invisible">
+        <ImageView
+            android:id="@+id/wa"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/whatsapp" />
+        <ImageView
+            android:id="@+id/twitter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/twitter" />
+        <ImageView
+            android:id="@+id/fb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/fb" />
+    </LinearLayout>
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/sharing"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="36dp"
+        android:src="@drawable/join_room_in_progress"
+        android:visibility="invisible" />
+</RelativeLayout>

@@ -53,6 +53,17 @@
                     android:layout_marginEnd="140dp"
                     android:layout_height="30dp">
                 </ImageView>
+                <ImageView
+                    android:id="@+id/schedule_rooms"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignTop="@+id/invite"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginEnd="196dp"
+                    android:layout_marginRight="196dp"
+                    android:src="@drawable/letter_box_icon"></ImageView>
                 <com.google.android.material.imageview.ShapeableImageView
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
