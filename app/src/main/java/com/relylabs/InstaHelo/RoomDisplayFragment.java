@@ -580,7 +580,7 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
             user_profile_image.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    final CharSequence[] items = { "+Add", "-Remove", "Cancel" };
+                    final CharSequence[] items = { "+Add", "-Remove", "Close Room", "Cancel" };
                     AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                     builder.setItems(items, new DialogInterface.OnClickListener() {
                         @Override
@@ -591,6 +591,8 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
 
                             if (items[item].equals("+Add")) {
                                 process_additional_users(true);
+                            }else if (items[item].equals("Close Room")) {
+                                process_start_close_room_request();
                             } else if (items[item].equals("Cancel")) {
                                 dialog.dismiss();
                             } else if (items[item].equals("-Remove")) {
@@ -705,6 +707,32 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
         FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
         ft.add(R.id.fragment_holder, otherprof);
         ft.commitAllowingStateLoss();
+    }
+
+    public void process_start_close_room_request() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setMessage("You are going to close the room. Are you sure you want to do this?");
+        builder.setTitle("Warning");
+        builder.setPositiveButton("No", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+
+                // Do nothing, but close the dialog
+                dialog.dismiss();
+            }
+        });
+
+        builder.setNegativeButton("Yes", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                // Do nothing
+                RoomHelper.send_request_to_exit_everyone(activity);
+                dialog.dismiss();
+            }
+        });
+        builder.show();
     }
 
     public void process_additional_users(Boolean should_add) {

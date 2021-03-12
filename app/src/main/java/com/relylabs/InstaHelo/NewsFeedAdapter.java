@@ -30,14 +30,16 @@ import java.util.Calendar;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.ViewHolder> implements BottomScheduleRoom.ItemClickListener {
+public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.ViewHolder>  {
 
     private ArrayList<EventElement> mData;
     private LayoutInflater mInflater;
+    private String list_type;
     private NewsFeedAdapter.ItemClickListener mClickListener;
     final Calendar myCalendar = Calendar.getInstance();
     // data is passed into the constructor
-    public NewsFeedAdapter(Context context, ArrayList<EventElement> data) {
+    public NewsFeedAdapter(Context context, ArrayList<EventElement> data,  String list_type) {
+        this.list_type = list_type;
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
     }
@@ -55,13 +57,19 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.ViewHo
         holder.tagDisplayView.setText(mData.get(position).eventTitle);
 
         EventElement e = mData.get(position);
+        if (e.card_type.equals("INFO")) {
+            holder.itemView.setBackgroundColor(holder.itemView.getResources().getColor(R.color.neartagtheme));
+            holder.c2.setVisibility(View.INVISIBLE);
+            holder.c1.setVisibility(View.INVISIBLE);
+            return;
+        }
         if (e.eventPhotoUrls.size() < 2) {
             holder.c2.setVisibility(View.INVISIBLE);
         }
         if(e.isScheduled){
             holder.time.setVisibility(View.VISIBLE);
             myCalendar.setTimeInMillis(e.scheduleTimestamp);
-            String myFormat = "E, dd MMM yyyy hh:mm a z"; //In which you need put here
+            String myFormat = "E, dd MMM yyyy hh:mm a"; //In which you need put here
             SimpleDateFormat sdf = new SimpleDateFormat(myFormat);
             holder.time.setText(sdf.format(myCalendar.getTime()).toUpperCase());
         }
@@ -93,7 +101,7 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.ViewHo
         adapter.setClickListener(new NewsFeedCardElementAdapter.ItemClickListener() {
             @Override
             public void onTagClick(int index) {
-                if (mClickListener != null) mClickListener.onTagClick(position);
+                if (mClickListener != null) mClickListener.onRoomClick(position, list_type);
             }
         });
         holder.speaker_audience_list.setAdapter(adapter);
@@ -102,7 +110,6 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.ViewHo
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         layoutManager.setExtraLayoutSpace(DeviceUtils.getScreenHeight(holder.itemView.getContext()));
         holder.speaker_audience_list.setLayoutManager(layoutManager);
-
     }
 
     // total number of cells
@@ -110,12 +117,6 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.ViewHo
     public int getItemCount() {
         return mData.size();
     }
-
-    @Override
-    public void onItemClick(String item) {
-        Log.d("here","bottom");
-    }
-
 
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -154,7 +155,7 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.ViewHo
 
         @Override
         public void onClick(View view) {
-            if (mClickListener != null) mClickListener.onTagClick(getAdapterPosition());
+            if (mClickListener != null) mClickListener.onRoomClick(getAdapterPosition(), list_type);
         }
     }
 
@@ -170,6 +171,6 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.ViewHo
 
     // parent activity will implement this method to respond to click events
     public interface ItemClickListener {
-        void onTagClick(int index);
+        void onRoomClick(int index, String list_type);
     }
 }

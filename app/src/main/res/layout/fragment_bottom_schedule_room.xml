@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/White"
+    android:background="@drawable/rounded_dialog"
     android:clickable="true"
     android:focusable="true"
     android:orientation="vertical"
@@ -11,12 +11,10 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/speaker_grid_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:layout_below="@+id/shcedule_topic"
-        android:layout_alignParentStart="true"
         android:layout_marginStart="18dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="0dp" />
+        android:layout_marginEnd="10dp" />
     <TextView
         android:id="@+id/hosts"
         android:layout_width="wrap_content"
@@ -57,32 +55,59 @@
         android:textColor="@color/main_screen_text_color" />
     <LinearLayout
         android:id="@+id/sharing"
-        android:layout_width="132dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/hosts"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="32dp"
         android:orientation="horizontal"
-        android:visibility="invisible">
+        android:visibility="visible">
         <ImageView
             android:id="@+id/wa"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="10dp"
             android:layout_weight="1"
-            android:src="@drawable/whatsapp" />
+            android:src="@drawable/wa" />
         <ImageView
             android:id="@+id/twitter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:layout_weight="1"
+            android:layout_marginTop="-5dp"
             android:src="@drawable/twitter" />
         <ImageView
             android:id="@+id/fb"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="5dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_weight="1"
             android:src="@drawable/fb" />
     </LinearLayout>
+    <TextView
+        android:layout_marginTop="30dp"
+        android:visibility="invisible"
+        android:layout_below="@+id/sharing"
+        android:text="Room has not started yet"
+        android:id="@+id/room_not_started_text"
+        android:layout_width="match_parent"
+        android:textAlignment="center"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:visibility="invisible"
+        android:text="Dismiss"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="30dp"
+        android:layout_below="@+id/room_not_started_text"
+        android:layout_height="40dp"
+        android:layout_width="match_parent"
+        android:textAlignment="center"
+        android:id="@+id/dismiss_btn"
+        android:textColor="@color/blue1" />
     <ImageView
         android:id="@+id/imageView5"
         android:layout_width="wrap_content"
@@ -90,6 +115,6 @@
         android:layout_below="@+id/sharing"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="36dp"
-        android:src="@drawable/join_room_in_progress"
-        android:visibility="invisible" />
+        android:layout_marginBottom="50dp"
+        android:visibility="visible" />
 </RelativeLayout>

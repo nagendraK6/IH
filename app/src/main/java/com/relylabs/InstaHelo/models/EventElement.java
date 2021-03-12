@@ -14,6 +14,9 @@ public class EventElement {
 
     public String eventTitle;
 
+    // ROOM vs INFO
+    public String card_type;
+
     public String eventChannelName;
 
     public ArrayList<String> eventPhotoUrls;
@@ -39,5 +42,6 @@ public class EventElement {
         this.isScheduled = Boolean.FALSE;
         this.hasStarted = Boolean.TRUE;
         this.isRoomAdmin = false;
+        this.card_type = "ROOM";
     }
 }

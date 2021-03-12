@@ -81,7 +81,7 @@ We are thrilled to have you onboard ! \n\nWe are adding people gradually to Inst
     <string name="following_string">Following</string>
     <string name="notification">Notifications</string>
     <string name="all_room">All rooms</string>
-    <string name="schedule_text">You can find this conversation on all rooms screen at scheduled time</string>
+    <string name="schedule_text">You can always find this room on the `All Rooms` screen</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="cancel">Cancel</string>

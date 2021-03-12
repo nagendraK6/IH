@@ -34,11 +34,7 @@ import cz.msebera.android.httpclient.Header;
 public class RoomHelper {
 
     public static void showDialogRoomCreate(FragmentActivity activity) {
-        Fragment fr = new RoomCreateBottomSheetDialogFragment();
-        FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
-        ft.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top);
-        ft.add(R.id.fragment_holder, fr);
-        ft.commitAllowingStateLoss();
+        Helper.addFragmentWithTag(new RoomCreateBottomSheetDialogFragment(), activity, Constants.FRAGMENT_CREATE_ROOM_A);
     }
 
 
@@ -293,6 +289,16 @@ public class RoomHelper {
         }
     }
 
+    public static void send_request_to_exit_everyone(FragmentActivity activity) {
+        Bundle data_bundle = new Bundle();
+        data_bundle.putString("user_action", "CLOSE_ROOM");
+        Intent intent = new Intent("data_from_fragment");
+        intent.putExtras(data_bundle);
+        if (activity != null) {
+            activity.sendBroadcast(intent);
+        }
+    }
+
     public static boolean isServiceRunningInForeground(Context context, Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
@@ -304,5 +310,13 @@ public class RoomHelper {
             }
         }
         return false;
+    }
+
+    public static void ask_main_for_refresh_content(FragmentActivity activity) {
+        Bundle data_bundle = new Bundle();
+        data_bundle.putString("update_type", "REFRESH_FEED");
+        Intent intent = new Intent("update_from_service");
+        intent.putExtras(data_bundle);
+        activity.sendBroadcast(intent);
     }
 }

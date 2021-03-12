@@ -55,7 +55,6 @@ public class NewsFeedCardElementAdapter extends RecyclerView.Adapter<NewsFeedCar
         if (!e.IsSpeaker) {
             holder.speech_icon.setVisibility(View.INVISIBLE);
         }
-
     }
 
     // total number of cells

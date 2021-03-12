@@ -3,6 +3,7 @@ package com.relylabs.InstaHelo.Utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
@@ -332,6 +333,25 @@ public class Helper {
         }
     }
 
+    public static void addFragmentWithTag(Fragment fragment_to_start, FragmentActivity activity_ref, String tag) {
+        if(activity_ref!=null) {
+            FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
+            ft.add(R.id.fragment_holder, fragment_to_start, tag);
+            ft.commitAllowingStateLoss();
+        }
+    }
+
+    public static void removeFragmentWithTag(FragmentActivity activity_ref, String tag) {
+        if(activity_ref!=null) {
+            Fragment fragment = activity_ref.getSupportFragmentManager().findFragmentByTag(tag);
+            if(fragment != null) {
+                FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
+                ft.remove(fragment);
+                ft.commitAllowingStateLoss();
+            }
+        }
+    }
+
     public static void replaceFragment(Fragment fragment_to_start, FragmentActivity activity_ref) {
         if(activity_ref!=null) {
             FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
@@ -364,5 +384,18 @@ public class Helper {
         // uncomment the code after testing
        // Intent i= new Intent(activity, ContactUploadBackgroundService.class);
        // activity.startService(i);
+    }
+
+    public static Boolean isAppInstalled(FragmentActivity activity, String package_name){
+        PackageManager pm = activity.getPackageManager();
+        boolean app_installed;
+        try {
+            pm.getPackageInfo(package_name, PackageManager.GET_ACTIVITIES);
+            app_installed = true;
+        }
+        catch (PackageManager.NameNotFoundException e) {
+            app_installed = false;
+        }
+        return app_installed;
     }
 }

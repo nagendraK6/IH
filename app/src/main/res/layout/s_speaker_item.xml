@@ -1,20 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="6dp"
-    android:gravity="center"
-    android:padding="0dp">
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/speaker_listener_moderator_image"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="0dp"
-            android:background="@drawable/empty_user_profile_image" />
-    </RelativeLayout>
-</LinearLayout>
+    android:layout_marginTop="10dp"
+    android:layout_height="wrap_content">
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/speaker_listener_moderator_image_bottom_sheet"
+        android:background="@drawable/empty_inviter"
+        android:layout_width="60dp"
+        android:layout_height="60dp"/>
+</RelativeLayout>

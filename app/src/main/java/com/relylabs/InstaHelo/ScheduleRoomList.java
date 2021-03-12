@@ -26,6 +26,7 @@ import android.widget.ProgressBar;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.relylabs.InstaHelo.Utils.Constants;
 import com.relylabs.InstaHelo.Utils.RoomHelper;
 import com.relylabs.InstaHelo.bottomsheet.BottomScheduleRoom;
 import com.relylabs.InstaHelo.followerList.FollowerListAdapter;
@@ -91,29 +92,12 @@ public class ScheduleRoomList extends Fragment implements NewsFeedAdapter.ItemCl
         });
         fetch_all_events(true);
         prepareRecyclerView();
-
-        ImageView start_a_room_cta = view.findViewById(R.id.start_a_room_cta);
-
-        start_a_room_cta.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("start_room","clicked");
-                UserSettings us = UserSettings.getSettings();
-                if (us.is_current_user_admin && !us.selected_event_id.equals(-1)) {
-                    showDialogForCurrentRoomExit("Action Moderator", "You are an active moderator of a room. To create the room you have to leave the conversation. Do you want to leave the room before creating new room?");
-                } else if (!us.selected_event_id.equals(-1)) {
-                    showDialogForCurrentRoomExit("Action Conversation", "Active conversation in progress. Do you want to leave the room before creating new room?");
-                } else {
-                    RoomHelper.showDialogRoomCreate(activity_ref);
-                }
-            }
-        });
     }
 
     void prepareRecyclerView() {
         recyclerView = fragment_view.findViewById(R.id.list_rooms);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
-        adapter = new NewsFeedAdapter(activity_ref,all_feeds);
+        adapter = new NewsFeedAdapter(activity_ref,all_feeds, "SCHEDULED_ROOM");
         recyclerView.setAdapter(adapter);
         adapter.setClickListener(this);
 
@@ -201,16 +185,9 @@ public class ScheduleRoomList extends Fragment implements NewsFeedAdapter.ItemCl
         client.addHeader("Authorization", "Token " + user.AccessToken);
         client.post(App.getBaseURL() + "page/all_events_scheduled", params, jrep);
     }
-    @Override
-    public void onTagClick(int index) {
-        Log.d("here",String.valueOf(index));
-//        String room_slug = all_feeds.get(index).roomSlug;
-//        ScheduleRoom room = new ScheduleRoom();
-//        Bundle args = new Bundle();
-//        args.putString("room_slug", room_slug);
-//        room.setArguments(args);
-//        loadFragment(room,activity_ref);
 
+//    @Override
+    public void onTagClick(int index) {
         BottomScheduleRoom bottomSheet =
                 BottomScheduleRoom.newInstance();
 
@@ -280,4 +257,8 @@ public class ScheduleRoomList extends Fragment implements NewsFeedAdapter.ItemCl
         super.onDestroy();
     }
 
+    @Override
+    public void onRoomClick(int index, String list_type) {
+
+    }
 }

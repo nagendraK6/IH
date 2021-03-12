@@ -2,6 +2,7 @@ package com.relylabs.InstaHelo.bottomsheet;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -60,14 +61,20 @@ import cz.msebera.android.httpclient.Header;
 
 import static com.relylabs.InstaHelo.Utils.Helper.removefragment;
 
-public class BottomScheduleRoom extends BottomSheetDialogFragment implements View.OnClickListener {
+public class BottomScheduleRoom extends BottomSheetDialogFragment {
+
+
+    TextView title;
+    TextView date_schedule;
+    TextView speaker_list;
+    ImageView action_btn;
+    TextView room_not_started_text, dismiss_btn;
+
+
     public static final String TAG = "ActionBottomDialog";
-    private static final int PERMISSION_REQ_ID_RECORD_AUDIO = 0;
-    private static final int PERMISSION_REQ_ID_RECORD_AUDIO_INIT = 1;
     SpeakerAdapter adapter;
     RecyclerView recyclerView;
     final Calendar myCalendar = Calendar.getInstance();
-    private ItemClickListener mListener;
     View fragment_view;
     public Boolean isRoomAdmin = false;
     public Boolean hasStarted = false;
@@ -75,8 +82,7 @@ public class BottomScheduleRoom extends BottomSheetDialogFragment implements Vie
     private  ArrayList<String> usernames = new ArrayList<String>();
     private  ArrayList<String> img = new ArrayList<String>();
     private  ArrayList<String> user_ids = new ArrayList<>();
-    private Integer tappedRoomId = -9;
-    Boolean is_room_fragment_loaded = false;
+
     public static BottomScheduleRoom newInstance() {
         return new BottomScheduleRoom();
     }
@@ -84,6 +90,10 @@ public class BottomScheduleRoom extends BottomSheetDialogFragment implements Vie
     int event_id;
     String title_main;
     String channelName;
+    String room_slug;
+
+    ImageView whatsapp, facebook, twitter;
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -91,44 +101,100 @@ public class BottomScheduleRoom extends BottomSheetDialogFragment implements Vie
             activity_ref=(FragmentActivity) context;
         }
     }
+
     @Nullable @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_bottom_schedule_room, container, false);
     }
+
+    @Override
+    public int getTheme() {
+        return R.style.AppBottomSheetDialogTheme;
+    }
+
     @Override public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         fragment_view = view;
-        String room_slug = this.getArguments().getString("room_slug");
+        room_slug = this.getArguments().getString("room_slug");
         Log.d("room_slug",room_slug);
         getData(room_slug);
 
-        ImageView action_btn = view.findViewById(R.id.imageView5);
 
+        action_btn = view.findViewById(R.id.imageView5);
+        title = fragment_view.findViewById(R.id.shcedule_topic);
+        date_schedule = fragment_view.findViewById(R.id.shcedule_time);
+        speaker_list = fragment_view.findViewById(R.id.hosts);
+
+        room_not_started_text = fragment_view.findViewById(R.id.room_not_started_text);
+        dismiss_btn = fragment_view.findViewById(R.id.dismiss_btn);
+        dismiss_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
         action_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("hasstarted", hasStarted.toString());
-                Log.d("is_admin",isRoomAdmin.toString());
                 if(isRoomAdmin && !hasStarted){
+                    // updates to server that room start and join the room.
                     sendStartNotiServer();
-                    dismiss();
-                    startRoom();
                 }
                 else if(isRoomAdmin && hasStarted){
+                    joinTheRoom();
                     dismiss();
-                    startRoom();
                 }
                 else if (!isRoomAdmin && !hasStarted){
                     Log.d("room_not_started","log");
                 }
                 else if(!isRoomAdmin && hasStarted){
+                    joinTheRoom();
                     dismiss();
-                    startRoom();
                 }
             }
         });
+
+        whatsapp = view.findViewById(R.id.wa);
+        twitter = view.findViewById(R.id.twitter);
+        facebook = view.findViewById(R.id.fb);
+        whatsapp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                shareEvent("com.whatsapp");
+            }
+        });
+        twitter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                shareEvent("com.twitter.android");
+            }
+        });
+        facebook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                shareEvent("com.facebook.katana");
+            }
+        });
     }
+
+    public void shareEvent(String package_name){
+        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+        if (Helper.isAppInstalled(activity_ref,package_name)) {
+            sharingIntent.setPackage(package_name);
+        }
+        String myFormat = "E, dd MMM yyyy hh:mm a z"; //In which you need put here
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat);
+        String time_share = sdf.format(myCalendar.getTime()).toUpperCase();
+        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Instahelo Room");
+        String shareBody =
+                "Hey! checkout this audio room " + title_main  + " on @instahelo app. Join me at " + time_share + " \n" +
+                        "Download from https://play.google.com/store/apps/details?id=com.relylabs.InstaHelo . Click here for more details : " + App.getBaseURL() + room_slug ;
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+        startActivity(Intent.createChooser(sharingIntent, "Share via"));
+    }
+
     public void sendStartNotiServer(){
         final User user = User.getLoggedInUser();
         AsyncHttpClient client = new AsyncHttpClient();
@@ -143,11 +209,13 @@ public class BottomScheduleRoom extends BottomSheetDialogFragment implements Vie
                     busy.setVisibility(View.INVISIBLE);
                     Log.d("response", response.toString());
                     String error_message = response.getString("error_message");
+                    joinTheRoom();
+                    dismiss();
 
                 }
                 catch (JSONException e) {
                     e.printStackTrace();
-                    removefragment(activity_ref);
+                   dismiss();
                 }
 
             }
@@ -161,78 +229,22 @@ public class BottomScheduleRoom extends BottomSheetDialogFragment implements Vie
         client.addHeader("Authorization", "Token " + user.AccessToken);
         client.post(App.getBaseURL() + "page/start_schedule_room", params, jrep);
     }
-    public void startRoom(){
-        UserSettings us = UserSettings.getSettings();
-        tappedRoomId = event_id;
-        if (tappedRoomId != -1 && tappedRoomId == us.selected_event_id) {
-            loadRoomFragment();
-            return;
-        }
 
-        us.selected_channel_name  =  channelName;
-        us.selected_channel_display_name = title_main;
-        us.save();
+    public void joinTheRoom(){
+        // send the notification to main screen fragment and it will process as a normal room click
+        Bundle data_bundle = new Bundle();
+        data_bundle.putString("user_action", "JOIN_ROOM");
+        data_bundle.putInt("room_id", event_id);
+        data_bundle.putString("channel_name", channelName);
+        data_bundle.putString("room_title", title_main);
 
-//                    show_busy_indicator();
-
-        if (checkPermissionInitial(activity_ref)) {
-            if (tappedRoomId != us.selected_event_id && us.selected_event_id != -1) {
-                // user switching channel...
-                // don't save room id as the service will use to leave the channel and set in service
-                RoomHelper.send_channel_switch(activity_ref, us.selected_channel_name, us.selected_channel_display_name, tappedRoomId);
-            } else {
-                us.selected_event_id = tappedRoomId;
-                us.save();
-                RoomHelper.sendRoomServieStartRequest(activity_ref, us.selected_channel_name, us.selected_channel_display_name, us.selected_event_id);
-            }
-        }
-    }
-
-    public boolean checkPermissionInitial(final Context context) {
-        int currentAPIVersion = Build.VERSION.SDK_INT;
-        if (currentAPIVersion >= android.os.Build.VERSION_CODES.M) {
-            if (
-                    ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED
-            ) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, android.Manifest.permission.RECORD_AUDIO)) {
-                    requestPermissions(new String[]{android.Manifest.permission.RECORD_AUDIO}, PERMISSION_REQ_ID_RECORD_AUDIO_INIT);
-                } else {
-                    requestPermissions(new String[]{android.Manifest.permission.RECORD_AUDIO}, PERMISSION_REQ_ID_RECORD_AUDIO_INIT);
-                }
-                return false;
-            } else {
-                return true;
-            }
-        } else {
-            return true;
-        }
-    }
-
-    private void loadRoomFragment() {
-        unloadFragmentBottom();
-        if (!is_room_fragment_loaded) {
-            UserSettings us = UserSettings.getSettings();
-            Bundle args = new Bundle();
-            args.putString("update_type", "LIST_CHANGE");
-            args.putString("event_title", us.selected_channel_display_name);
-            args.putInt("event_id", us.selected_event_id);
-            Fragment fr = new RoomDisplayFragment();
-            FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
-            ft.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top);
-            fr.setArguments(args);
-            ft.add(R.id.fragment_holder, fr);
-            is_room_fragment_loaded = true;
-            ft.commitAllowingStateLoss();
-        }
-    }
-    private void unloadFragmentBottom() {
+        Intent intent = new Intent("update_from_room");
+        intent.putExtras(data_bundle);
         if (activity_ref != null) {
-            Fragment fragment = activity_ref.getSupportFragmentManager().findFragmentByTag("bottom_sheet");
-            if(fragment != null) {
-                activity_ref.getSupportFragmentManager().beginTransaction().remove(fragment).commitAllowingStateLoss();
-            }
+            activity_ref.sendBroadcast(intent);
         }
     }
+
     void getData(String room_slug){
         final User user = User.getLoggedInUser();
         AsyncHttpClient client = new AsyncHttpClient();
@@ -241,19 +253,17 @@ public class BottomScheduleRoom extends BottomSheetDialogFragment implements Vie
         params.add("room_slug",room_slug);
         ProgressBar busy = fragment_view.findViewById(R.id.loading_channel_token_fetch9);
         LinearLayout sharing = fragment_view.findViewById(R.id.sharing);
-        ImageView start = fragment_view.findViewById(R.id.imageView5);
         busy.setVisibility(View.VISIBLE);
         JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
+
                     busy.setVisibility(View.INVISIBLE);
                     sharing.setVisibility(View.VISIBLE);
-                    start.setVisibility(View.VISIBLE);
                     Log.d("response_follow", response.toString());
-                    TextView title = fragment_view.findViewById(R.id.shcedule_topic);
-                    TextView date_schedule = fragment_view.findViewById(R.id.shcedule_time);
-                    TextView speaker_list = fragment_view.findViewById(R.id.hosts);
+
+
                     String title_json = response.getString("title");
                     title_main = title_json;
                     int id = response.getInt("event_id");
@@ -263,11 +273,25 @@ public class BottomScheduleRoom extends BottomSheetDialogFragment implements Vie
                     isRoomAdmin = response.getBoolean("is_room_admin");
                     hasStarted = response.getBoolean("has_started");
                     long timestamp = response.getLong("schedule_time");
+
+
+                    if (isRoomAdmin && hasStarted == false) {
+                        action_btn.setBackground(activity_ref.getDrawable(R.drawable.start_scheduled_room));
+                    } else if (hasStarted) {
+                        action_btn.setBackground(activity_ref.getDrawable(R.drawable.join_room_in_progress));
+                    } else {
+                        action_btn.setVisibility(View.INVISIBLE);
+                        room_not_started_text.setVisibility(View.VISIBLE);
+                        dismiss_btn.setVisibility(View.VISIBLE);
+                    }
+
                     myCalendar.setTimeInMillis(timestamp);
-                    String myFormat = "E, dd MMM yyyy hh:mm a z"; //In which you need put here
+                    String myFormat = "E, dd MMM yyyy hh:mm a"; //In which you need put here
                     SimpleDateFormat sdf = new SimpleDateFormat(myFormat);
                     date_schedule.setText(sdf.format(myCalendar.getTime()).toUpperCase());
                     JSONArray speaker_list_json = response.getJSONArray("speakers_list");
+
+
                     String sp_list = "With ";
                     for(int i=0;i<speaker_list_json.length();i++){
                         Log.d("array",speaker_list_json.get(i).toString());
@@ -281,13 +305,11 @@ public class BottomScheduleRoom extends BottomSheetDialogFragment implements Vie
                     speaker_list.setText(sp_list.substring(0,sp_list.length()-2));
                     title.setText(title_json);
                     prepareRecyclerView();
-
                 }
                 catch (JSONException e) {
                     e.printStackTrace();
                     removefragment(activity_ref);
                 }
-
             }
 
             @Override
@@ -302,30 +324,12 @@ public class BottomScheduleRoom extends BottomSheetDialogFragment implements Vie
 
     void prepareRecyclerView() {
         recyclerView = fragment_view.findViewById(R.id.speaker_grid_list);
-        int layout_size = usernames.size() <= 3 ? usernames.size() : 6;
-        GridLayoutManager gm = new GridLayoutManager(fragment_view.getContext(), 6);
-        gm.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                Log.d("debug_c", "Span size check" +String.valueOf(position));
-                return 1;
-            }
-        });
-        recyclerView.setLayoutManager(gm);
+        recyclerView.setLayoutManager( new GridLayoutManager(getContext(), 5));
         adapter = new SpeakerAdapter(getContext(), names, usernames, img,user_ids);
         recyclerView.setAdapter(adapter);
     }
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
-    }
-    @Override public void onClick(View view) {
-        TextView tvSelected = (TextView) view;
-        mListener.onItemClick(tvSelected.getText().toString());
-        dismiss();
-    }
-    public interface ItemClickListener {
-        void onItemClick(String item);
     }
 }

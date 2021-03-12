@@ -37,6 +37,8 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.relylabs.InstaHelo.R;
+import com.relylabs.InstaHelo.Utils.Constants;
+import com.relylabs.InstaHelo.Utils.Helper;
 import com.relylabs.InstaHelo.Utils.Logger;
 import com.relylabs.InstaHelo.models.User;
 import com.relylabs.InstaHelo.models.UsersInRoom;
@@ -90,14 +92,11 @@ public class RoomCreateBottomSheetDialogFragment extends Fragment  {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        activity.unregisterReceiver(broadCastNewMessage);
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        IntentFilter new_post = new IntentFilter("update_from_schedule");
-        activity.registerReceiver(broadCastNewMessage, new_post);
         return inflater.inflate(R.layout.fragment_room_create_view, container, false);
     }
 
@@ -166,7 +165,7 @@ public class RoomCreateBottomSheetDialogFragment extends Fragment  {
                     args.putString("title", room_title);
                     args.putString("type",room_type);
                     sch.setArguments(args);
-                    loadFragment(sch, activity);
+                    Helper.addFragmentWithTag(sch, activity, Constants.FRAGMENT_CREATE_ROOM_B);
                 }
             }
         });
@@ -228,22 +227,4 @@ public class RoomCreateBottomSheetDialogFragment extends Fragment  {
             manager.popBackStack();
         }
     }
-
-
-    BroadcastReceiver broadCastNewMessage = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String user_action = intent
-                    .getStringExtra("user_action");
-            Integer uid;
-            switch (user_action) {
-                case "REMOVE_FRAGMENT":
-                    hideKeyboard(getContext());
-                    removefragment();
-                    break;
-            }
-        }
-    };
-
-
 }

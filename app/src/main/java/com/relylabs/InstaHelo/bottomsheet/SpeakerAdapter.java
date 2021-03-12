@@ -64,7 +64,7 @@ public class SpeakerAdapter extends RecyclerView.Adapter<SpeakerAdapter.ViewHold
     public void onBindViewHolder(final SpeakerAdapter.ViewHolder holder, final int position) {
 //        holder.name.setText(this.names.get(position));
         if(!this.img.get(position).equals("")){
-            float radius = context.getResources().getDimension(R.dimen.default_corner_radius_profile_schedule_small);
+            float radius = context.getResources().getDimension(R.dimen.default_corner_radius_profile_follow);
             holder.prof.setShapeAppearanceModel(holder.prof.getShapeAppearanceModel()
                     .toBuilder()
                     .setTopRightCorner(CornerFamily.ROUNDED, radius)
@@ -72,6 +72,7 @@ public class SpeakerAdapter extends RecyclerView.Adapter<SpeakerAdapter.ViewHold
                     .setBottomLeftCorner(CornerFamily.ROUNDED, radius)
                     .setBottomRightCorner(CornerFamily.ROUNDED, radius)
                     .build());
+
             Picasso.get().load(this.img.get(position)).into(holder.prof);
         }
         holder.prof.setOnClickListener(new View.OnClickListener() {
@@ -98,7 +99,7 @@ public class SpeakerAdapter extends RecyclerView.Adapter<SpeakerAdapter.ViewHold
         //        TextView name;
         ViewHolder(View itemView) {
             super(itemView);
-            prof = itemView.findViewById(R.id.speaker_listener_moderator_image);
+            prof = itemView.findViewById(R.id.speaker_listener_moderator_image_bottom_sheet);
 //            name = itemView.findViewById(R.id.user_name_prof);
             itemView.setOnClickListener(this);
         }

@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -115,9 +116,11 @@ public class ActiveRoomService extends Service {
         });
     }
 
-    void processExit(Boolean should_shut_down_service, Integer room_id) {
+    void processExit(Boolean should_shut_down_service, Integer room_id, Boolean is_non_looper) {
         stopTimer();
-        leave_channel_server_update(String.valueOf(room_id));
+        if (!is_non_looper) {
+            leave_channel_server_update(String.valueOf(room_id));
+        }
         process_leave_channel();
         selected_event_id = -1;
         UserSettings us = UserSettings.getSettings();
@@ -157,7 +160,7 @@ public class ActiveRoomService extends Service {
                             .getStringExtra("channel_display_name");
                     Integer new_selected_event_id =  intent
                             .getIntExtra("room_id", -1);
-                    processExit(false, selected_event_id);
+                    processExit(false, selected_event_id, false);
                     // process remove old channel
                     selected_event_id = new_selected_event_id;
                     UserSettings us = UserSettings.getSettings();
@@ -223,16 +226,25 @@ public class ActiveRoomService extends Service {
                     break;
 
 
+             case "CLOSE_ROOM":
+                    uid =  intent
+                            .getIntExtra("uid", -1);
+                    send_message("CLOSE_ROOM", uid);
+                    // switch_roles_on_server(1, uid);
+                    break;
+
+
                 case "MUTE_UNMUTE_CLICK":
                     process_mute_unmute();
                     break;
+
 
                 case "MUTE_UNMUTE_CLICK_RECONNECT":
                     process_channel_disconnect_reconnect();
                     break;
 
                 case "LEAVE_CHANNEL_EXIT":
-                    processExit(true, selected_event_id);
+                    processExit(true, selected_event_id, false);
                     break;
             }
             Log.d("debug_data", "received broadcast " + user_action);
@@ -609,16 +621,15 @@ public class ActiveRoomService extends Service {
             Log.d("debug_ping", "Sending Leave Request: Check");
             if (UsersInRoom.getAllSpeakers().size() == 0) {
                 askforexit();
-                Log.d("debug_ping", "Sending Leave Request: Success");
-                processExit(true, selected_event_id);
+                processExit(true, selected_event_id, false);
             }
 
             // check if the app is in background > 30 mins
             RelySystem rs = RelySystem.getSystemSettings();
-            if (!rs.is_foreground && System.currentTimeMillis()/1000 - rs.timestamp_updated > 3600) {
+            if (!rs.is_foreground && System.currentTimeMillis()/1000 - rs.timestamp_updated > 1800) {
                 Log.d("debug_ping", "App in background for more than 30 mins");
                 askforexit();
-                processExit(true, selected_event_id);
+                processExit(true, selected_event_id, false);
             }
             handlerExit.postDelayed(this, 60000);
         }
@@ -719,7 +730,7 @@ public class ActiveRoomService extends Service {
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         Log.d("debug_data", "Task removed");
-        processExit(true,selected_event_id);
+        processExit(true,selected_event_id, false);
         super.onTaskRemoved(rootIntent);
     }
 
@@ -775,6 +786,12 @@ public class ActiveRoomService extends Service {
                 us.audience_hand_raised = true;
                 us.save();
                 askforRefresh();
+            }
+
+            if (user_action.equals("CLOSE_ROOM")) {
+                askforexit();
+                processExit(true, selected_event_id, true);
+                return;
             }
 
             if (User.getLoggedInUser().UserID.equals(user_id)) {

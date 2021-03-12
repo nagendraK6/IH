@@ -315,7 +315,6 @@ public class MainActivity extends AppCompatActivity {
 
     private Fragment findFragment() {
         User user = User.getLoggedInUser();
-
         if (user == null) {
             return new GetStartedFragment();
         }

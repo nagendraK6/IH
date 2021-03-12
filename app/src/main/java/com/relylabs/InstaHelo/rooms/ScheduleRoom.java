@@ -2,6 +2,7 @@ package com.relylabs.InstaHelo.rooms;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -26,6 +27,8 @@ import com.loopj.android.http.RequestParams;
 import com.relylabs.InstaHelo.App;
 import com.relylabs.InstaHelo.MainScreenFragment;
 import com.relylabs.InstaHelo.R;
+import com.relylabs.InstaHelo.Utils.Constants;
+import com.relylabs.InstaHelo.Utils.RoomHelper;
 import com.relylabs.InstaHelo.followerList.FollowerListAdapter;
 import com.relylabs.InstaHelo.models.User;
 
@@ -34,7 +37,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
 
@@ -51,6 +56,16 @@ public class ScheduleRoom extends Fragment {
     private  ArrayList<String> usernames = new ArrayList<String>();
     private  ArrayList<String> img = new ArrayList<String>();
     private  ArrayList<String> user_ids = new ArrayList<>();
+    Boolean has_just_created = false;
+    ImageView whatsapp, facebook, twitter;
+    String room_title;
+    final Calendar myCalendar = Calendar.getInstance();
+
+    TextView title;
+    TextView date_schedule;
+    TextView time_schedule;
+    TextView speaker_list;
+    String room_slug;
 
     FragmentActivity activity_ref;
     @Override
@@ -75,33 +90,88 @@ public class ScheduleRoom extends Fragment {
 
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        String room_slug = getArguments().getString("room_slug");
-        Log.d("room_slug",room_slug);
+        room_slug = getArguments().getString("room_slug");
+        if (getArguments().containsKey("has_just_created")) {
+            has_just_created = Boolean.TRUE;
+            TextView new_room_info = view.findViewById(R.id.new_room_info);
+            new_room_info.setVisibility(View.VISIBLE);
+        }
+
         fragment_view = view;
-        ImageView back = view.findViewById(R.id.back_button_schedule);
-        TextView all_rooms = view.findViewById(R.id.all_room);
-        ImageView go_to_all_rooms = view.findViewById(R.id.go_to_all_rooms);
-        getData(room_slug);
-        back.setOnClickListener(new View.OnClickListener() {
+        title = fragment_view.findViewById(R.id.schdeule_title);
+        date_schedule = fragment_view.findViewById(R.id.date_schedule);
+        time_schedule = fragment_view.findViewById(R.id.time_schedule);
+        speaker_list = fragment_view.findViewById(R.id.speaker_list);
+        room_title = "";
+
+        whatsapp = view.findViewById(R.id.wa);
+        twitter = view.findViewById(R.id.twitter);
+        facebook = view.findViewById(R.id.fb);
+        whatsapp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                shareEvent("com.whatsapp");
+            }
+        });
+        twitter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                shareEvent("com.twitter.android");
+            }
+        });
+        facebook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                shareEvent("com.facebook.katana");
+            }
+        });
+      //  ImageView back = view.findViewById(R.id.back_button_schedule);
+        //TextView all_rooms = view.findViewById(R.id.all_room);
+        ImageView go_to_all_rooms = view.findViewById(R.id.go_to_all_rooms);
+        getData(room_slug);
+        /*back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                RoomHelper.ask_main_for_refresh_content(activity_ref);
+                cleanup_composer_is_needed();
                 Helper.removefragment(activity_ref);
             }
         });
         all_rooms.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                RoomHelper.ask_main_for_refresh_content(activity_ref);
+                cleanup_composer_is_needed();
                 Helper.removefragment(activity_ref);
             }
-        });
+        });*/
         go_to_all_rooms.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                RoomHelper.ask_main_for_refresh_content(activity_ref);
+                cleanup_composer_is_needed();
                 Helper.removefragment(activity_ref);
             }
         });
-
     }
+
+    public void shareEvent(String package_name){
+        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+        if (Helper.isAppInstalled(activity_ref,package_name)) {
+            sharingIntent.setPackage(package_name);
+        }
+        String myFormat = "E, dd MMM yyyy hh:mm a z"; //In which you need put here
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat);
+        String time_share = sdf.format(myCalendar.getTime()).toUpperCase();
+        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Instahelo Room");
+        String shareBody =
+                "Hey! checkout this audio room " + room_title  + " on @instahelo app. Join me at " + time_share + " \n" +
+                        "Download from https://play.google.com/store/apps/details?id=com.relylabs.InstaHelo . Click here for more details : " + App.getBaseURL() + room_slug ;
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+        startActivity(Intent.createChooser(sharingIntent, "Share via"));
+    }
+
     void getData(String room_slug){
         ProgressBar busy = fragment_view.findViewById(R.id.loading_channel_token_fetch8);
         busy.setVisibility(View.VISIBLE);
@@ -117,11 +187,8 @@ public class ScheduleRoom extends Fragment {
                 busy.setVisibility(View.INVISIBLE);
                 try {
                     Log.d("response_follow", response.toString());
-                    TextView title = fragment_view.findViewById(R.id.schdeule_title);
-                    TextView date_schedule = fragment_view.findViewById(R.id.date_schedule);
-                    TextView time_schedule = fragment_view.findViewById(R.id.time_schedule);
-                    TextView speaker_list = fragment_view.findViewById(R.id.speaker_list);
-                    String title_json = response.getString("title");
+
+                    room_title = response.getString("title");
                     long timestamp = response.getLong("schedule_time");
                     JSONArray speaker_list_json = response.getJSONArray("speakers_list");
                     String sp_list = "Speakers: ";
@@ -135,7 +202,8 @@ public class ScheduleRoom extends Fragment {
                         sp_list += temp.get("name").toString() + ", ";
                     }
                     speaker_list.setText(sp_list.substring(0,sp_list.length()-2));
-                    title.setText(title_json);
+                    title.setText(room_title);
+                    myCalendar.setTimeInMillis(timestamp);
                     Date d = new Date((long)timestamp);
                     String dateToStr = DateFormat.getDateInstance().format(d);
                     String timeToStr = DateFormat.getTimeInstance(DateFormat.SHORT).format(d);
@@ -175,4 +243,10 @@ public class ScheduleRoom extends Fragment {
         recyclerView.setAdapter(adapter);
     }
 
+    void cleanup_composer_is_needed() {
+        if (has_just_created) {
+            Helper.removeFragmentWithTag(activity_ref, Constants.FRAGMENT_CREATE_ROOM_B);
+            Helper.removeFragmentWithTag(activity_ref, Constants.FRAGMENT_CREATE_ROOM_A);
+        }
+    }
 }

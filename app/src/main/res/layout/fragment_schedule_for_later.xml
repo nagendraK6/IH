@@ -154,7 +154,6 @@
         android:text="Start a Room"
         android:textAppearance="@style/OnboardingTop"
         android:textSize="16sp"
-
         />
 
     <TextView
@@ -176,6 +175,17 @@
         android:layout_marginStart="86dp"
         android:layout_marginTop="27dp"
         android:textStyle="bold" />
+
+    <ProgressBar
+        android:id="@+id/busy_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center"
+        android:indeterminateTint="@color/instahelo_blue"
+        android:indeterminateTintMode="src_atop"
+        android:visibility="invisible" />
 
     <ImageView
         android:id="@+id/schedule_event"
@@ -220,6 +230,7 @@
         android:layout_marginStart="0dp"
         android:layout_marginTop="13dp"
         android:text="@string/add_host"
+        android:visibility="invisible"
         android:textColor="@color/follower_blue"
         android:textStyle="bold" />
 </RelativeLayout>

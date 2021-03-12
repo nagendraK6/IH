@@ -42,6 +42,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.relylabs.InstaHelo.Utils.Helper;
 import com.relylabs.InstaHelo.Utils.RoomHelper;
+import com.relylabs.InstaHelo.bottomsheet.BottomScheduleRoom;
 import com.relylabs.InstaHelo.models.EventCardUserElement;
 import com.relylabs.InstaHelo.models.EventElement;
 import com.relylabs.InstaHelo.models.User;
@@ -90,8 +91,8 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
     private static final int PERMISSION_REQ_ID_RECORD_AUDIO_INIT = 1;
 
 
-    NewsFeedAdapter adapter;
-    RecyclerView news_feed_list;
+    NewsFeedAdapter active_rooms_adapter, scheduled_rooms_adapter;
+    RecyclerView active_rooms_list, schedule_rooms_list;
 
     ProgressBar busy;
 
@@ -99,9 +100,9 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
     Boolean show_inviter_card = true;
 
     private FragmentActivity activity;
-    ArrayList<EventElement> all_feeds;
+    ArrayList<EventElement> all_active_rooms, all_scheduled_rooms;
     Boolean is_room_fragment_loaded = false;
-
+    TextView uc;
 
     /// this is what service returns to the end  main fragment and main fragment decides.
     // .room fragment to load
@@ -210,6 +211,16 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                         process_mute_unmute();
                     }
                     break;
+
+                case "JOIN_ROOM":
+                    Integer room_id =  intent
+                            .getIntExtra("room_id", -1);
+                    room_title =  intent
+                            .getStringExtra("room_title");
+                    String channel_name =  intent
+                            .getStringExtra("channel_name");
+                    start_join_room(room_id, channel_name, room_title);
+                    break;
             }
             Log.d("debug_data", "received broadcast " + user_action);
         }
@@ -227,7 +238,8 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         IntentFilter service_ins = new IntentFilter("update_from_service");
         activity.registerReceiver(broadcastReceiverFromService, service_ins);
 
-        all_feeds = new ArrayList<>();
+        all_active_rooms = new ArrayList<>();
+        all_scheduled_rooms = new ArrayList<>();
         return view;
     }
 
@@ -235,10 +247,15 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d("debug_activity", "OnView Created called MainScreenFragment");
-        news_feed_list = view.findViewById(R.id.news_feed_list);
-        // Create adapter passing in the sample user data
-        adapter = new NewsFeedAdapter(activity, all_feeds);
-        adapter.setClickListener(this);
+
+        active_rooms_list = view.findViewById(R.id.active_rooms);
+        active_rooms_adapter = new NewsFeedAdapter(activity, all_active_rooms, "ACTIVE");
+        active_rooms_adapter.setClickListener(this);
+
+
+        schedule_rooms_list = view.findViewById(R.id.schedule_rooms_list);
+        scheduled_rooms_adapter = new NewsFeedAdapter(activity, all_scheduled_rooms, "SCHEDULED");
+        scheduled_rooms_adapter.setClickListener(this);
 
         final User user = User.getLoggedInUser();
         user.UserSteps = "MAIN_SCREEN";
@@ -280,11 +297,19 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         });
 
 
-        news_feed_list.setAdapter(adapter);
+        schedule_rooms_list.setAdapter(scheduled_rooms_adapter);
         PreCachingLayoutManager layoutManager = new PreCachingLayoutManager(activity);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         layoutManager.setExtraLayoutSpace(DeviceUtils.getScreenHeight(activity));
-        news_feed_list.setLayoutManager(layoutManager);
+        schedule_rooms_list.setLayoutManager(layoutManager);
+
+        PreCachingLayoutManager activelayoutManager = new PreCachingLayoutManager(activity);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        layoutManager.setExtraLayoutSpace(DeviceUtils.getScreenHeight(activity));
+
+
+        active_rooms_list.setAdapter(active_rooms_adapter);
+        active_rooms_list.setLayoutManager(activelayoutManager);
 
 
         ShapeableImageView img = view.findViewById(R.id.user_profile_image);
@@ -370,6 +395,8 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                 loadFragmentWithoutupdate(new ScheduleRoomList());
             }
         });
+
+        uc = view.findViewById(R.id.uc);
     }
 
 
@@ -428,17 +455,38 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
 
     private Integer tappedRoomId = -9;
 
-    @Override
-    public void onTagClick(int index) {
+
+
+     @Override
+     public void onRoomClick(int index, String list_type) {
+         ArrayList<EventElement> all_feeds = list_type.equals("ACTIVE") ? all_active_rooms : all_scheduled_rooms;
+
+        if (list_type.equals("SCHEDULED")) {
+            // show the bottom sheet
+            BottomScheduleRoom bottomSheet =
+                    BottomScheduleRoom.newInstance();
+
+            Bundle bundle = new Bundle();
+            bundle.putString("room_slug", all_feeds.get(index).roomSlug );
+            bottomSheet.setArguments(bundle);
+            bottomSheet.show(getFragmentManager(),
+                    BottomScheduleRoom.TAG);
+            return;
+        }
+
+         start_join_room(all_feeds.get(index).eventID, all_feeds.get(index).eventChannelName, all_feeds.get(index).eventTitle);
+    }
+
+    public void start_join_room(Integer newRoomId, String channelName, String roomTitle) {
+        tappedRoomId = newRoomId;
         UserSettings us = UserSettings.getSettings();
-        tappedRoomId = all_feeds.get(index).eventID;
         if (tappedRoomId != -1 && tappedRoomId == us.selected_event_id) {
             loadRoomFragment();
             return;
         }
 
-        us.selected_channel_name  =  all_feeds.get(index).eventChannelName;
-        us.selected_channel_display_name = all_feeds.get(index).eventTitle;
+        us.selected_channel_name  =  channelName;
+        us.selected_channel_display_name = roomTitle;
         us.save();
 
         show_busy_indicator();
@@ -495,9 +543,6 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
-                    ArrayList<EventElement> all_event_data = new ArrayList<>();
-
-                    JSONArray all_info = response.getJSONArray("all_events");
                     JSONObject current_user_info = response.getJSONObject("current_user_info");
                     User user = User.getLoggedInUser();
                     user.IsSuperUser = current_user_info.getBoolean("is_super_user");
@@ -505,42 +550,27 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                     user.LastName = current_user_info.getString("last_name");
                     user.ProfilePicURL = current_user_info.getString("profile_pic_url");
                     user.save();
-                    for(int i = 0; i < all_info.length(); i++) {
-                        JSONObject event = all_info.getJSONObject(i);
-                        String event_title = event.getString("event_title");
-                        String event_channel_name = event.getString("event_channel_name");
-                        Integer event_id = event.getInt("event_id");
-                        ArrayList<String> photo_urls = new ArrayList<>();
-                        ArrayList<EventCardUserElement> all_users_in_card = new ArrayList<>();
-                        JSONArray event_photo_urls = event.getJSONArray("event_photo_urls");
-                        JSONArray event_card_users = event.getJSONArray("event_card_users");
-                        for (int j = 0; j < event_photo_urls.length(); j++) {
-                            photo_urls.add(event_photo_urls.getString(j));
-                        }
 
-                        for (int j = 0; j < event_card_users.length(); j++) {
-                            EventCardUserElement u = new EventCardUserElement();
-                            JSONObject obj = event_card_users.getJSONObject(j);
-                            u.IsSpeaker = obj.getBoolean("is_speaker");
-                            u.Name = obj.getString("name");
-                            all_users_in_card.add(u);
-                        }
 
-                        EventElement e = new EventElement();
-                        e.eventChannelName = event_channel_name;
-                        e.eventTitle = event_title;
-                        e.eventID = event_id;
-                        e.eventPhotoUrls = photo_urls;
-                        e.userElements = all_users_in_card;
-                        e.isScheduled = Boolean.FALSE;
-                        all_event_data.add(e);
+                    JSONArray all_active_rooms_t = response.getJSONArray("all_active_rooms");
+                    JSONArray all_scheduled_rooms_t = response.getJSONArray("all_scheduled_rooms");
+
+                    ArrayList<EventElement> active_room_data = new ArrayList<>();
+                    ArrayList<EventElement> scheduled_room_data = new ArrayList<>();
+                    active_room_data = get_rooms_data_from_json(all_active_rooms_t);
+                    scheduled_room_data = get_rooms_data_from_json(all_scheduled_rooms_t);
+
+                    all_active_rooms.clear();
+                    all_scheduled_rooms.clear();
+                    if (scheduled_room_data.size() == 0) {
+                        uc.setVisibility(View.INVISIBLE);
+                    } else {
+                        uc.setVisibility(View.VISIBLE);
                     }
-
-
-                    all_feeds.clear();
-                    all_feeds.addAll(all_event_data);
-                    adapter.notifyDataSetChanged();
-
+                    all_active_rooms.addAll(active_room_data);
+                    all_scheduled_rooms.addAll(scheduled_room_data);
+                    active_rooms_adapter.notifyDataSetChanged();
+                    scheduled_rooms_adapter.notifyDataSetChanged();
                     if (with_indicator) {
                         hide_busy_indicator();
                     }
@@ -560,7 +590,59 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
 
         client.addHeader("Accept", "application/json");
         client.addHeader("Authorization", "Token " + user.AccessToken);
-        client.post(App.getBaseURL() + "page/all_events", params, jrep);
+        client.post(App.getBaseURL() + "page/all_events_with_scheduled", params, jrep);
+    }
+
+
+    ArrayList<EventElement>  get_rooms_data_from_json(JSONArray all_info) throws JSONException {
+        ArrayList<EventElement> all_event_data = new ArrayList<>();
+        for(int i = 0; i < all_info.length(); i++) {
+            JSONObject event = all_info.getJSONObject(i);
+            String event_title = event.getString("event_title");
+            String event_channel_name = event.getString("event_channel_name");
+            Integer event_id = event.getInt("event_id");
+            ArrayList<String> photo_urls = new ArrayList<>();
+            ArrayList<EventCardUserElement> all_users_in_card = new ArrayList<>();
+            JSONArray event_photo_urls = event.getJSONArray("event_photo_urls");
+            JSONArray event_card_users = event.getJSONArray("event_card_users");
+            for (int j = 0; j < event_photo_urls.length(); j++) {
+                photo_urls.add(event_photo_urls.getString(j));
+            }
+
+            for (int j = 0; j < event_card_users.length(); j++) {
+                EventCardUserElement u = new EventCardUserElement();
+                JSONObject obj = event_card_users.getJSONObject(j);
+                u.IsSpeaker = obj.getBoolean("is_speaker");
+                u.Name = obj.getString("name");
+                all_users_in_card.add(u);
+            }
+
+            Boolean hasStarted = event.getBoolean("has_started");
+            Boolean isScheduled = event.getBoolean("is_scheduled");
+            Boolean isAdmin = event.getBoolean("is_room_admin");
+
+            EventElement e = new EventElement();
+            e.eventChannelName = event_channel_name;
+            e.eventTitle = event_title;
+            e.eventID = event_id;
+            e.eventPhotoUrls = photo_urls;
+            e.userElements = all_users_in_card;
+            if (isScheduled) {
+                String event_room_slug = event.getString("event_room_slug");
+                long timestamp = event.getLong("timestamp");
+                e.roomSlug = event_room_slug;
+                e.scheduleTimestamp = timestamp;
+            }
+
+            e.isRoomAdmin = isAdmin;
+            e.hasStarted = hasStarted;
+            e.isScheduled = isScheduled;
+
+
+            all_event_data.add(e);
+        }
+
+        return all_event_data;
     }
 
     void fetch_all_invites_count() {
@@ -822,6 +904,9 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         showDialogExit(title, description, new ServerCallBack() {
             @Override
             public void onSuccess() {
+                process_leave_channel();
+                unloadFragmentBottom();
+                fetch_all_events(false);
                 RoomHelper.showDialogRoomCreate(activity);
             }
         });
@@ -894,4 +979,6 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         speaker_accept_reject.show(activity.getSupportFragmentManager(),
                 "add_photo_dialog_fragment");
     }
+
+
 }

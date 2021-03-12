@@ -56,22 +56,57 @@
             android:text="InstaHelo and have discussions with?" />
     </RelativeLayout>
 
-    <RelativeLayout
+
+    <ScrollView
         android:layout_below="@+id/invite_card"
         android:layout_width="match_parent"
-        android:background="@color/neartagtheme"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
         android:layout_height="match_parent">
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/news_feed_list"
-            android:background="@color/neartagtheme"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingBottom="200dp"
-            android:clipToPadding="false"
-            />
-    </RelativeLayout>
+            android:layout_height="wrap_content">
+            <RelativeLayout
+                android:id="@+id/active_rooms_view"
+                android:layout_width="match_parent"
+                android:background="@color/neartagtheme"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_height="wrap_content">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/active_rooms"
+                    android:background="@color/neartagtheme"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    />
+            </RelativeLayout>
+            <TextView
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="15dp"
+                android:textSize="20dp"
+                android:textColor="@color/neartagtextcolor"
+                android:layout_marginBottom="10dp"
+                android:layout_below="@+id/active_rooms_view"
+                android:layout_width="wrap_content"
+                android:text="Upcoming Rooms"
+                android:id="@+id/uc"
+                android:layout_height="wrap_content" />
+            <RelativeLayout
+                android:layout_below="@+id/uc"
+                android:layout_width="match_parent"
+                android:background="@color/neartagtheme"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_height="wrap_content">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/schedule_rooms_list"
+                    android:background="@color/neartagtheme"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingBottom="200dp"
+                    android:clipToPadding="false"
+                    />
+            </RelativeLayout>
+        </RelativeLayout>
+    </ScrollView>
     <RelativeLayout
         android:layout_width="match_parent"
         android:id="@+id/bottom_room_create_action"
@@ -89,7 +124,7 @@
             android:id="@+id/start_a_room_cta"
             android:layout_centerHorizontal="true"
             android:background="@drawable/start_a_room"
-            android:layout_height="40dp"/>
+            android:layout_height="wrap_content"/>
     </RelativeLayout>
 
     <ProgressBar
