@@ -89,8 +89,8 @@ import io.agora.rtc.models.UserInfo;
 public class MainScreenFragment extends Fragment implements NewsFeedAdapter.ItemClickListener, IOnBackPressed {
     private static final int PERMISSION_REQ_ID_RECORD_AUDIO = 0;
     private static final int PERMISSION_REQ_ID_RECORD_AUDIO_INIT = 1;
-
-
+    ImageView notification_btn;
+    View fragment_view;
     NewsFeedAdapter active_rooms_adapter, scheduled_rooms_adapter;
     RecyclerView active_rooms_list, schedule_rooms_list;
 
@@ -103,7 +103,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
     ArrayList<EventElement> all_active_rooms, all_scheduled_rooms;
     Boolean is_room_fragment_loaded = false;
     TextView uc;
-
+    
     /// this is what service returns to the end  main fragment and main fragment decides.
     // .room fragment to load
 
@@ -221,6 +221,8 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                             .getStringExtra("channel_name");
                     start_join_room(room_id, channel_name, room_title);
                     break;
+
+
             }
             Log.d("debug_data", "received broadcast " + user_action);
         }
@@ -247,11 +249,11 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d("debug_activity", "OnView Created called MainScreenFragment");
-
+        notification_btn = view.findViewById(R.id.notification);
         active_rooms_list = view.findViewById(R.id.active_rooms);
         active_rooms_adapter = new NewsFeedAdapter(activity, all_active_rooms, "ACTIVE");
         active_rooms_adapter.setClickListener(this);
-
+        fragment_view = view;
 
         schedule_rooms_list = view.findViewById(R.id.schedule_rooms_list);
         scheduled_rooms_adapter = new NewsFeedAdapter(activity, all_scheduled_rooms, "SCHEDULED");
@@ -334,7 +336,8 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                 Bundle args = new Bundle();
                 args.putString("user_id",String.valueOf(user.UserID));
                 otherprof.setArguments(args);
-                loadFragmentWithoutupdate(otherprof);
+//                loadFragmentWithoutupdate(otherprof);
+                Helper.loadFragment(otherprof,activity);
             }
         });
 
@@ -343,7 +346,8 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         search_icon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadFragmentWithoutupdate(new ExploreFragment());
+//                loadFragmentWithoutupdate(new ExploreFragment());
+                Helper.loadFragment(new ExploreFragment(),activity);
             }
         });
 
@@ -354,7 +358,8 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
             @Override
             public void onClick(View v) {
                 hideInvitesView(view);
-                loadFragmentWithoutupdate(new SendInviteFragment());
+//                loadFragmentWithoutupdate(new SendInviteFragment());
+                Helper.loadFragment(new SendInviteFragment(),activity);
             }
         });
 
@@ -379,12 +384,12 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         }
 
 
-        ImageView notification = view.findViewById(R.id.notification);
-        notification.setOnClickListener(new View.OnClickListener() {
+        notification_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadFragmentWithoutupdate(new NotificationList()
-                );
+//                loadFragmentWithoutupdate(new NotificationList());
+                notification_btn.setImageResource(R.drawable.notification_bell_icon);
+                Helper.loadFragment(new NotificationList(),activity);
             }
         });
 
@@ -392,7 +397,8 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         sch_rooms.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadFragmentWithoutupdate(new ScheduleRoomList());
+//                loadFragmentWithoutupdate(new ScheduleRoomList());
+                Helper.loadFragment(new ScheduleRoomList(),activity);
             }
         });
 
@@ -550,8 +556,10 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                     user.LastName = current_user_info.getString("last_name");
                     user.ProfilePicURL = current_user_info.getString("profile_pic_url");
                     user.save();
-
-
+                    Boolean should_show_notification_dot = current_user_info.getBoolean("should_show_notification_dot");
+                    if(should_show_notification_dot){
+                        notification_btn.setImageResource(R.drawable.notification_dot);
+                    }
                     JSONArray all_active_rooms_t = response.getJSONArray("all_active_rooms");
                     JSONArray all_scheduled_rooms_t = response.getJSONArray("all_scheduled_rooms");
 

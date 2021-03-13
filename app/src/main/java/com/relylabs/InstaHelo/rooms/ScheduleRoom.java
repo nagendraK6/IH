@@ -1,6 +1,8 @@
 package com.relylabs.InstaHelo.rooms;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -66,7 +68,11 @@ public class ScheduleRoom extends Fragment {
     TextView time_schedule;
     TextView speaker_list;
     String room_slug;
-
+    String myFormat;
+    SimpleDateFormat sdf;
+    String time_share;
+    ImageView copy_btn;
+    
     FragmentActivity activity_ref;
     @Override
     public void onAttach(Context context) {
@@ -90,6 +96,8 @@ public class ScheduleRoom extends Fragment {
 
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        myFormat = "E, dd MMM yyyy hh:mm a z"; //In which you need put here
+        sdf = new SimpleDateFormat(myFormat);
         room_slug = getArguments().getString("room_slug");
         if (getArguments().containsKey("has_just_created")) {
             has_just_created = Boolean.TRUE;
@@ -153,6 +161,29 @@ public class ScheduleRoom extends Fragment {
                 Helper.removefragment(activity_ref);
             }
         });
+
+        copy_btn = view.findViewById(R.id.copy_btn2);
+        copy_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LayoutInflater inflater = getLayoutInflater();
+                Helper.showToast(activity_ref,view,inflater,"Link copied to clipboard!");
+                String shareBody =
+                        "Hey! checkout this audio room " + room_title  + " on @instahelo app. Join me at " + time_share + " \n" +
+                                "Download from https://play.google.com/store/apps/details?id=com.relylabs.InstaHelo . Click here for more details : " + App.getBaseURL() + room_slug ;
+                ClipboardManager clipboard = (ClipboardManager) activity_ref.getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("InstaHelo", shareBody);
+                clipboard.setPrimaryClip(clip);
+            }
+        });
+
+        TextView addToCalendar = view.findViewById(R.id.add_to_calendar2);
+        addToCalendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Helper.addToCalendar(activity_ref,myCalendar,room_title);
+            }
+        });
     }
 
     public void shareEvent(String package_name){
@@ -161,9 +192,6 @@ public class ScheduleRoom extends Fragment {
         if (Helper.isAppInstalled(activity_ref,package_name)) {
             sharingIntent.setPackage(package_name);
         }
-        String myFormat = "E, dd MMM yyyy hh:mm a z"; //In which you need put here
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat);
-        String time_share = sdf.format(myCalendar.getTime()).toUpperCase();
         sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Instahelo Room");
         String shareBody =
                 "Hey! checkout this audio room " + room_title  + " on @instahelo app. Join me at " + time_share + " \n" +
@@ -204,6 +232,7 @@ public class ScheduleRoom extends Fragment {
                     speaker_list.setText(sp_list.substring(0,sp_list.length()-2));
                     title.setText(room_title);
                     myCalendar.setTimeInMillis(timestamp);
+                    time_share = sdf.format(myCalendar.getTime()).toUpperCase();
                     Date d = new Date((long)timestamp);
                     String dateToStr = DateFormat.getDateInstance().format(d);
                     String timeToStr = DateFormat.getTimeInstance(DateFormat.SHORT).format(d);

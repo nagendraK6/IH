@@ -16,10 +16,14 @@ import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.CookieSyncManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -46,7 +50,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 
+import static androidx.core.content.ContextCompat.startActivity;
 import static com.activeandroid.Cache.getContext;
 
 
@@ -313,22 +319,37 @@ public class Helper {
             Fragment f = activity.getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
             FragmentManager manager = activity.getSupportFragmentManager();
             FragmentTransaction trans = manager.beginTransaction();
+            trans.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right,R.anim.slide_in_left, R.anim.slide_out_right);
             trans.remove(f);
             trans.commitAllowingStateLoss();
             manager.popBackStack();
         }
     }
+
+    public static void removeFragmentWithTopAnim(FragmentActivity activity){
+        Fragment f = activity.getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
+        FragmentManager manager = activity.getSupportFragmentManager();
+        FragmentTransaction trans = manager.beginTransaction();
+        trans.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top,R.anim.slide_in_bottom, R.anim.slide_out_top);
+        trans.remove(f);
+        trans.commitAllowingStateLoss();
+        manager.popBackStack();
+    }
     public static void loadFragmentAdapter(Fragment fragment_to_start,View view) {
         AppCompatActivity activity = (AppCompatActivity) view.getContext();
         FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
+        ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right,R.anim.slide_in_left, R.anim.slide_out_right);
         ft.add(R.id.fragment_holder, fragment_to_start);
+        ft.addToBackStack(null);
         ft.commitAllowingStateLoss();
     }
 
     public static void loadFragment(Fragment fragment_to_start, FragmentActivity activity_ref) {
         if(activity_ref!=null) {
             FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
+            ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right,R.anim.slide_in_left, R.anim.slide_out_right);
             ft.add(R.id.fragment_holder, fragment_to_start);
+            ft.addToBackStack(null);
             ft.commitAllowingStateLoss();
         }
     }
@@ -336,7 +357,9 @@ public class Helper {
     public static void addFragmentWithTag(Fragment fragment_to_start, FragmentActivity activity_ref, String tag) {
         if(activity_ref!=null) {
             FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
+            ft.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top,R.anim.slide_in_bottom, R.anim.slide_out_top);
             ft.add(R.id.fragment_holder, fragment_to_start, tag);
+            ft.addToBackStack(null);
             ft.commitAllowingStateLoss();
         }
     }
@@ -346,6 +369,7 @@ public class Helper {
             Fragment fragment = activity_ref.getSupportFragmentManager().findFragmentByTag(tag);
             if(fragment != null) {
                 FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
+                ft.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top,R.anim.slide_in_bottom, R.anim.slide_out_top);
                 ft.remove(fragment);
                 ft.commitAllowingStateLoss();
             }
@@ -356,6 +380,7 @@ public class Helper {
         if(activity_ref!=null) {
             FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.fragment_holder, fragment_to_start);
+            ft.addToBackStack(null);
             ft.commitAllowingStateLoss();
         }
     }
@@ -398,4 +423,29 @@ public class Helper {
         }
         return app_installed;
     }
+
+    public static void showToast(FragmentActivity activity_ref, View view, LayoutInflater inflater,String toast_text ){
+        View layout = inflater.inflate(R.layout.custom_toast,
+                (ViewGroup) view.findViewById(R.id.custom_toast_layout_id));
+
+        TextView text = (TextView) layout.findViewById(R.id.toast_text);
+        text.setText(toast_text);
+        Toast toast = new Toast(activity_ref);
+        toast.setGravity(Gravity.TOP|Gravity.FILL_HORIZONTAL,0,0);
+        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setView(layout);
+        toast.show();
+    }
+
+    public static void addToCalendar(FragmentActivity activity_ref,Calendar myCalendar,String title_main){
+        Intent i = new Intent(Intent.ACTION_EDIT);
+        i.setType("vnd.android.cursor.item/event");
+        i.putExtra("beginTime", myCalendar.getTimeInMillis());
+        i.putExtra("allDay", false);
+        i.putExtra("rule", "FREQ=YEARLY");
+        i.putExtra("endTime", myCalendar.getTimeInMillis() + 60 * 60 * 1000);
+        i.putExtra("title", title_main);
+        activity_ref.startActivity(i);
+    }
+
 }

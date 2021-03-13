@@ -291,7 +291,7 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
             @Override
             public void onClick(View v) {
                 broadcastLocalUpdate("MINIMISED");
-                Helper.removefragment(activity);
+                Helper.removeFragmentWithTopAnim(activity);
             }
         });
 
@@ -303,7 +303,7 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
             public void onClick(View v) {
                 show_busy_indicator();
                 broadcastLocalUpdate("LEAVE_CHANNEL");
-                Helper.removefragment(activity);
+                Helper.removeFragmentWithTopAnim(activity);
             }
         });
 

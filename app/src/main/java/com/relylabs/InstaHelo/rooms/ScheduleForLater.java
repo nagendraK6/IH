@@ -35,6 +35,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.relylabs.InstaHelo.App;
 import com.relylabs.InstaHelo.R;
+import com.relylabs.InstaHelo.RoomDisplayFragment;
 import com.relylabs.InstaHelo.Utils.Helper;
 import com.relylabs.InstaHelo.Utils.RoomHelper;
 import com.relylabs.InstaHelo.models.User;
@@ -124,7 +125,7 @@ public class ScheduleForLater extends Fragment {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removefragment(activity_ref);
+                Helper.removeFragmentWithTopAnim(activity_ref);
                 Bundle data_bundle = new Bundle();
                 data_bundle.putString("user_action", "REMOVE_FRAGMENT");
                 Intent intent = new Intent("update_from_schedule");
@@ -187,7 +188,7 @@ public class ScheduleForLater extends Fragment {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removefragment(activity_ref);
+                Helper.removeFragmentWithTopAnim(activity_ref);
             }
         });
 

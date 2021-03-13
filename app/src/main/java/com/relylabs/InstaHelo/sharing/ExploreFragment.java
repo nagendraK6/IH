@@ -255,8 +255,6 @@ public class ExploreFragment  extends Fragment implements ExploreListAdapter.Ite
         Bundle args = new Bundle();
         args.putString("user_id",String.valueOf(all_user_profiles.get(position).UserId));
         otherprof.setArguments(args);
-        FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
-        ft.add(R.id.fragment_holder, otherprof);
-        ft.commitAllowingStateLoss();
+        Helper.loadFragment(otherprof,activity);
     }
 }

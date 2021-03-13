@@ -99,6 +99,7 @@
         android:layout_centerHorizontal="true"
         android:orientation="horizontal"
         android:visibility="visible">
+
         <ImageView
             android:id="@+id/wa"
             android:layout_width="40dp"
@@ -124,6 +125,16 @@
             android:layout_height="40dp"
             android:layout_weight="1"
             android:src="@drawable/fb" />
+
+        <ImageView
+            android:id="@+id/copy_btn2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/copy_icon" />
     </LinearLayout>
 
     <TextView
@@ -149,6 +160,15 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:src="@drawable/go_to_all_rooms" />
+
+    <TextView
+        android:id="@+id/add_to_calendar2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/sharing"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="135dp"
+        android:text="Add to calendar" />
 
 
 </RelativeLayout>

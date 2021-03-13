@@ -221,7 +221,7 @@ public class RoomCreateBottomSheetDialogFragment extends Fragment  {
             Fragment f = activity.getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
             FragmentManager manager = activity.getSupportFragmentManager();
             FragmentTransaction trans = manager.beginTransaction();
-            trans.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top);
+            trans.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top,R.anim.slide_in_bottom, R.anim.slide_out_top);
             trans.remove(f);
             trans.commitAllowingStateLoss();
             manager.popBackStack();

@@ -2,8 +2,11 @@ package com.relylabs.InstaHelo.bottomsheet;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -12,6 +15,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +36,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
@@ -69,6 +75,7 @@ public class BottomScheduleRoom extends BottomSheetDialogFragment {
     TextView speaker_list;
     ImageView action_btn;
     TextView room_not_started_text, dismiss_btn;
+    ImageView copy_btn;
 
 
     public static final String TAG = "ActionBottomDialog";
@@ -82,7 +89,7 @@ public class BottomScheduleRoom extends BottomSheetDialogFragment {
     private  ArrayList<String> usernames = new ArrayList<String>();
     private  ArrayList<String> img = new ArrayList<String>();
     private  ArrayList<String> user_ids = new ArrayList<>();
-
+    
     public static BottomScheduleRoom newInstance() {
         return new BottomScheduleRoom();
     }
@@ -91,7 +98,9 @@ public class BottomScheduleRoom extends BottomSheetDialogFragment {
     String title_main;
     String channelName;
     String room_slug;
-
+    String time_share;
+    SimpleDateFormat sdf;
+    String myFormat;
     ImageView whatsapp, facebook, twitter;
 
     @Override
@@ -115,10 +124,34 @@ public class BottomScheduleRoom extends BottomSheetDialogFragment {
 
     @Override public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        myFormat = "E, dd MMM yyyy hh:mm a z"; //In which you need put here
+        sdf = new SimpleDateFormat(myFormat);
         fragment_view = view;
         room_slug = this.getArguments().getString("room_slug");
         Log.d("room_slug",room_slug);
         getData(room_slug);
+        copy_btn = view.findViewById(R.id.copy_btn);
+        copy_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                LayoutInflater inflater = getLayoutInflater();
+                Helper.showToast(activity_ref,view,inflater,"Link copied to clipboard!");
+                String shareBody =
+                        "Hey! checkout this audio room " + title_main  + " on @instahelo app. Join me at " + time_share + " \n" +
+                                "Download from https://play.google.com/store/apps/details?id=com.relylabs.InstaHelo . Click here for more details : " + App.getBaseURL() + room_slug ;
+                ClipboardManager clipboard = (ClipboardManager) activity_ref.getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("InstaHelo", shareBody);
+                clipboard.setPrimaryClip(clip);
+            }
+        });
+        TextView addToCalendar = view.findViewById(R.id.add_to_calendar);
+        addToCalendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Helper.addToCalendar(activity_ref,myCalendar,title_main);
+            }
+        });
 
 
         action_btn = view.findViewById(R.id.imageView5);
@@ -184,9 +217,6 @@ public class BottomScheduleRoom extends BottomSheetDialogFragment {
         if (Helper.isAppInstalled(activity_ref,package_name)) {
             sharingIntent.setPackage(package_name);
         }
-        String myFormat = "E, dd MMM yyyy hh:mm a z"; //In which you need put here
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat);
-        String time_share = sdf.format(myCalendar.getTime()).toUpperCase();
         sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Instahelo Room");
         String shareBody =
                 "Hey! checkout this audio room " + title_main  + " on @instahelo app. Join me at " + time_share + " \n" +
@@ -286,6 +316,7 @@ public class BottomScheduleRoom extends BottomSheetDialogFragment {
                     }
 
                     myCalendar.setTimeInMillis(timestamp);
+                    time_share = sdf.format(myCalendar.getTime()).toUpperCase();
                     String myFormat = "E, dd MMM yyyy hh:mm a"; //In which you need put here
                     SimpleDateFormat sdf = new SimpleDateFormat(myFormat);
                     date_schedule.setText(sdf.format(myCalendar.getTime()).toUpperCase());
