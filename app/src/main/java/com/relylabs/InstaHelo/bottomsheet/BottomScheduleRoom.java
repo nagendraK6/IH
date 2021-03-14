@@ -149,7 +149,7 @@ public class BottomScheduleRoom extends BottomSheetDialogFragment {
         addToCalendar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Helper.addToCalendar(activity_ref,myCalendar,title_main);
+                Helper.addToCalendar(activity_ref,myCalendar,title_main, room_slug);
             }
         });
 
@@ -159,7 +159,6 @@ public class BottomScheduleRoom extends BottomSheetDialogFragment {
         date_schedule = fragment_view.findViewById(R.id.shcedule_time);
         speaker_list = fragment_view.findViewById(R.id.hosts);
 
-        room_not_started_text = fragment_view.findViewById(R.id.room_not_started_text);
         dismiss_btn = fragment_view.findViewById(R.id.dismiss_btn);
         dismiss_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -218,6 +217,12 @@ public class BottomScheduleRoom extends BottomSheetDialogFragment {
             sharingIntent.setPackage(package_name);
         }
         sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Instahelo Room");
+
+        if (package_name.equals("com.whatsapp")) {
+            title_main = "*" + title_main + "*";
+        } else {
+            title_main = "'" + title_main + "'";
+        }
         String shareBody =
                 "Hey! checkout this audio room " + title_main  + " on @instahelo app. Join me at " + time_share + " \n" +
                         "Download from https://play.google.com/store/apps/details?id=com.relylabs.InstaHelo . Click here for more details : " + App.getBaseURL() + room_slug ;
@@ -311,7 +316,6 @@ public class BottomScheduleRoom extends BottomSheetDialogFragment {
                         action_btn.setBackground(activity_ref.getDrawable(R.drawable.join_room_in_progress));
                     } else {
                         action_btn.setVisibility(View.INVISIBLE);
-                        room_not_started_text.setVisibility(View.VISIBLE);
                         dismiss_btn.setVisibility(View.VISIBLE);
                     }
 

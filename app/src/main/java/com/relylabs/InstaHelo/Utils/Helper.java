@@ -31,6 +31,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.relylabs.InstaHelo.App;
 import com.relylabs.InstaHelo.MainScreenFragment;
 import com.relylabs.InstaHelo.R;
 import com.relylabs.InstaHelo.models.User;
@@ -437,7 +438,7 @@ public class Helper {
         toast.show();
     }
 
-    public static void addToCalendar(FragmentActivity activity_ref,Calendar myCalendar,String title_main){
+    public static void addToCalendar(FragmentActivity activity_ref,Calendar myCalendar,String title_main, String room_slug){
         Intent i = new Intent(Intent.ACTION_EDIT);
         i.setType("vnd.android.cursor.item/event");
         i.putExtra("beginTime", myCalendar.getTimeInMillis());
@@ -445,6 +446,7 @@ public class Helper {
         i.putExtra("rule", "FREQ=YEARLY");
         i.putExtra("endTime", myCalendar.getTimeInMillis() + 60 * 60 * 1000);
         i.putExtra("title", title_main);
+        i.putExtra("description",  "Room link " + App.getBaseURL() + room_slug);
         activity_ref.startActivity(i);
     }
 
