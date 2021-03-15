@@ -422,7 +422,6 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
     public void onResume() {
         super.onResume();
         fetch_all_events(false);
-        Helper.enqueu_upload(activity);
     }
 
     private void hideInvitesView(View v) {

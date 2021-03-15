@@ -19,6 +19,7 @@ import android.os.Bundle;
 import com.bumptech.glide.Glide;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.shape.CornerFamily;
+import com.relylabs.InstaHelo.models.SystemProperties;
 import com.relylabs.InstaHelo.models.User;
 import com.relylabs.InstaHelo.HandRaise.HandRaiseUsersListDialogFragment;
 import com.relylabs.InstaHelo.models.UserSettings;

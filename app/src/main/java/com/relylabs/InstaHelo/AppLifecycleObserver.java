@@ -6,7 +6,8 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 
-import com.relylabs.InstaHelo.models.RelySystem;
+import com.relylabs.InstaHelo.Utils.Helper;
+import com.relylabs.InstaHelo.models.SystemProperties;
 
 public class AppLifecycleObserver implements LifecycleObserver {
 
@@ -16,13 +17,13 @@ public class AppLifecycleObserver implements LifecycleObserver {
     public void onEnterForeground() {
         //run the code we need
         Log.d("debug_data", "App in foreground");
-        RelySystem.updateState(true);
+        SystemProperties.updateState(true);
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     public void onEnterBackground() {
         //run the code we need
         Log.d("debug_data", "App in background");
-        RelySystem.updateState(false);
+        SystemProperties.updateState(false);
     }
 }

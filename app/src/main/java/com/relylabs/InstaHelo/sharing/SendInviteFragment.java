@@ -132,7 +132,7 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
         fragment_view = view;
         if (checkPermission(activity)) {
             processContacts(true);
-            //Helper.sendRequestForContactProcess(activity);
+            Helper.sendRequestForContactProcess(activity);
         }
 
         SearchView search = (SearchView) view.findViewById(R.id.search_contact);
@@ -254,7 +254,6 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
         super.onRequestPermissionsResult(RC, per, PResult);
         if (PResult.length > 0 && PResult[0] == PackageManager.PERMISSION_GRANTED) {
             processContacts(true);
-            //Helper.sendRequestForContactProcess(activity);
         }
     }
 

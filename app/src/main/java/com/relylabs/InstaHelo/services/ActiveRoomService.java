@@ -13,7 +13,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -29,7 +28,7 @@ import com.relylabs.InstaHelo.MainActivity;
 import com.relylabs.InstaHelo.ServerCallBack;
 import com.relylabs.InstaHelo.Utils.RoomHelper;
 import com.relylabs.InstaHelo.models.EventElement;
-import com.relylabs.InstaHelo.models.RelySystem;
+import com.relylabs.InstaHelo.models.SystemProperties;
 import com.relylabs.InstaHelo.models.User;
 import com.relylabs.InstaHelo.models.UserSettings;
 import com.relylabs.InstaHelo.models.UsersInRoom;
@@ -625,7 +624,7 @@ public class ActiveRoomService extends Service {
             }
 
             // check if the app is in background > 30 mins
-            RelySystem rs = RelySystem.getSystemSettings();
+            SystemProperties rs = SystemProperties.getSystemSettings();
             if (!rs.is_foreground && System.currentTimeMillis()/1000 - rs.timestamp_updated > 1800) {
                 Log.d("debug_ping", "App in background for more than 30 mins");
                 askforexit();

@@ -45,6 +45,7 @@ import com.relylabs.InstaHelo.onboarding.LoginFragment;
 import com.relylabs.InstaHelo.onboarding.PhoneVerificationFragment;
 import com.relylabs.InstaHelo.onboarding.PhotoAskFragment;
 import com.relylabs.InstaHelo.onboarding.SuggestedProfileToFollowFragment;
+import com.relylabs.InstaHelo.services.ActiveRoomService;
 import com.relylabs.InstaHelo.services.ContactUploadBackgroundService;
 
 import org.apache.commons.lang3.StringUtils;
@@ -295,13 +296,8 @@ public class Helper {
     }
 
     public static void sendRequestForContactProcess(FragmentActivity activity) {
-        Bundle data_bundle = new Bundle();
-        data_bundle.putString("user_action", "contact_update");
-        Intent intent = new Intent("update_to_main_activity");
-        intent.putExtras(data_bundle);
-        if (activity != null) {
-            activity.sendBroadcast(intent);
-        }
+            Intent i= new Intent(activity, ContactUploadBackgroundService.class);
+            activity.startService(i);
     }
 
     public static void hideKeyboard(Context mContext) {
@@ -404,12 +400,6 @@ public class Helper {
         }
 
         return null;
-    }
-
-    public  static void enqueu_upload(FragmentActivity activity) {
-        // uncomment the code after testing
-       // Intent i= new Intent(activity, ContactUploadBackgroundService.class);
-       // activity.startService(i);
     }
 
     public static Boolean isAppInstalled(FragmentActivity activity, String package_name){

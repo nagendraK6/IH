@@ -144,12 +144,11 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
     }
 
-    private  boolean registered = false;
     @Override
     protected void onResume() {
         super.onResume();
-        Intent intent = getIntent();
-
+        Log.d("debug_data", "Main Screen activity resume");
+        Helper.sendRequestForContactProcess(MainActivity.this);
     }
 
 
@@ -196,121 +195,11 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-
-
-
-
-
-    public void readContactsAndStoreLocal(){
-        ContentResolver cr = MainActivity.this.getContentResolver();
-        Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
-                null, null, null, null);
-
-        if (cur.getCount() > 0) {
-            while (cur.moveToNext()) {
-                String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
-                String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-                if (Integer.parseInt(cur.getString(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
-                    // get the phone number
-                    Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,
-                            ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = ?",
-                            new String[]{id}, null);
-
-                    String phone = "";
-                    while (pCur.moveToNext()) {
-                        phone = pCur.getString(
-                                pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                    }
-
-                    pCur.close();
-                    String refinedPhone = cleanPhoneNo(phone, MainActivity.this);
-                    Log.d("debug_p", refinedPhone);
-                    if(!refinedPhone.equals("ERROR")){
-                        if (!Contact.checkIfExists(refinedPhone)) {
-                            new Contact(name, refinedPhone, false, false).save();
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     @Override
     protected void onDestroy() {
         Log.d("debug_data", "activity destroyed");
         // RoomHelper.sendServiceLeaveChannel(MainActivity.this);
         super.onDestroy();
-    }
-
-    private void upload_to_server_contacts_and_return_invited_users(ArrayList<Contact> contacts) {
-        if (contacts.size() == 0) {
-            return;
-        }
-
-        final User user = User.getLoggedInUser();
-        AsyncHttpClient client = new AsyncHttpClient();
-        RequestParams params = new RequestParams();
-
-        ArrayList<String> contact_name = new ArrayList<>();
-        ArrayList<String> contact_number = new ArrayList<>();
-
-        for (int i = 0; i < contacts.size(); i++) {
-            contact_name.add(contacts.get(i).getName());
-            contact_number.add(contacts.get(i).getPhone());
-        }
-
-        JSONArray mJSONArray_names = new JSONArray(contact_name);
-        JSONArray mJSONArray_numbers = new JSONArray(contact_number);
-
-        params.add("contact_names", mJSONArray_names.toString());
-        params.add("contact_numbers", mJSONArray_numbers.toString());
-
-        JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                try {
-                    String error_message = response.getString("error_message");
-                    if (error_message.equals("ERROR")) {
-                        return;
-                    }
-
-                    JSONArray alread_invited_users = response.getJSONArray("invited_contacts");
-                    Log.d("debug_data", "Already invited list is " + String.valueOf(alread_invited_users.length()));
-                    for(int i = 0; i < alread_invited_users.length(); i++) {
-                        String  phn = alread_invited_users.getString(i);
-                        Contact c = Contact.getContact(phn);
-                        if (c != null) {
-                            c.IsInvited = Boolean.TRUE;
-                            c.IsUploaded = Boolean.TRUE;
-                            c.save();
-                        }
-                    }
-
-                    // else mark users selected as done
-                    for (int i = 0; i < contacts.size(); i++) {
-                        Log.d("debug_data", "Contact marked uploaded");
-                        contacts.get(i).IsUploaded =  Boolean.TRUE;
-                        contacts.get(i).save();
-                    }
-                    Log.d("debug_data", "Contact uploaded");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
-                Log.d("debug_data", "" + res);
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject obj) {
-            }
-        };
-
-        client.addHeader("Accept", "application/json");
-        client.addHeader("Authorization", "Token " + user.AccessToken);
-        client.post(App.getBaseURL() + "registration/store_contacts", params, jrep);
     }
 
     private Fragment findFragment() {
