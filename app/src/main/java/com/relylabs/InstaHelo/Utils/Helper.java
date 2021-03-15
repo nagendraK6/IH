@@ -31,6 +31,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.relylabs.InstaHelo.App;
 import com.relylabs.InstaHelo.MainScreenFragment;
 import com.relylabs.InstaHelo.R;
 import com.relylabs.InstaHelo.models.User;
@@ -44,6 +45,7 @@ import com.relylabs.InstaHelo.onboarding.LoginFragment;
 import com.relylabs.InstaHelo.onboarding.PhoneVerificationFragment;
 import com.relylabs.InstaHelo.onboarding.PhotoAskFragment;
 import com.relylabs.InstaHelo.onboarding.SuggestedProfileToFollowFragment;
+import com.relylabs.InstaHelo.services.ActiveRoomService;
 import com.relylabs.InstaHelo.services.ContactUploadBackgroundService;
 
 import org.apache.commons.lang3.StringUtils;
@@ -294,13 +296,8 @@ public class Helper {
     }
 
     public static void sendRequestForContactProcess(FragmentActivity activity) {
-        Bundle data_bundle = new Bundle();
-        data_bundle.putString("user_action", "contact_update");
-        Intent intent = new Intent("update_to_main_activity");
-        intent.putExtras(data_bundle);
-        if (activity != null) {
-            activity.sendBroadcast(intent);
-        }
+            Intent i= new Intent(activity, ContactUploadBackgroundService.class);
+            activity.startService(i);
     }
 
     public static void hideKeyboard(Context mContext) {
@@ -380,7 +377,6 @@ public class Helper {
         if(activity_ref!=null) {
             FragmentTransaction ft = activity_ref.getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.fragment_holder, fragment_to_start);
-            ft.addToBackStack(null);
             ft.commitAllowingStateLoss();
         }
     }
@@ -403,12 +399,6 @@ public class Helper {
         }
 
         return null;
-    }
-
-    public  static void enqueu_upload(FragmentActivity activity) {
-        // uncomment the code after testing
-       // Intent i= new Intent(activity, ContactUploadBackgroundService.class);
-       // activity.startService(i);
     }
 
     public static Boolean isAppInstalled(FragmentActivity activity, String package_name){
@@ -437,7 +427,7 @@ public class Helper {
         toast.show();
     }
 
-    public static void addToCalendar(FragmentActivity activity_ref,Calendar myCalendar,String title_main){
+    public static void addToCalendar(FragmentActivity activity_ref,Calendar myCalendar,String title_main, String room_slug){
         Intent i = new Intent(Intent.ACTION_EDIT);
         i.setType("vnd.android.cursor.item/event");
         i.putExtra("beginTime", myCalendar.getTimeInMillis());
@@ -445,6 +435,7 @@ public class Helper {
         i.putExtra("rule", "FREQ=YEARLY");
         i.putExtra("endTime", myCalendar.getTimeInMillis() + 60 * 60 * 1000);
         i.putExtra("title", title_main);
+        i.putExtra("description",  "Room link " + App.getBaseURL() + room_slug);
         activity_ref.startActivity(i);
     }
 

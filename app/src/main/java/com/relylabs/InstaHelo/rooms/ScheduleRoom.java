@@ -64,8 +64,7 @@ public class ScheduleRoom extends Fragment {
     final Calendar myCalendar = Calendar.getInstance();
 
     TextView title;
-    TextView date_schedule;
-    TextView time_schedule;
+    TextView date_and_time_schedule;
     TextView speaker_list;
     String room_slug;
     String myFormat;
@@ -107,8 +106,7 @@ public class ScheduleRoom extends Fragment {
 
         fragment_view = view;
         title = fragment_view.findViewById(R.id.schdeule_title);
-        date_schedule = fragment_view.findViewById(R.id.date_schedule);
-        time_schedule = fragment_view.findViewById(R.id.time_schedule);
+        date_and_time_schedule = fragment_view.findViewById(R.id.date_and_time_schedule);
         speaker_list = fragment_view.findViewById(R.id.speaker_list);
         room_title = "";
 
@@ -181,7 +179,7 @@ public class ScheduleRoom extends Fragment {
         addToCalendar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Helper.addToCalendar(activity_ref,myCalendar,room_title);
+                Helper.addToCalendar(activity_ref,myCalendar,room_title, room_slug);
             }
         });
     }
@@ -192,6 +190,13 @@ public class ScheduleRoom extends Fragment {
         if (Helper.isAppInstalled(activity_ref,package_name)) {
             sharingIntent.setPackage(package_name);
         }
+
+        if (package_name.equals("com.whatsapp")) {
+            room_title = "*" + room_title + "*";
+        } else {
+            room_title = "'" + room_title + "'";
+        }
+
         sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Instahelo Room");
         String shareBody =
                 "Hey! checkout this audio room " + room_title  + " on @instahelo app. Join me at " + time_share + " \n" +
@@ -236,8 +241,7 @@ public class ScheduleRoom extends Fragment {
                     Date d = new Date((long)timestamp);
                     String dateToStr = DateFormat.getDateInstance().format(d);
                     String timeToStr = DateFormat.getTimeInstance(DateFormat.SHORT).format(d);
-                    date_schedule.setText(dateToStr);
-                    time_schedule.setText(timeToStr);
+                    date_and_time_schedule.setText(dateToStr + ", " + timeToStr);
                     prepareRecyclerView();
                 }
                 catch (JSONException e) {
