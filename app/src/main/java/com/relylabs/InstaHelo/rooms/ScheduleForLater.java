@@ -14,6 +14,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +30,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.shape.CornerFamily;
 import com.loopj.android.http.AsyncHttpClient;
@@ -38,6 +41,7 @@ import com.relylabs.InstaHelo.R;
 import com.relylabs.InstaHelo.RoomDisplayFragment;
 import com.relylabs.InstaHelo.Utils.Helper;
 import com.relylabs.InstaHelo.Utils.RoomHelper;
+import com.relylabs.InstaHelo.bottomsheet.BottomScheduleRoom;
 import com.relylabs.InstaHelo.models.User;
 import com.relylabs.InstaHelo.models.UserSettings;
 import com.relylabs.InstaHelo.services.ActiveRoomService;
@@ -48,7 +52,9 @@ import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -56,14 +62,20 @@ import static com.relylabs.InstaHelo.Utils.Helper.hideKeyboard;
 import static com.relylabs.InstaHelo.Utils.Helper.removefragment;
 
 
-public class ScheduleForLater extends Fragment {
+public class ScheduleForLater extends Fragment implements FinalCoHostAdapter.ItemClickListener{
     private FragmentActivity activity_ref;
     final Calendar myCalendar = Calendar.getInstance();
     String room_type = "social";
     ImageView schedule_event;
     ProgressBar busy_indicator;
-
+    TextView add_a_host;
     int day_data,month_data,year_data,hour_data,minutes_data;
+    private  ArrayList<String> names = new ArrayList<String>();
+    private  ArrayList<String> user_id = new ArrayList<String>();
+    private  ArrayList<String> img = new ArrayList<String>();
+    RecyclerView recyclerView;
+    FinalCoHostAdapter adapter;
+    private static final int TARGET_FRAGMENT_REQUEST_CODE = 1;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,7 +100,29 @@ public class ScheduleForLater extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         busy_indicator = view.findViewById(R.id.busy_indicator);
+        add_a_host = view.findViewById(R.id.add_a_host);
         final User user = User.getLoggedInUser();
+        recyclerView = view.findViewById(R.id.users_in_profile_list);
+        names.add(user.FirstName + " " + user.LastName);
+        user_id.add(String.valueOf(user.UserID));
+        img.add(user.ProfilePicURL);
+        prepareRecyclerView();
+        add_a_host.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                AddCoHostDialog bottomSheet =
+                        AddCoHostDialog.newInstance();
+
+                Bundle bundle = new Bundle();
+//                bundle.putString("room_slug", all_feeds.get(index).roomSlug );
+                bundle.putStringArrayList("user_id_selected",user_id);
+                bottomSheet.setArguments(bundle);
+                bottomSheet.setTargetFragment(ScheduleForLater.this, TARGET_FRAGMENT_REQUEST_CODE);
+                bottomSheet.show(getFragmentManager(),
+                        AddCoHostDialog.TAG);
+            }
+        });
         String prof_url = user.ProfilePicURL;
         String title = getArguments().getString("title");
         String type = getArguments().getString("type");
@@ -104,8 +138,7 @@ public class ScheduleForLater extends Fragment {
                     .build());
             Picasso.get().load(prof_url).into(prof);
         }
-        TextView name = view.findViewById(R.id.name_user_curr);
-        name.setText(user.FirstName + " " + user.LastName);
+        
         room_type = type;
         if(room_type.equals("public")){
             TextView helper = view.findViewById(R.id.helperText2);
@@ -264,6 +297,7 @@ public class ScheduleForLater extends Fragment {
         params.add("event_title", title);
         params.add("room_type", room_type);
         params.add("schedule_timestamp", String.valueOf(timestamp));
+        params.add("cohost_user_ids",user_id.toString());
         show_busy_indicator();
 
         JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
@@ -305,5 +339,56 @@ public class ScheduleForLater extends Fragment {
         client.addHeader("Accept", "application/json");
         client.addHeader("Authorization", "Token " + user.AccessToken);
         client.post(App.getBaseURL() + "page/create_a_room", params, jrep);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if( resultCode != Activity.RESULT_OK ) {
+            return;
+        }
+        if( requestCode == TARGET_FRAGMENT_REQUEST_CODE ) {
+            final User user = User.getLoggedInUser();
+            ArrayList<String> names = data.getStringArrayListExtra("names");
+            ArrayList<String> user_id = data.getStringArrayListExtra("user_id");
+            ArrayList<String> img = data.getStringArrayListExtra("img");
+            this.names.clear();
+            this.user_id.clear();
+            this.img.clear();
+            this.names.add(user.FirstName + " " + user.LastName);
+            this.img.add(user.ProfilePicURL);
+            this.user_id.add(String.valueOf(user.UserID));
+            this.names.addAll(names);
+            this.user_id.addAll(user_id);
+            this.img.addAll(img);
+            adapter.notifyDataSetChanged();
+            Log.d("names",names.toString());
+        }
+    }
+
+    public static Intent newIntent(ArrayList<String> user_id,ArrayList<String> names,ArrayList<String> img) {
+        Intent intent = new Intent();
+        intent.putExtra("user_id", user_id);
+        intent.putExtra("names", names);
+        intent.putExtra("img", img);
+        return intent;
+    }
+
+    void prepareRecyclerView() {
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
+        adapter = new FinalCoHostAdapter(getContext(), names, img,user_id);
+        adapter.setClickListener(this);
+        recyclerView.setAdapter(adapter);
+
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        Log.d("clickListner", String.valueOf(position));
+        if (position != 0) {
+            user_id.remove(position);
+            img.remove(position);
+            names.remove(position);
+            adapter.notifyDataSetChanged();
+        }
     }
 }
