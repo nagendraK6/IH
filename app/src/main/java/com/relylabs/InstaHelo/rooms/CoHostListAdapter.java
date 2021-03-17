@@ -42,17 +42,17 @@ import com.relylabs.InstaHelo.Utils.Helper;
 
 public class CoHostListAdapter extends RecyclerView.Adapter<CoHostListAdapter.ViewHolder> {
 
-    private ArrayList<String> names, usernames,bio,img,user_ids,main_user_ids;
+    private ArrayList<String> names, usernames,bio,imgs,user_ids,main_user_ids;
     private LayoutInflater mInflater;
     private CoHostListAdapter.ItemClickListener mClickListener;
     private Context context;
     private ArrayList<Boolean> isChecked;
-    CoHostListAdapter(Context context, ArrayList<String> names, ArrayList<String> usernames,ArrayList<String> bio,ArrayList<String> img,ArrayList<String> user_ids, ArrayList<Boolean> isChecked, ArrayList<String> main_user_ids) {
+    CoHostListAdapter(Context context, ArrayList<String> names, ArrayList<String> usernames,ArrayList<String> bio,ArrayList<String> imgs,ArrayList<String> user_ids, ArrayList<Boolean> isChecked, ArrayList<String> main_user_ids) {
         this.mInflater = LayoutInflater.from(context);
         this.names = names;
         this.usernames = usernames;
         this.bio = bio;
-        this.img = img;
+        this.imgs = imgs;
         this.context = context;
         this.user_ids = user_ids;
         this.isChecked = isChecked;
@@ -86,7 +86,7 @@ public class CoHostListAdapter extends RecyclerView.Adapter<CoHostListAdapter.Vi
         }
 
         float radius = context.getResources().getDimension(R.dimen.default_corner_radius_profile_follow);
-        if (!this.img.get(position).equals("")) {
+        if (!this.imgs.get(position).equals("")) {
             holder.prof.setShapeAppearanceModel(holder.prof.getShapeAppearanceModel()
                     .toBuilder()
                     .setTopRightCorner(CornerFamily.ROUNDED, radius)
@@ -94,7 +94,7 @@ public class CoHostListAdapter extends RecyclerView.Adapter<CoHostListAdapter.Vi
                     .setBottomLeftCorner(CornerFamily.ROUNDED, radius)
                     .setBottomRightCorner(CornerFamily.ROUNDED, radius)
                     .build());
-            Picasso.get().load(this.img.get(position)).into(holder.prof);
+            Picasso.get().load(this.imgs.get(position)).into(holder.prof);
         }
         holder.item.setOnClickListener(new View.OnClickListener() {
             @Override

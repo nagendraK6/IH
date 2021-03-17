@@ -42,15 +42,15 @@ import com.relylabs.InstaHelo.Utils.Helper;
 
 public class FinalCoHostAdapter extends RecyclerView.Adapter<FinalCoHostAdapter.ViewHolder> {
 
-    private ArrayList<String> names,img,user_ids;
+    private ArrayList<String> names,imgs,user_ids;
     private LayoutInflater mInflater;
     private FinalCoHostAdapter.ItemClickListener mClickListener;
     private Context context;
     Boolean isChecked = false;
-    FinalCoHostAdapter(Context context, ArrayList<String> names,ArrayList<String> img,ArrayList<String> user_ids) {
+    FinalCoHostAdapter(Context context, ArrayList<String> names,ArrayList<String> imgs,ArrayList<String> user_ids) {
         this.mInflater = LayoutInflater.from(context);
         this.names = names;
-        this.img = img;
+        this.imgs = imgs;
         this.context = context;
         this.user_ids = user_ids;
     }
@@ -66,7 +66,7 @@ public class FinalCoHostAdapter extends RecyclerView.Adapter<FinalCoHostAdapter.
     public void onBindViewHolder(final FinalCoHostAdapter.ViewHolder holder, final int position) {
         holder.name.setText(this.names.get(position));
         float radius = context.getResources().getDimension(R.dimen.default_corner_radius_profile_schedule_small);
-        if (!this.img.get(position).equals("")) {
+        if (!this.imgs.get(position).equals("")) {
             holder.prof.setShapeAppearanceModel(holder.prof.getShapeAppearanceModel()
                     .toBuilder()
                     .setTopRightCorner(CornerFamily.ROUNDED, radius)
@@ -74,7 +74,7 @@ public class FinalCoHostAdapter extends RecyclerView.Adapter<FinalCoHostAdapter.
                     .setBottomLeftCorner(CornerFamily.ROUNDED, radius)
                     .setBottomRightCorner(CornerFamily.ROUNDED, radius)
                     .build());
-            Picasso.get().load(this.img.get(position)).into(holder.prof);
+            Picasso.get().load(this.imgs.get(position)).into(holder.prof);
         }
         if(position == 0){
             holder.remove_host.setVisibility(View.INVISIBLE);

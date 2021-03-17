@@ -69,7 +69,7 @@ public class OtherProfile extends Fragment {
     View fragment_view;
     FragmentActivity activity;
     ImageView edit_btn_bio, edit_btn_name, edit_btn_photo;
-
+    TextView is_following;
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -101,6 +101,7 @@ public class OtherProfile extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         fragment_view = view;
+        is_following = view.findViewById(R.id.is_following);
         IntentFilter new_post = new IntentFilter("update_from_follow");
         activity.registerReceiver(broadCastNewMessage, new_post);
 
@@ -362,6 +363,10 @@ public class OtherProfile extends Fragment {
                         nominated.setText(inviter_name);
                         TextView user_bio = view.findViewById(R.id.user_bio);
                         user_bio.setText(bio);
+                        Boolean is_following_curr_user = response.getBoolean("follows_curr_user");
+                        if(is_following_curr_user){
+                            is_following.setVisibility(View.VISIBLE);
+                        }
                     }
 
                     Log.d("profile_res",response.toString());

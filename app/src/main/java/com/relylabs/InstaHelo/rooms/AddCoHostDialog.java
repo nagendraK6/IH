@@ -67,14 +67,14 @@ public class AddCoHostDialog extends Fragment implements CoHostListAdapter.ItemC
     private  ArrayList<String> names = new ArrayList<String>();
     private  ArrayList<String> usernames = new ArrayList<String>();
     private  ArrayList<String> bio = new ArrayList<String>();
-    private  ArrayList<String> img = new ArrayList<String>();
+    private  ArrayList<String> imgs = new ArrayList<String>();
     private  ArrayList<String> main_names = new ArrayList<String>();
     private  ArrayList<String> main_usernames = new ArrayList<String>();
     private  ArrayList<String> main_bio = new ArrayList<String>();
-    private  ArrayList<String> main_img = new ArrayList<String>();
+    private  ArrayList<String> main_imgs = new ArrayList<String>();
     private  ArrayList<String> user_ids_selected = new ArrayList<>();
     private  ArrayList<String> names_selected = new ArrayList<>();
-    private  ArrayList<String> img_selected = new ArrayList<>();
+    private  ArrayList<String> imgs_selected = new ArrayList<>();
     private  ArrayList<Boolean > isChecked = new ArrayList<>();
     private  ArrayList<String> already_checked;
     CoHostListAdapter adapter;
@@ -108,7 +108,7 @@ public class AddCoHostDialog extends Fragment implements CoHostListAdapter.ItemC
 
     @Override public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        already_checked = getArguments().getStringArrayList("user_id_selected");
+        already_checked = getArguments().getStringArrayList("user_ids_selected");
         Log.d("already_checked",already_checked.toString());
         TextView lets_go = view.findViewById(R.id.lets_go);
         lets_go.setOnClickListener(new View.OnClickListener() {
@@ -138,14 +138,14 @@ public class AddCoHostDialog extends Fragment implements CoHostListAdapter.ItemC
                 query_txt = newText;
                 user_ids.clear();
                 bio.clear();
-                img.clear();
+                imgs.clear();
                 usernames.clear();
                 names.clear();
                 if(query_txt.equals("")){
 
                     user_ids.addAll(main_user_ids);
                     usernames.addAll(main_usernames);
-                    img.addAll(main_img);
+                    imgs.addAll(main_imgs);
                     names.addAll(main_names);
                     bio.addAll(main_bio);
                 }
@@ -155,7 +155,7 @@ public class AddCoHostDialog extends Fragment implements CoHostListAdapter.ItemC
                             user_ids.add(main_user_ids.get(i));
                             names.add(main_names.get(i));
                             usernames.add(main_usernames.get(i));
-                            img.add(main_img.get(i));
+                            imgs.add(main_imgs.get(i));
                             bio.add(main_bio.get(i));
                         }
                     }
@@ -193,7 +193,7 @@ public class AddCoHostDialog extends Fragment implements CoHostListAdapter.ItemC
                     JSONArray name = response.getJSONArray("names");
                     JSONArray username = response.getJSONArray("usernames");
                     JSONArray bio_temp = response.getJSONArray("bio");
-                    JSONArray img_temp = response.getJSONArray(("img"));
+                    JSONArray imgs_temp = response.getJSONArray(("img"));
                     JSONArray ids = response.getJSONArray("user_ids");
                     if(name!=null){
                         for (int i=0;i<name.length();i++){
@@ -202,7 +202,7 @@ public class AddCoHostDialog extends Fragment implements CoHostListAdapter.ItemC
                             if(already_checked.contains(String.valueOf(ids.getInt(i)))){
                                 isChecked.add(true);
                                 user_ids_selected.add(String.valueOf(ids.getInt(i)));
-                                img_selected.add(img_temp.getString(i));
+                                imgs_selected.add(imgs_temp.getString(i));
                                 names_selected.add(name.getString(i));
                             }
                             else{
@@ -221,15 +221,15 @@ public class AddCoHostDialog extends Fragment implements CoHostListAdapter.ItemC
                             bio.add(bio_temp.getString(i));
                         }
                     }
-                    if(img_temp!=null){
-                        for(int i=0;i<img_temp.length();i++){
-                            img.add(img_temp.getString(i));
+                    if(imgs_temp!=null){
+                        for(int i=0;i<imgs_temp.length();i++){
+                            imgs.add(imgs_temp.getString(i));
                         }
                     }
                     main_names.addAll(names);
                     main_usernames.addAll(usernames);
                     main_bio.addAll(bio);
-                    main_img.addAll(img);
+                    main_imgs.addAll(imgs);
                     main_user_ids.addAll(user_ids);
                     adapter.notifyDataSetChanged();
                 } catch (JSONException e) {
@@ -260,7 +260,7 @@ public class AddCoHostDialog extends Fragment implements CoHostListAdapter.ItemC
     }
     void prepareRecyclerView() {
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
-        adapter = new CoHostListAdapter(getContext(), names, usernames,bio, img,user_ids,isChecked,main_user_ids);
+        adapter = new CoHostListAdapter(getContext(), names, usernames,bio, imgs,user_ids,isChecked,main_user_ids);
         adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
 
@@ -275,7 +275,7 @@ public class AddCoHostDialog extends Fragment implements CoHostListAdapter.ItemC
             return;
         }
         Helper.hideKeyboard(activity_ref);
-        Intent intent = ScheduleForLater.newIntent(user_ids_selected,names_selected,img_selected);
+        Intent intent = ScheduleForLater.newIntent(user_ids_selected,names_selected,imgs_selected);
         getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
         Helper.removefragment(activity_ref);
     }
@@ -285,7 +285,7 @@ public class AddCoHostDialog extends Fragment implements CoHostListAdapter.ItemC
 
         String id = user_ids.get(position);
         String name = names.get(position);
-        String im = img.get(position);
+        String im = imgs.get(position);
         int pos = main_user_ids.indexOf(id);
         Boolean bool = isChecked.get(pos);
         if(bool){
@@ -303,7 +303,7 @@ public class AddCoHostDialog extends Fragment implements CoHostListAdapter.ItemC
                 if (data.equals(name))
                     itr2.remove();
             }
-            Iterator itr3 = img_selected.iterator();
+            Iterator itr3 = imgs_selected.iterator();
             while (itr3.hasNext())
             {
                 String data = (String)itr3.next();
@@ -314,7 +314,7 @@ public class AddCoHostDialog extends Fragment implements CoHostListAdapter.ItemC
         else{
             user_ids_selected.add(id);
             names_selected.add(name);
-            img_selected.add(im);
+            imgs_selected.add(im);
         }
         isChecked.set(pos,bool);
         Log.d("clicked",user_ids_selected.toString());

@@ -71,8 +71,8 @@ public class ScheduleForLater extends Fragment implements FinalCoHostAdapter.Ite
     TextView add_a_host;
     int day_data,month_data,year_data,hour_data,minutes_data;
     private  ArrayList<String> names = new ArrayList<String>();
-    private  ArrayList<String> user_id = new ArrayList<String>();
-    private  ArrayList<String> img = new ArrayList<String>();
+    private  ArrayList<String> user_ids = new ArrayList<String>();
+    private  ArrayList<String> imgs = new ArrayList<String>();
     RecyclerView recyclerView;
     FinalCoHostAdapter adapter;
     private static final int TARGET_FRAGMENT_REQUEST_CODE = 1;
@@ -104,8 +104,8 @@ public class ScheduleForLater extends Fragment implements FinalCoHostAdapter.Ite
         final User user = User.getLoggedInUser();
         recyclerView = view.findViewById(R.id.users_in_profile_list);
         names.add(user.FirstName + " " + user.LastName);
-        user_id.add(String.valueOf(user.UserID));
-        img.add(user.ProfilePicURL);
+        user_ids.add(String.valueOf(user.UserID));
+        imgs.add(user.ProfilePicURL);
         prepareRecyclerView();
         add_a_host.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,7 +116,7 @@ public class ScheduleForLater extends Fragment implements FinalCoHostAdapter.Ite
 
                 Bundle bundle = new Bundle();
 //                bundle.putString("room_slug", all_feeds.get(index).roomSlug );
-                bundle.putStringArrayList("user_id_selected",user_id);
+                bundle.putStringArrayList("user_ids_selected",user_ids);
                 bottomSheet.setArguments(bundle);
                 bottomSheet.setTargetFragment(ScheduleForLater.this, TARGET_FRAGMENT_REQUEST_CODE);
                 Helper.loadFragment(bottomSheet, activity_ref);
@@ -296,7 +296,7 @@ public class ScheduleForLater extends Fragment implements FinalCoHostAdapter.Ite
         params.add("event_title", title);
         params.add("room_type", room_type);
         params.add("schedule_timestamp", String.valueOf(timestamp));
-        params.add("cohost_user_ids",user_id.toString());
+        params.add("cohost_user_ids",user_ids.toString());
         show_busy_indicator();
 
         JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
@@ -348,33 +348,33 @@ public class ScheduleForLater extends Fragment implements FinalCoHostAdapter.Ite
         if( requestCode == TARGET_FRAGMENT_REQUEST_CODE ) {
             final User user = User.getLoggedInUser();
             ArrayList<String> names = data.getStringArrayListExtra("names");
-            ArrayList<String> user_id = data.getStringArrayListExtra("user_id");
-            ArrayList<String> img = data.getStringArrayListExtra("img");
+            ArrayList<String> user_ids = data.getStringArrayListExtra("user_ids");
+            ArrayList<String> imgs = data.getStringArrayListExtra("imgs");
             this.names.clear();
-            this.user_id.clear();
-            this.img.clear();
+            this.user_ids.clear();
+            this.imgs.clear();
             this.names.add(user.FirstName + " " + user.LastName);
-            this.img.add(user.ProfilePicURL);
-            this.user_id.add(String.valueOf(user.UserID));
+            this.imgs.add(user.ProfilePicURL);
+            this.user_ids.add(String.valueOf(user.UserID));
             this.names.addAll(names);
-            this.user_id.addAll(user_id);
-            this.img.addAll(img);
+            this.user_ids.addAll(user_ids);
+            this.imgs.addAll(imgs);
             adapter.notifyDataSetChanged();
             Log.d("names",names.toString());
         }
     }
 
-    public static Intent newIntent(ArrayList<String> user_id,ArrayList<String> names,ArrayList<String> img) {
+    public static Intent newIntent(ArrayList<String> user_ids,ArrayList<String> names,ArrayList<String> imgs) {
         Intent intent = new Intent();
-        intent.putExtra("user_id", user_id);
+        intent.putExtra("user_ids", user_ids);
         intent.putExtra("names", names);
-        intent.putExtra("img", img);
+        intent.putExtra("imgs", imgs);
         return intent;
     }
 
     void prepareRecyclerView() {
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
-        adapter = new FinalCoHostAdapter(getContext(), names, img,user_id);
+        adapter = new FinalCoHostAdapter(getContext(), names, imgs,user_ids);
         adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
 
@@ -384,8 +384,8 @@ public class ScheduleForLater extends Fragment implements FinalCoHostAdapter.Ite
     public void onItemClick(int position) {
         Log.d("clickListner", String.valueOf(position));
         if (position != 0) {
-            user_id.remove(position);
-            img.remove(position);
+            user_ids.remove(position);
+            imgs.remove(position);
             names.remove(position);
             adapter.notifyDataSetChanged();
         }
