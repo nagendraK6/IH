@@ -2,14 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="600dp"
+    android:layout_height="match_parent"
     android:background="@color/neartagtheme"
     android:clickable="true"
     android:focusable="true"
     android:orientation="vertical">
 
     <SearchView
-
         android:id="@+id/search_people"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -45,7 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="50dp"
         android:text="SCHEDULE A ROOM"
         android:textSize="16sp" />
 
@@ -64,11 +63,10 @@
         android:id="@+id/lets_go"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/search_people"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="300dp"
-        android:text="Let's Go"
-        android:textSize="18sp" />
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="50dp"
+        android:background="@drawable/lets_go" />
 
     <ImageView
         android:id="@+id/cross"

@@ -119,8 +119,7 @@ public class ScheduleForLater extends Fragment implements FinalCoHostAdapter.Ite
                 bundle.putStringArrayList("user_id_selected",user_id);
                 bottomSheet.setArguments(bundle);
                 bottomSheet.setTargetFragment(ScheduleForLater.this, TARGET_FRAGMENT_REQUEST_CODE);
-                bottomSheet.show(getFragmentManager(),
-                        AddCoHostDialog.TAG);
+                Helper.loadFragment(bottomSheet, activity_ref);
             }
         });
         String prof_url = user.ProfilePicURL;

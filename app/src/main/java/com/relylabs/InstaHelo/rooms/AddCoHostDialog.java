@@ -56,7 +56,7 @@ import cz.msebera.android.httpclient.Header;
 
 import static com.relylabs.InstaHelo.Utils.Helper.removefragment;
 
-public class AddCoHostDialog extends BottomSheetDialogFragment implements CoHostListAdapter.ItemClickListener {
+public class AddCoHostDialog extends Fragment implements CoHostListAdapter.ItemClickListener {
 
     FragmentActivity activity_ref;
     public static final String TAG = "ActionBottomDialog";
@@ -101,10 +101,10 @@ public class AddCoHostDialog extends BottomSheetDialogFragment implements CoHost
     public static AddCoHostDialog newInstance() {
         return new AddCoHostDialog();
     }
-    @Override
-    public int getTheme() {
-        return R.style.AppBottomSheetDialogTheme;
-    }
+    //@Override
+   // public int getTheme() {
+        //return R.style.AppBottomSheetDialogTheme;
+    //}
 
     @Override public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -175,9 +175,6 @@ public class AddCoHostDialog extends BottomSheetDialogFragment implements CoHost
         });
         getFollowing();
         prepareRecyclerView();
-
-
-
     }
     public void getFollowing(){
         show_busy_indicator();
@@ -280,7 +277,7 @@ public class AddCoHostDialog extends BottomSheetDialogFragment implements CoHost
         Helper.hideKeyboard(activity_ref);
         Intent intent = ScheduleForLater.newIntent(user_ids_selected,names_selected,img_selected);
         getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
-        dismiss();
+        Helper.removefragment(activity_ref);
     }
 
     @Override
