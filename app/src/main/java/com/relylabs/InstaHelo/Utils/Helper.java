@@ -313,13 +313,17 @@ public class Helper {
 
     public static void removefragment(FragmentActivity activity) {
         if(activity!=null) {
-            Fragment f = activity.getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
-            FragmentManager manager = activity.getSupportFragmentManager();
-            FragmentTransaction trans = manager.beginTransaction();
-            trans.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right,R.anim.slide_in_left, R.anim.slide_out_right);
-            trans.remove(f);
-            trans.commitAllowingStateLoss();
-            manager.popBackStack();
+            try {
+                Fragment f = activity.getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
+                FragmentManager manager = activity.getSupportFragmentManager();
+                FragmentTransaction trans = manager.beginTransaction();
+                trans.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right,R.anim.slide_in_left, R.anim.slide_out_right);
+                trans.remove(f);
+                trans.commitAllowingStateLoss();
+                manager.popBackStack();
+            } catch (Exception ex) {
+              // do nothing
+            }
         }
     }
 

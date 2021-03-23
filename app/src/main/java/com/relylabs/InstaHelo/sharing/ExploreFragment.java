@@ -149,7 +149,7 @@ public class ExploreFragment  extends Fragment implements ExploreListAdapter.Ite
         recyclerView = fragment_view.findViewById(R.id.users_in_profile_list);
         LinearLayoutManager layoutManager = new LinearLayoutManager(activity);
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new ExploreListAdapter(getContext(), all_user_profiles);
+        adapter = new ExploreListAdapter(activity, all_user_profiles);
         adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
         show_busy_indicator.setVisibility(View.INVISIBLE);

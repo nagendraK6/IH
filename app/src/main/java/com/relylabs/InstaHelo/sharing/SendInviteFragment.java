@@ -273,7 +273,7 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
         recyclerView = fragment_view.findViewById(R.id.contact_list_display);
         LinearLayoutManager layoutManager = new LinearLayoutManager(activity);
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new SharingContactListAdapter(getContext(), contact_names, contact_numbers);
+        adapter = new SharingContactListAdapter(activity, contact_names, contact_numbers);
         adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
         show_busy_indicator.setVisibility(View.INVISIBLE);

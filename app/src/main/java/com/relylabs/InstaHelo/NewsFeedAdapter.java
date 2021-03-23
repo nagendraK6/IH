@@ -63,9 +63,11 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.ViewHo
             holder.c1.setVisibility(View.INVISIBLE);
             return;
         }
+
         if (e.eventPhotoUrls.size() < 2) {
             holder.c2.setVisibility(View.INVISIBLE);
         }
+
         if(e.isScheduled){
             holder.time.setVisibility(View.VISIBLE);
             myCalendar.setTimeInMillis(e.scheduleTimestamp);
@@ -93,6 +95,7 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.ViewHo
 
         if (!p2.equals("")) {
             Picasso.get().load(p2).into(holder.c2);
+            holder.c2.setVisibility(View.VISIBLE);
         } else {
             holder.c2.setImageDrawable(holder.itemView.getContext().getDrawable(R.drawable.empty_inviter));
         }

@@ -359,8 +359,8 @@ public class BottomScheduleRoom extends BottomSheetDialogFragment {
 
     void prepareRecyclerView() {
         recyclerView = fragment_view.findViewById(R.id.speaker_grid_list);
-        recyclerView.setLayoutManager( new GridLayoutManager(getContext(), 5));
-        adapter = new SpeakerAdapter(getContext(), names, usernames, img,user_ids);
+        recyclerView.setLayoutManager( new GridLayoutManager(activity_ref, 5));
+        adapter = new SpeakerAdapter(activity_ref, names, usernames, img,user_ids);
         recyclerView.setAdapter(adapter);
     }
     @Override

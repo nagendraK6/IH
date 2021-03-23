@@ -451,8 +451,8 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
     private  void setupAudiences(View view) {
         UserSettings us = UserSettings.getSettings();
         recyclerView_a = view.findViewById(R.id.listener_grid_list);
-        recyclerView_a.setLayoutManager(new GridLayoutManager(getContext(), 3));
-        audience_adapter = new RoomsUsersDisplayListAdapter(getContext(), audiences, us.is_current_user_admin);
+        recyclerView_a.setLayoutManager(new GridLayoutManager(activity, 3));
+        audience_adapter = new RoomsUsersDisplayListAdapter(activity, audiences, us.is_current_user_admin);
         audience_adapter.setClickListener(this);
         recyclerView_a.setAdapter(audience_adapter);
     }
@@ -461,8 +461,8 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
     private  void setupSpeakers(View view) {
         UserSettings us = UserSettings.getSettings();
         recyclerView_s = view.findViewById(R.id.speaker_grid_list);
-        recyclerView_s.setLayoutManager(new GridLayoutManager(getContext(), 3));
-        speaker_adapter = new RoomsUsersDisplayListAdapter(getContext(), speakers, us.is_current_user_admin);
+        recyclerView_s.setLayoutManager(new GridLayoutManager(activity, 3));
+        speaker_adapter = new RoomsUsersDisplayListAdapter(activity, speakers, us.is_current_user_admin);
         speaker_adapter.setClickListener(this);
         recyclerView_s.setAdapter(speaker_adapter);
     }
@@ -565,10 +565,10 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
             if (null != activeNetwork) {
                 if(activeNetwork.getType() != ConnectivityManager.TYPE_WIFI &&
                         activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
-                    Toast.makeText(getContext(), "Internet has poor connectivity", Toast.LENGTH_LONG).show();
+                    Toast.makeText(activity, "Internet has poor connectivity", Toast.LENGTH_LONG).show();
                 }
             } else {
-                Toast.makeText(getContext(), "Internet has poor connectivity", Toast.LENGTH_LONG).show();
+                Toast.makeText(activity, "Internet has poor connectivity", Toast.LENGTH_LONG).show();
             }
         }
     }
