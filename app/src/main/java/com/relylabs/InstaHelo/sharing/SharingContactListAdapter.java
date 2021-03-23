@@ -1,12 +1,14 @@
 package com.relylabs.InstaHelo.sharing;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,6 +17,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -30,6 +33,7 @@ import com.loopj.android.http.RequestParams;
 import com.relylabs.InstaHelo.App;
 import com.relylabs.InstaHelo.MainScreenFragment;
 import com.relylabs.InstaHelo.R;
+import com.relylabs.InstaHelo.Utils.Helper;
 import com.relylabs.InstaHelo.Utils.Logger;
 import com.relylabs.InstaHelo.models.Contact;
 import com.relylabs.InstaHelo.models.User;
@@ -61,18 +65,7 @@ public class SharingContactListAdapter extends RecyclerView.Adapter<SharingConta
         this.contact_names = contact_names;
         this.context = context;
     }
-    public boolean isAppInstalled(String packageName) {
-        PackageManager pm = context.getPackageManager();
-        boolean app_installed;
-        try {
-            pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES);
-            app_installed = true;
-        }
-        catch (PackageManager.NameNotFoundException e) {
-            app_installed = false;
-        }
-        return app_installed;
-    }
+
     // inflates the cell layout from xml when needed
     @Override
     public SharingContactListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -102,13 +95,10 @@ public class SharingContactListAdapter extends RecyclerView.Adapter<SharingConta
                 PackageManager packageManager = context.getPackageManager();
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 String phone = contact_numbers.get(position).toString();
-                Boolean isInstalledWhatsapp =isAppInstalled("com.whatsapp");
+                Boolean isInstalledWhatsapp = isAppInstalled(context, "com.whatsapp");
                 sendInvite(phone);
+                String message = "Hey " + contact_names.get(position) + " - I have an invite to InstaHelo and want you to join. I added you using " + phone +  ", so make sure to use that number when you register. Here is the link!  https://play.google.com/store/apps/details?id=com.relylabs.InstaHelo";
                 if(isInstalledWhatsapp){
-                    /*if (!phone.startsWith("+91")){
-                        phone = "+91" + phone;
-                    }*/
-                    String message = "Hey " + contact_names.get(position) + " - I have an invite to InstaHelo and want you to join. I added you using " + phone +  ", so make sure to use that number when you register. Here is the link!  https://play.google.com/store/apps/details?id=com.relylabs.InstaHelo";
                     try {
                         String url = "https://api.whatsapp.com/send?phone="+ phone +"&text=" + URLEncoder.encode(message, "UTF-8");
                         i.setPackage("com.whatsapp");
@@ -121,16 +111,31 @@ public class SharingContactListAdapter extends RecyclerView.Adapter<SharingConta
                     }
                 }
                 else{
-                    Intent smsIntent = new Intent(Intent.ACTION_VIEW);
-                    smsIntent.setType("vnd.android-dir/mms-sms");
+                    Intent smsIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("sms:"));
+                    if(android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+                        smsIntent.setType("vnd.android-dir/mms-sms");
+
                     smsIntent.putExtra("address", phone);
-                    smsIntent.putExtra("sms_body","Hey!, come join me at InstaHelo");
+                    smsIntent.putExtra("sms_body",message);
                     context.startActivity(smsIntent);
                 }
             }
         });
-
     }
+
+    public static Boolean isAppInstalled(Context activity, String package_name){
+        PackageManager pm = activity.getPackageManager();
+        boolean app_installed;
+        try {
+            pm.getPackageInfo(package_name, PackageManager.GET_ACTIVITIES);
+            app_installed = true;
+        }
+        catch (PackageManager.NameNotFoundException e) {
+            app_installed = false;
+        }
+        return app_installed;
+    }
+
     public void sendInvite(String username){
         RequestParams params = new RequestParams();
         params.add("username",username);
@@ -158,7 +163,6 @@ public class SharingContactListAdapter extends RecyclerView.Adapter<SharingConta
                     e.printStackTrace();
                 }
             }
-
 
 
             @Override
