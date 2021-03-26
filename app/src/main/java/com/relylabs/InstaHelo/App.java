@@ -22,6 +22,6 @@ public class App extends Application {
     }
 
     public static String getBaseURL() {
-        return "https://www.beeheive.com/";
+        return "https://www.instahelo.com/";
     }
 }
