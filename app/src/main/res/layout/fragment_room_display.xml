@@ -25,7 +25,8 @@
             android:layout_marginBottom="50dp"
             android:clickable="true"
             android:focusable="true"
-            android:text="Clap" />
+            android:text="Clap"
+            android:visibility="invisible" />
 
         <ScrollView
             android:layout_width="match_parent"
@@ -157,7 +158,8 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="0dp"
                 android:gravity="center_vertical"
-                android:text="Clap" />
+                android:text="Clap"
+                android:visibility="invisible" />
 
         </RelativeLayout>
     </RelativeLayout>

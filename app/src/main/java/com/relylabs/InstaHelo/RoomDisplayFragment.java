@@ -756,9 +756,10 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
         Bundle args = new Bundle();
         args.putString("user_id",String.valueOf(uid));
         otherprof.setArguments(args);
-        FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
-        ft.add(R.id.fragment_holder, otherprof);
-        ft.commitAllowingStateLoss();
+        Helper.loadFragment(otherprof,activity);
+//        FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
+//        ft.add(R.id.fragment_holder, otherprof);
+//        ft.commitAllowingStateLoss();
     }
 
     public void process_start_close_room_request() {
