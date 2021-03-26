@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.CookieSyncManager;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -418,10 +419,11 @@ public class Helper {
         return app_installed;
     }
 
-    public static void showToast(FragmentActivity activity_ref, View view, LayoutInflater inflater,String toast_text ){
+    public static void showToast(FragmentActivity activity_ref, View view, LayoutInflater inflater,String toast_text,int drawable ){
         View layout = inflater.inflate(R.layout.custom_toast,
                 (ViewGroup) view.findViewById(R.id.custom_toast_layout_id));
-
+        RelativeLayout toast_layout = layout.findViewById(R.id.custom_toast_layout_id);
+        toast_layout.setBackgroundResource(drawable);
         TextView text = (TextView) layout.findViewById(R.id.toast_text);
         text.setText(toast_text);
         Toast toast = new Toast(activity_ref);
@@ -443,4 +445,11 @@ public class Helper {
         activity_ref.startActivity(i);
     }
 
+    public static void ask_main_for_refresh_content(FragmentActivity activity) {
+        Bundle data_bundle = new Bundle();
+        data_bundle.putString("update_type", "REFRESH_FEED");
+        Intent intent = new Intent("update_from_service");
+        intent.putExtras(data_bundle);
+        activity.sendBroadcast(intent);
+    }
 }

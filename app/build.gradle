@@ -13,8 +13,8 @@ android {
         applicationId "com.relylabs.InstaHelo"
         minSdkVersion 24
         targetSdkVersion 30
-        versionCode 86
-        versionName "0.0.86"
+        versionCode 87
+        versionName "0.0.87"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

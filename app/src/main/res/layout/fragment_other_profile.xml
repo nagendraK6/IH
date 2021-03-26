@@ -3,25 +3,26 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/relative"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/neartagtheme"
-    android:focusable="true"
     android:clickable="true"
+    android:focusable="true"
     android:orientation="vertical">
 
 
     <ProgressBar
         android:id="@+id/loading_channel_token_fetch"
-        android:visibility="invisible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:indeterminateTintMode="src_atop"
-        android:indeterminateTint="@color/instahelo_blue"
-
-        android:layout_centerVertical="true"
         android:layout_centerInParent="true"
-        android:layout_gravity="center" />
+        android:layout_centerVertical="true"
+        android:layout_gravity="center"
+
+        android:indeterminateTint="@color/instahelo_blue"
+        android:indeterminateTintMode="src_atop"
+        android:visibility="invisible" />
 
     <TextView
         android:id="@+id/textView12"
@@ -48,6 +49,7 @@
         android:text="@string/following"
         android:textColor="@color/neartagtextcolor"
         android:textSize="18sp" />
+
     <ImageView
         android:id="@+id/prev_button2"
         android:layout_width="wrap_content"
@@ -69,41 +71,44 @@
         app:srcCompat="@drawable/empty_user_profile_image" />
 
     <ImageView
+        android:id="@+id/edit_btn_photo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/prev_button2"
         android:layout_alignStart="@+id/prev_button2"
         android:layout_marginStart="62dp"
         android:layout_marginTop="50dp"
-        android:id="@+id/edit_btn_photo"
-        android:visibility="invisible"
-        android:layout_width="wrap_content"
         android:src="@drawable/pencil_white"
-        android:layout_height="wrap_content">
+        android:visibility="invisible">
 
     </ImageView>
+
     <RelativeLayout
+        android:id="@+id/name_user_section"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/profile_img"
         android:layout_alignStart="@+id/profile_img"
-        android:layout_height="wrap_content"
         android:layout_marginStart="0dp"
-        android:layout_marginTop="20sp"
-        android:id="@+id/name_user_section">
+        android:layout_marginTop="20sp">
+
         <TextView
             android:id="@+id/name_user"
             android:layout_width="match_parent"
-            android:layout_marginRight="30dp"
             android:layout_height="wrap_content"
+            android:layout_marginRight="30dp"
             android:textColor="@color/Black"
             android:textSize="21sp"
             android:textStyle="bold" />
+
         <ImageView
-            android:visibility="invisible"
             android:id="@+id/edit_btn_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_marginRight="35dp"
-            android:src="@drawable/pencil_edit"/>
+            android:src="@drawable/pencil_edit"
+            android:visibility="invisible" />
     </RelativeLayout>
 
 
@@ -132,6 +137,16 @@
         android:visibility="invisible" />
 
     <TextView
+        android:id="@+id/clap_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/is_following"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="0dp"
+        android:layout_toEndOf="@+id/is_following"
+        android:textSize="18sp" />
+
+    <TextView
         android:id="@+id/follower"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -156,35 +171,36 @@
         android:textSize="18sp" />
 
     <RelativeLayout
-        android:layout_width="wrap_content"
         android:id="@+id/user_bio_section"
+        android:layout_width="wrap_content"
 
 
+        android:layout_height="wrap_content"
         android:layout_below="@+id/follower"
+
+
         android:layout_alignStart="@+id/follower"
-
-
         android:layout_alignParentEnd="true"
         android:layout_marginStart="0dp"
         android:layout_marginTop="27dp"
-        android:layout_marginEnd="36dp"
-        android:layout_height="wrap_content">
+        android:layout_marginEnd="36dp">
 
         <TextView
             android:id="@+id/user_bio"
             android:layout_width="match_parent"
-            android:layout_marginRight="30dp"
             android:layout_height="wrap_content"
+            android:layout_marginRight="30dp"
             android:textColor="@color/Black"
             android:textSize="16sp" />
+
         <ImageView
-            android:visibility="invisible"
             android:id="@+id/edit_btn_bio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_marginLeft="10dp"
-            android:src="@drawable/pencil_edit"/>
+            android:src="@drawable/pencil_edit"
+            android:visibility="invisible" />
     </RelativeLayout>
 
 
@@ -229,8 +245,8 @@
         android:layout_alignTop="@+id/profile_img_noti"
         android:layout_marginStart="20dp"
         android:layout_marginTop="2dp"
-        android:textColor="@color/Black"
         android:layout_toEndOf="@+id/profile_img_noti"
+        android:textColor="@color/Black"
         android:textSize="14sp" />
 
     <TextView
@@ -241,5 +257,47 @@
         android:layout_marginTop="140dp"
         android:layout_marginRight="50dp"
         android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/settings"
+        android:layout_width="wrap_content"
+        android:layout_height="19dp"
+        android:layout_alignTop="@+id/prev_button2"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="32dp"
+        android:visibility="invisible"
+        app:srcCompat="@drawable/large_three_dots" />
+
+    <LinearLayout
+        android:id="@+id/option_menu"
+        android:layout_width="120dp"
+        android:layout_height="80dp"
+        android:layout_below="@+id/settings"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="7dp"
+        android:layout_marginEnd="26dp"
+        android:background="#FFFFFF"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <TextView
+            android:id="@+id/report"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="11dp"
+            android:layout_marginTop="15dp"
+            android:text="Report Profile" />
+
+        <TextView
+            android:id="@+id/block"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="11dp"
+            android:layout_marginTop="12dp"
+            android:text="Block" />
+    </LinearLayout>
 
 </RelativeLayout>

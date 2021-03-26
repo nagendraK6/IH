@@ -313,6 +313,7 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
 
     @Override
     public void onDestroy() {
+        Helper.ask_main_for_refresh_content(activity);
         super.onDestroy();
     }
 
@@ -321,6 +322,6 @@ public class SendInviteFragment extends Fragment implements SharingContactListAd
 
     @Override
     public void onItemClick(int position) {
-
+        Log.d("debug_click", "Sent the invite to the user");
     }
 }

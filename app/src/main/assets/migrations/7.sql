@@ -1,0 +1,1 @@
+ALTER TABLE Users ADD COLUMN InvitedUsersCount INT DEFAULT 0;

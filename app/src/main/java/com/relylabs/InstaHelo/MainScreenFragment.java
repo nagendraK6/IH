@@ -98,7 +98,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
 
     TextView invites_count_display;
     Boolean show_inviter_card = true;
-
+    Integer min_no_of_followers_needed = 0;
     private FragmentActivity activity;
     ArrayList<EventElement> all_active_rooms, all_scheduled_rooms;
     Boolean is_room_fragment_loaded = false;
@@ -288,6 +288,25 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
             @Override
             public void onClick(View v) {
                 UserSettings us = UserSettings.getSettings();
+                User u = User.getLoggedInUser();
+                if (u.IsStartRoomEnabled == false) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                    builder.setTitle("Friends Invite needed");
+                    builder.setMessage("To create a room, you need to send at least " + String.valueOf(min_no_of_followers_needed) + " friends in your network. Invite now?");
+                    builder.setPositiveButton("Let's do it", new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            // Do nothing, but close the dialog
+                            Helper.loadFragment(new SendInviteFragment(),activity);
+                            dialog.dismiss();
+                        }
+                    });
+
+                    builder.show();
+                    return;
+                }
+
                 if (us.is_current_user_admin && !us.selected_event_id.equals(-1)) {
                     showDialogForCurrentRoomExit("Action Moderator", "You are an active moderator of a room. To create the room you have to leave the conversation. Do you want to leave the room before creating new room?");
                 } else if (!us.selected_event_id.equals(-1)) {
@@ -554,11 +573,15 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                     user.FirstName = current_user_info.getString("first_name");
                     user.LastName = current_user_info.getString("last_name");
                     user.ProfilePicURL = current_user_info.getString("profile_pic_url");
+                    user.IsStartRoomEnabled = current_user_info.getBoolean("IsStartRoomEnabled");
+                    min_no_of_followers_needed = current_user_info.getInt("min_no_of_invites_needed");
+                    user.InvitedUsersCount = current_user_info.getInt("invited_users_count");
                     user.save();
                     Boolean should_show_notification_dot = current_user_info.getBoolean("should_show_notification_dot");
                     if(should_show_notification_dot){
                         notification_btn.setImageResource(R.drawable.notification_dot);
                     }
+
                     JSONArray all_active_rooms_t = response.getJSONArray("all_active_rooms");
                     JSONArray all_scheduled_rooms_t = response.getJSONArray("all_scheduled_rooms");
 

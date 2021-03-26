@@ -2,6 +2,7 @@ package com.relylabs.InstaHelo.sharing;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,6 +14,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -37,6 +39,7 @@ import com.relylabs.InstaHelo.Utils.Helper;
 import com.relylabs.InstaHelo.Utils.Logger;
 import com.relylabs.InstaHelo.models.Contact;
 import com.relylabs.InstaHelo.models.User;
+import com.relylabs.InstaHelo.models.UserSettings;
 import com.relylabs.InstaHelo.onboarding.SuggestedProfileToFollowFragment;
 
 import org.json.JSONArray;
@@ -57,8 +60,6 @@ public class SharingContactListAdapter extends RecyclerView.Adapter<SharingConta
     private LayoutInflater mInflater;
     private SharingContactListAdapter.ItemClickListener mClickListener;
     private Context context;
-    private static final int MY_PERMISSIONS_REQUEST_SEND_SMS =0 ;
-    // data is passed into the constructor
     SharingContactListAdapter(Context context, ArrayList<String> contact_names, ArrayList<String> contact_numbers) {
         this.mInflater = LayoutInflater.from(context);
         this.contact_numbers = contact_numbers;
@@ -151,8 +152,29 @@ public class SharingContactListAdapter extends RecyclerView.Adapter<SharingConta
                     String error_message = response.getString("error_message");
                     Log.d("sharing",response.toString());
                     int invite_count = response.getInt("invites_count");
+                    int invited_users_count = response.getInt("invited_users_count");
+                    int min_invites_count = response.getInt("min_invites_count");
                     user.InvitesCount = invite_count;
                     user.save();
+
+
+                    UserSettings us  = UserSettings.getSettings();
+                    if (!us.has_seen_create_room_info && invited_users_count > min_invites_count) {
+                        us.has_seen_create_room_info = true;
+                        us.save();
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        builder.setTitle("Congrats ");
+                        builder.setMessage("You can now create the room and your followers can join the discussion.");
+                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+
+                        builder.show();
+                    }
 
                     Contact c = Contact.getContact(username);
                     if (c != null) {

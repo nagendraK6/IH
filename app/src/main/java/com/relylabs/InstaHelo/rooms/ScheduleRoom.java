@@ -165,7 +165,7 @@ public class ScheduleRoom extends Fragment {
             @Override
             public void onClick(View v) {
                 LayoutInflater inflater = getLayoutInflater();
-                Helper.showToast(activity_ref,view,inflater,"Link copied to clipboard!");
+                Helper.showToast(activity_ref,view,inflater,"Link copied to clipboard!", R.drawable.toast_background);
                 String shareBody =
                         "Hey! checkout this audio room " + room_title  + " on @instahelo app. Join me at " + time_share + " \n" +
                                 "Download from https://play.google.com/store/apps/details?id=com.relylabs.InstaHelo . Click here for more details : " + App.getBaseURL() + room_slug ;

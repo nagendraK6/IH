@@ -83,6 +83,22 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setUpFragment();
 
+        String type = getIntent().getStringExtra("type");
+        String user_id;
+        if(type!=null){
+            switch (type){
+                case "user_followed":
+                case "user_joined":
+                    user_id = getIntent().getStringExtra("value");
+                    openProfile(user_id);
+                    break;
+                case "room_scheduled":
+                    String room_slug = getIntent().getStringExtra("value");
+                    openScheduleRoom(room_slug);
+                    break;
+            }
+        }
+
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(new OnCompleteListener<String>() {
                     @Override
@@ -107,6 +123,21 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception ex) {
             Log.d("intent", "Info in event link");
         }
+    }
+
+    void openProfile(String user_id){
+        OtherProfile otherprof = new OtherProfile();
+        Bundle args = new Bundle();
+        args.putString("user_id",user_id);
+        otherprof.setArguments(args);
+        Helper.loadFragment(otherprof,MainActivity.this);
+    }
+    void openScheduleRoom(String room_slug){
+        ScheduleRoom room = new ScheduleRoom();
+        Bundle args = new Bundle();
+        args.putString("room_slug", room_slug);
+        room.setArguments(args);
+        Helper.loadFragment(room,MainActivity.this);
     }
 
     private void processIntents() {
@@ -155,7 +186,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        String action = intent.getAction();
         Uri data = intent.getData();
         if(data !=null){
             List<String > params = data.getPathSegments();
@@ -175,6 +205,22 @@ public class MainActivity extends AppCompatActivity {
             ft.add(R.id.fragment_holder, room);
             ft.commitAllowingStateLoss();
 
+        }
+
+        String type = intent.getStringExtra("type");
+        String user_id;
+        if(type!=null){
+            switch (type){
+                case "user_followed":
+                case "user_joined":
+                    user_id = intent.getStringExtra("value");
+                    openProfile(user_id);
+                    break;
+                case "room_scheduled":
+                    String room_slug = intent.getStringExtra("value");
+                    openScheduleRoom(room_slug);
+                    break;
+            }
         }
     }
 

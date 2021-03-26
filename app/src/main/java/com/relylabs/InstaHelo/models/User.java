@@ -74,6 +74,9 @@ public class User extends Model {
     @Column(name = "IsSuperUser")
     public Boolean IsSuperUser;
 
+    @Column(name = "InvitedUsersCount")
+    public Integer InvitedUsersCount;
+
     public User() {
         super();
         this.IsOTPVerified = false;
@@ -86,6 +89,7 @@ public class User extends Model {
         this.InvitesCount = 0;
         this.IsStartRoomEnabled = false;
         this.IsSuperUser = false;
+        this.InvitedUsersCount = 0;
     }
 
 

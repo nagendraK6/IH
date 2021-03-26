@@ -1,0 +1,1 @@
+ALTER TABLE UserSettings ADD COLUMN has_seen_create_room_info TINYINT DEFAULT 0;

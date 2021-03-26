@@ -46,6 +46,10 @@ public class UserSettings extends Model {
     @Column(name = "audience_hand_raised")
     public Boolean audience_hand_raised;
 
+
+    @Column(name = "has_seen_create_room_info")
+    public Boolean has_seen_create_room_info;
+
     public UserSettings() {
         super();
         User u = User.getLoggedInUser();
@@ -59,6 +63,7 @@ public class UserSettings extends Model {
         this.is_current_role_speaker = false;
         this.is_current_user_admin = false;
         this.audience_hand_raised = false;
+        this.has_seen_create_room_info = false;
     }
 
     public static UserSettings getSettings() {

@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -265,6 +266,15 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
         ImageView invite = view.findViewById(R.id.invite);
         invite.setVisibility(View.INVISIBLE);
 
+        TextView clap_icon = view.findViewById(R.id.clap_icon);
+        clap_icon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextView clap = view.findViewById(R.id.clap);
+                move(clap);
+                send_clap_to_server();
+            }
+        });
 
         ImageView notif = view.findViewById(R.id.notification);
         notif.setVisibility(View.INVISIBLE);
@@ -428,7 +438,49 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
         super_user_controls(view);
     }
 
-
+    public static void move(final TextView view){
+        ValueAnimator va = ValueAnimator.ofFloat(0,1);
+        int mDuration = 3500; //in millis
+        va.setDuration(mDuration);
+        va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            public void onAnimationUpdate(ValueAnimator animation) {
+                Log.d("Animation", "on animation updated");
+                view.setTranslationY((float)animation.getAnimatedValue());
+                float value = ((Float) (animation.getAnimatedValue()))
+                        .floatValue();
+                view.setTranslationY((float)(-150.0 * Math.tan(value*Math.PI/2)));
+            }
+        });
+        va.start();
+    }
+    void send_clap_to_server(){
+        checkConnection();
+        User user = User.getLoggedInUser();
+        AsyncHttpClient client = new AsyncHttpClient();
+        RequestParams params = new RequestParams();
+        UserSettings us = UserSettings.getSettings();
+        params.add("event_id", String.valueOf(us.selected_event_id));
+        JsonHttpResponseHandler jrep= new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                try {
+                    String error_message = response.getString("error_message");
+                    Log.d("response",response.toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
+            }
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable t, JSONObject obj) {
+            }
+        };
+        client.addHeader("Accept", "application/json");
+        client.addHeader("Authorization", "Token " + user.AccessToken);
+        client.post( App.getBaseURL() + "page/clap_for_speakers", params, jrep);
+    }
 
     void processMuteUnmuteSettings() {
         UserSettings us = UserSettings.getSettings();
