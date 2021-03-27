@@ -19,6 +19,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
@@ -563,6 +564,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         }
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
+        params.add("version",getVersion());
         JsonHttpResponseHandler jrep = new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -1010,5 +1012,18 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                 "add_photo_dialog_fragment");
     }
 
+    String getVersion(){
+        String version = "";
+        try {
+            PackageInfo pInfo = activity.getPackageManager().getPackageInfo(activity.getPackageName(), 0);
+            version = pInfo.versionName;
+            int verCode = pInfo.versionCode;
+            Log.d("version",version);
+            Log.d("verCode",String.valueOf(verCode));
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return version;
+    }
 
 }
