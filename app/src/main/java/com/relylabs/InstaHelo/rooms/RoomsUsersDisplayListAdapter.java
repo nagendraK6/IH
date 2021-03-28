@@ -320,7 +320,7 @@ public class RoomsUsersDisplayListAdapter extends RecyclerView.Adapter<RoomsUser
 
     private void actions_for_speakers(Context context, Integer uid, Boolean is_speaker) {
         String txt = is_speaker ? "Move to Audience": "Invite to Speak";
-        final CharSequence[] items = { txt };
+        final CharSequence[] items = { txt, "View Profile" };
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
@@ -337,6 +337,8 @@ public class RoomsUsersDisplayListAdapter extends RecyclerView.Adapter<RoomsUser
                     dialog.dismiss();
                 } else if (items[item].equals("Invite to Speak")) {
                     mClickListener.onItemClick(uid, "MAKE_SPEAKER");
+                } else if  (items[item].equals("View Profile")) {
+                    mClickListener.onItemClick(uid, "SHOW_PROFILE");
                 }
             }
         });

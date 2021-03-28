@@ -484,6 +484,9 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
 
     void processMuteUnmuteSettings() {
         UserSettings us = UserSettings.getSettings();
+        if (us == null) {
+            return;
+        }
         if (us.is_current_role_speaker) {
             mute_unmute_button_bottom.setVisibility(View.VISIBLE);
             if (us.is_muted) {

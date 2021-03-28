@@ -293,7 +293,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                 if (u.IsStartRoomEnabled == false) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                     builder.setTitle("Friends Invite needed");
-                    builder.setMessage("To create a room, you need to send at least " + String.valueOf(min_no_of_followers_needed) + " friends in your network. Invite now?");
+                    builder.setMessage("Invite " + String.valueOf(min_no_of_followers_needed) + " friends in your network to unlock the ability to create a room. Invite now?");
                     builder.setPositiveButton("Let's do it", new DialogInterface.OnClickListener() {
 
                         public void onClick(DialogInterface dialog, int which) {
