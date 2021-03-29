@@ -180,7 +180,6 @@ public class OtherProfile extends Fragment {
         if(!current_user_id.equals(String.valueOf(user.UserID))){
             TextView follow_btn = view.findViewById(R.id.follow_btn);
             follow_btn.setVisibility(View.VISIBLE);
-            options.setVisibility(View.VISIBLE);
         }
 
         ImageView back = view.findViewById(R.id.prev_button2);
