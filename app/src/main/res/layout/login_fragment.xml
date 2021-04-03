@@ -95,7 +95,7 @@
         android:paddingBottom="12dp" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/tos_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/phone_ask"

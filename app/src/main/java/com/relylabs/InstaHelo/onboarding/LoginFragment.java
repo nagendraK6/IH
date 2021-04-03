@@ -15,12 +15,17 @@ import androidx.fragment.app.FragmentTransaction;
 
 
 import android.text.Editable;
+import android.text.Html;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.text.TextWatcher;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +36,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.relylabs.InstaHelo.App;
+import com.relylabs.InstaHelo.MainActivity;
 import com.relylabs.InstaHelo.R;
 import com.relylabs.InstaHelo.Utils.Logger;
 import com.relylabs.InstaHelo.models.User;
@@ -101,9 +107,14 @@ public class LoginFragment extends Fragment {
         next_phone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                process(phone_number_txt);
+                termsAndCondition(phone_number_txt);
             }
         });
+
+        final TextView textView = view.findViewById(R.id.tos_view);
+        textView.setText(R.string.terms_of_service);
+        textView.setMovementMethod(LinkMovementMethod.getInstance());
+
         setupPhoneNo();
     }
 
@@ -142,6 +153,46 @@ public class LoginFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private void termsAndCondition(String phone_number)  {
+        if (phone_number.length() <= 1) {
+            return;
+        }
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(activity_ref, android.R.style.Theme_DeviceDefault_Light_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(activity_ref);
+        }
+
+
+        Logger.log(Logger.PHONE_ADD_REQUEST_START);
+        final SpannableString s = new SpannableString(getString(R.string.terms_of_service)); // msg should have url to enable clicking
+        Linkify.addLinks(s, Linkify.ALL);
+
+
+
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        View layout = inflater.inflate(R.layout.login_dialog_fragment    /*my layout here*/, null);
+
+        final TextView textView = layout.findViewById(R.id.tos_text);
+        textView.setText(R.string.terms_of_service);
+        textView.setMovementMethod(LinkMovementMethod.getInstance());
+
+
+        builder.setView(layout)
+                .setPositiveButton("I AGREE" , new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        process(phone_number_txt);
+                    }})
+                .setNegativeButton("Don't Agree", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
     private void  process(String phone_number) {
