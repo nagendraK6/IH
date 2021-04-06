@@ -10,9 +10,6 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.Lifecycle;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,29 +21,23 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.shape.CornerFamily;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.relylabs.InstaHelo.Utils.Helper;
-import com.relylabs.InstaHelo.Utils.Logger;
-import com.relylabs.InstaHelo.Utils.RoomHelper;
 import com.relylabs.InstaHelo.editprofile.EditBioFragment;
 import com.relylabs.InstaHelo.editprofile.EditPhotoFragment;
 import com.relylabs.InstaHelo.editprofile.NameEditFragment;
 import com.relylabs.InstaHelo.followerList.FollowerList;
 import com.relylabs.InstaHelo.followerList.FollowingList;
 import com.relylabs.InstaHelo.models.User;
+import com.relylabs.InstaHelo.reporting.ReportProfile;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
-import java.util.WeakHashMap;
 
 import cz.msebera.android.httpclient.Header;
 

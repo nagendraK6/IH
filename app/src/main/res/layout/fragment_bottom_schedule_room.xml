@@ -8,6 +8,14 @@
     android:focusable="true"
     android:orientation="vertical"
     android:paddingBottom="21dp">
+    <TextView
+        android:id="@+id/report_btn"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="25dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/large_three_dots" />
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/speaker_grid_list"
         android:layout_width="match_parent"

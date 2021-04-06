@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
             switch (type){
                 case "user_followed":
                 case "user_joined":
+                case "profile_visited":
                     user_id = getIntent().getStringExtra("value");
                     openProfile(user_id);
                     break;
@@ -213,6 +214,7 @@ public class MainActivity extends AppCompatActivity {
             switch (type){
                 case "user_followed":
                 case "user_joined":
+                case "profile_visited":
                     user_id = intent.getStringExtra("value");
                     openProfile(user_id);
                     break;

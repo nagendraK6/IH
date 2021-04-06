@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/White"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical">
+
+    <ProgressBar
+        android:id="@+id/busy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center"
+
+        android:indeterminateTint="@color/instahelo_blue"
+        android:indeterminateTintMode="src_atop"
+        android:visibility="invisible" />
+
+    <EditText
+        android:id="@+id/report_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView16"
+        android:layout_gravity="center"
+        android:layout_marginStart="80dp"
+        android:layout_marginLeft="80dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginEnd="80dp"
+        android:background="@drawable/main_screen_no_ask"
+        android:focusable="true"
+        android:gravity="center"
+        android:hint="eg. Room has inappropriate content"
+        android:lines="8"
+        android:minLines="6"
+        android:textColorHint="@color/texthintcolor"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="30dp"
+        android:gravity="center_vertical"
+        android:text="@android:string/cancel"
+        android:textColor="@color/instahelo_blue" />
+
+    <TextView
+        android:id="@+id/report_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginTop="60dp"
+        android:text="Report"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textColor="@color/main_screen_text_color"
+        android:textSize="16sp" />
+
+    <ImageView
+        android:id="@+id/submit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/report_text"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="60dp"
+        android:src="@drawable/submit" />
+
+    <TextView
+        android:id="@+id/textView16"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/cancel"
+        android:layout_alignStart="@+id/cancel"
+        android:layout_marginTop="60dp"
+        android:text="Please describe the incidents in details:" />
+
+</RelativeLayout>

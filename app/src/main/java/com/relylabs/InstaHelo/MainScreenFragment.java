@@ -145,6 +145,11 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
                     .getStringExtra("user_action");
             Integer uid;
             switch (user_action) {
+                case "ROOM_REPORTED":
+                    String toast_text = "Thanks for reporting the room. We will review the report as soon as possible and will take the appropriate action";
+                    Helper.showToast(activity,fragment_view,getLayoutInflater(),toast_text,R.drawable.toast_red_background);
+                    break;
+
                 case "LEAVE_CHANNEL":
                     process_leave_channel();
                     unloadFragmentBottom();

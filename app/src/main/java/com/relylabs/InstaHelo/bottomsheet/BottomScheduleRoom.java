@@ -51,6 +51,7 @@ import com.relylabs.InstaHelo.Utils.Helper;
 import com.relylabs.InstaHelo.Utils.RoomHelper;
 import com.relylabs.InstaHelo.models.User;
 import com.relylabs.InstaHelo.models.UserSettings;
+import com.relylabs.InstaHelo.reporting.ReportRoomFragment;
 import com.relylabs.InstaHelo.rooms.ScheduleRoomSpeakerAdapter;
 
 import org.json.JSONArray;
@@ -206,6 +207,21 @@ public class BottomScheduleRoom extends BottomSheetDialogFragment {
             @Override
             public void onClick(View v) {
                 shareEvent("com.facebook.katana");
+            }
+        });
+
+
+        TextView report_btn = view.findViewById(R.id.report_btn);
+        report_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ReportRoomFragment reportRoomFragment = new ReportRoomFragment();
+                Bundle args = new Bundle();
+                args.putString("room_name",title_main);
+                args.putString("room_id_to_report", room_slug);
+                reportRoomFragment.setArguments(args);
+                Helper.loadFragment(reportRoomFragment, activity_ref);
+                dismiss();
             }
         });
     }

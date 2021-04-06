@@ -48,8 +48,16 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/title_of_room"
                         android:textStyle="bold"
+                        android:layout_marginRight="30dp"
                         android:layout_marginLeft="20dp"
                         android:text="Is India's farmers protest legal?"/>
+                    <TextView
+                        android:id="@+id/report_btn"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="30dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/large_three_dots" />
                     <androidx.recyclerview.widget.RecyclerView
                         android:layout_marginTop="5dp"
                         android:layout_below="@+id/title_of_room"

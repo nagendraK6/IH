@@ -43,6 +43,7 @@ import com.relylabs.InstaHelo.Utils.RoomHelper;
 import com.relylabs.InstaHelo.models.User;
 import com.relylabs.InstaHelo.models.UserSettings;
 import com.relylabs.InstaHelo.models.UsersInRoom;
+import com.relylabs.InstaHelo.reporting.ReportRoomFragment;
 import com.relylabs.InstaHelo.rooms.RoomsUsersDisplayListAdapter;
 import com.relylabs.InstaHelo.rooms.RoomsUsersDisplayListDiffsCallback;
 import com.relylabs.InstaHelo.sharing.SharingContactListAdapter;
@@ -436,6 +437,18 @@ public class RoomDisplayFragment extends Fragment implements RoomsUsersDisplayLi
         });
 
         super_user_controls(view);
+
+        TextView report_btn = view.findViewById(R.id.report_btn);
+        report_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ReportRoomFragment reportRoomFragment = new ReportRoomFragment();
+                Bundle args = new Bundle();
+                args.putString("room_name",event_title);
+                reportRoomFragment.setArguments(args);
+                Helper.loadFragment(reportRoomFragment, activity);
+            }
+        });
     }
 
     public static void move(final TextView view){
