@@ -107,7 +107,7 @@ public class LoginFragment extends Fragment {
         next_phone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                termsAndCondition(phone_number_txt);
+                process(phone_number_txt);
             }
         });
 
@@ -197,18 +197,6 @@ public class LoginFragment extends Fragment {
 
     private void  process(String phone_number) {
         if (phone_number.length() > 1) {
-            AlertDialog.Builder builder;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                builder = new AlertDialog.Builder(activity_ref, android.R.style.Theme_DeviceDefault_Light_Dialog_Alert);
-            } else {
-                builder = new AlertDialog.Builder(activity_ref);
-            }
-
-
-            Logger.log(Logger.PHONE_ADD_REQUEST_START);
-            builder.setMessage(getString(R.string.verify_no_msg) +  " \n\n" +country_code.getSelectedCountryCodeWithPlus() + "-" + phone_number + "\n\n" + getString(R.string.edit_no_msg))
-                    .setPositiveButton(getString(R.string.ok) , new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
 
                             // continue with delete
                             AsyncHttpClient client = new AsyncHttpClient();
@@ -270,18 +258,5 @@ public class LoginFragment extends Fragment {
                             client.post( App.getBaseURL() + "registration/login_phone", params, jrep);
 
                         }
-                    })
-                    .setNegativeButton(getString(R.string.edit), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // do nothing
-                            phone_no.setText("");
-
-                        }
-                    })
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
-
         }
-    }
-
 }
