@@ -38,6 +38,7 @@ import com.relylabs.InstaHelo.R;
 import com.relylabs.InstaHelo.models.User;
 import com.relylabs.InstaHelo.onboarding.AddBioDetailsFragment;
 import com.relylabs.InstaHelo.onboarding.ContactRequestFragment;
+import com.relylabs.InstaHelo.onboarding.DarkPatternInviteFragment;
 import com.relylabs.InstaHelo.onboarding.DisplayUserNameAskFragment;
 import com.relylabs.InstaHelo.onboarding.FragmentNonInvitedThankYouScreen;
 import com.relylabs.InstaHelo.onboarding.FriendsToFollow;
@@ -200,6 +201,11 @@ public class Helper {
             ft.replace(R.id.fragment_holder, new ContactRequestFragment());
             ft.commitAllowingStateLoss();
         }
+        else if(currentStep.equals("DARK_INVITE")){
+            ft.replace(R.id.fragment_holder, new DarkPatternInviteFragment());
+            ft.commitAllowingStateLoss();
+        }
+
         else if(currentStep.equals("CONTACT_REQUEST")){
             ft.replace(R.id.fragment_holder, new SuggestedProfileToFollowFragment());
             ft.commitAllowingStateLoss();
@@ -246,6 +252,9 @@ public class Helper {
         }
         else if(currentStep.equals("CONTACT_REQUEST")){
             ft.replace(R.id.fragment_holder, new SuggestedProfileToFollowFragment());
+            ft.commitAllowingStateLoss();
+        } else if(currentStep.equals("DARK_INVITE")){
+            ft.replace(R.id.fragment_holder, new MainScreenFragment());
             ft.commitAllowingStateLoss();
         }
     }

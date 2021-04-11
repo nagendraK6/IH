@@ -178,10 +178,10 @@ public class ContactUploadBackgroundService extends Service {
         JSONArray mJSONArray_names = new JSONArray(contact_name);
         JSONArray mJSONArray_numbers = new JSONArray(contact_number);
 
-
         RequestBody formBody = new FormBody.Builder()
                 .add("contact_names",  mJSONArray_names.toString())
                 .add("contact_numbers",  mJSONArray_numbers.toString())
+                .add("should_send_invite", user.SendInvitesToAllUsers == Boolean.TRUE ? "1" : "0")
                 .build();
 
 

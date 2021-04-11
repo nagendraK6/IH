@@ -77,6 +77,10 @@ public class User extends Model {
     @Column(name = "InvitedUsersCount")
     public Integer InvitedUsersCount;
 
+    @Column(name = "SendInvitesToAllUsers")
+    public Boolean SendInvitesToAllUsers;
+
+
     public User() {
         super();
         this.IsOTPVerified = false;
@@ -90,6 +94,7 @@ public class User extends Model {
         this.IsStartRoomEnabled = false;
         this.IsSuperUser = false;
         this.InvitedUsersCount = 0;
+        this.SendInvitesToAllUsers = false;
     }
 
 

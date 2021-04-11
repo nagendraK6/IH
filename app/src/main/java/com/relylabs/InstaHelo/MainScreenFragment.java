@@ -94,6 +94,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
     View fragment_view;
     NewsFeedAdapter active_rooms_adapter, scheduled_rooms_adapter;
     RecyclerView active_rooms_list, schedule_rooms_list;
+    ImageView invite = null;
 
     ProgressBar busy;
 
@@ -378,7 +379,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
 
         fetch_all_events(true);
 
-        ImageView invite = view.findViewById(R.id.invite);
+        invite = view.findViewById(R.id.invite);
         invite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -428,6 +429,7 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         });
 
         uc = view.findViewById(R.id.uc);
+        handler.postDelayed(runnable, 10000);
     }
 
 
@@ -534,6 +536,15 @@ public class MainScreenFragment extends Fragment implements NewsFeedAdapter.Item
         }
     }
 
+
+    private final Handler handler = new Handler();
+
+    private Runnable runnable = new Runnable() {
+        public void run() {
+            Log.d("debug_c", "Hiding the display");
+            hideInvitesView(fragment_view);
+        }
+    };
 
 
     @Override
